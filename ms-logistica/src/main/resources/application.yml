@@ -6,8 +6,8 @@ spring:
     name: ms-logistica
   datasource:
     url: jdbc:postgresql://localhost:5432/ms_logistica_db
-    username: postgres
-    password: Kevin2209.
+    username: admin
+    password: admin
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
