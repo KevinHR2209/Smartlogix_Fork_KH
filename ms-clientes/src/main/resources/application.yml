@@ -1,0 +1,18 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: ms-clientes
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ms_clientes
+    username: postgres
+    password: Kevin2209.
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
