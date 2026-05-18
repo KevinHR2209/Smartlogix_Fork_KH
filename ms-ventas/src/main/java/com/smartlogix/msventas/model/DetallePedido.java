@@ -2,6 +2,7 @@ package com.smartlogix.msventas.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "detalle_pedido")
@@ -14,6 +15,7 @@ public class DetallePedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idDetalle;
 
+    @JsonIgnore // 
     @ManyToOne
     @JoinColumn(name = "id_pedido")
     private Pedido pedido;
