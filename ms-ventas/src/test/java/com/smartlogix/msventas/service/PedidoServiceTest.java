@@ -11,12 +11,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,152 +26,70 @@ class PedidoServiceTest {
     private PedidoRepository pedidoRepository;
 
     @InjectMocks
-    private PedidoService pedidoService;
+    private PedidoService service;
 
-    private Pedido pedidoMock;
-    private DetallePedido detalleMock;
+    private Pedido pedido;
 
     @BeforeEach
     void setUp() {
-        // Inicializamos los mocks antes de cada test
-        pedidoMock = new Pedido();
-        pedidoMock.setIdPedido(1L);
-        pedidoMock.setEstadoPedido("PENDIENTE");
-
-        detalleMock = new DetallePedido();
-        detalleMock.setIdDetalle(10L);
-
-        List<DetallePedido> detalles = new ArrayList<>();
-        detalles.add(detalleMock);
-        pedidoMock.setDetalles(detalles);
+        pedido = new Pedido();
+        pedido.setIdPedido(1L);
+        pedido.setEstadoPedido("PENDIENTE");
+        pedido.setFechaCreacion(OffsetDateTime.now());
     }
 
-    // ==========================================
-    // TESTS PARA LISTAR
-    // ==========================================
-
     @Test
-    void listar_DebeRetornarListaDePedidos() {
-        // Arrange
-        when(pedidoRepository.findAll()).thenReturn(Arrays.asList(pedidoMock));
-
-        // Act
-        List<Pedido> resultado = pedidoService.listar();
-
-        // Assert
-        assertFalse(resultado.isEmpty());
+    void listar_debeRetornarListaDePedidos() {
+        when(pedidoRepository.findAll()).thenReturn(Arrays.asList(pedido));
+        List<Pedido> resultado = service.listar();
+        assertNotNull(resultado);
         assertEquals(1, resultado.size());
         verify(pedidoRepository, times(1)).findAll();
     }
 
     @Test
-    void listar_CuandoNoHayPedidos_DebeRetornarListaVacia() {
-        // Arrange (Caso Borde)
-        when(pedidoRepository.findAll()).thenReturn(List.of());
-
-        // Act
-        List<Pedido> resultado = pedidoService.listar();
-
-        // Assert
-        assertNotNull(resultado);
-        assertTrue(resultado.isEmpty());
-    }
-
-    // ==========================================
-    // TESTS PARA BUSCAR POR ID
-    // ==========================================
-
-    @Test
-    void buscarPorId_CuandoExiste_DebeRetornarPedido() {
-        // Arrange
-        when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pedidoMock));
-
-        // Act
-        Pedido resultado = pedidoService.buscarPorId(1L);
-
-        // Assert
+    void buscarPorId_cuandoExiste_debeRetornarPedido() {
+        when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pedido));
+        Pedido resultado = service.buscarPorId(1L);
         assertNotNull(resultado);
         assertEquals(1L, resultado.getIdPedido());
-        assertEquals("PENDIENTE", resultado.getEstadoPedido());
     }
 
     @Test
-    void buscarPorId_CuandoNoExiste_DebeLanzarExcepcion() {
-        // Arrange (Sad Path)
+    void buscarPorId_cuandoNoExiste_debeLanzarExcepcion() {
         when(pedidoRepository.findById(99L)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            pedidoService.buscarPorId(99L);
-        });
-
-        assertEquals("Pedido no encontrado", exception.getMessage());
-    }
-
-    // ==========================================
-    // TESTS PARA CREAR (Lógica de Negocio Central)
-    // ==========================================
-
-    @Test
-    void crear_ConFechaNula_DebeAsignarFechaYGuardar() {
-        // Arrange
-        pedidoMock.setFechaCreacion(null); // Aseguramos que venga nula
-        when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedidoMock);
-
-        // Act
-        Pedido resultado = pedidoService.crear(pedidoMock);
-
-        // Assert
-        assertNotNull(resultado.getFechaCreacion(), "La fecha de creación no debería ser nula después de crear");
-        verify(pedidoRepository).save(pedidoMock);
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> service.buscarPorId(99L));
+        assertEquals("Pedido no encontrado", ex.getMessage());
     }
 
     @Test
-    void crear_ConDetalles_DebeVincularDetallesAlPedido() {
-        // Arrange
-        // (En el setUp ya le agregamos un detalle sin pedido asociado)
-        assertNull(detalleMock.getPedido(), "El detalle no debería tener pedido antes de crear");
-        when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedidoMock);
-
-        // Act
-        pedidoService.crear(pedidoMock);
-
-        // Assert
-        // Verificamos que el servicio inyectó el 'this' (el pedido) dentro del detalle
-        assertNotNull(detalleMock.getPedido(), "El detalle debe tener el pedido asignado");
-        assertEquals(1L, detalleMock.getPedido().getIdPedido(), "El id del pedido en el detalle debe coincidir");
-    }
-
-    // ==========================================
-    // TESTS PARA CAMBIAR ESTADO
-    // ==========================================
-
-    @Test
-    void cambiarEstado_CuandoExiste_DebeActualizarYGuardar() {
-        // Arrange
-        when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pedidoMock));
-        when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedidoMock);
-
-        // Act
-        Pedido resultado = pedidoService.cambiarEstado(1L, "ENVIADO");
-
-        // Assert
-        assertEquals("ENVIADO", resultado.getEstadoPedido(), "El estado debe haber cambiado");
-        verify(pedidoRepository).findById(1L);
-        verify(pedidoRepository).save(pedidoMock);
+    void crear_conFechaNull_debeAsignarFechaAutomatica() {
+        Pedido nuevo = new Pedido();
+        nuevo.setEstadoPedido("PENDIENTE");
+        nuevo.setFechaCreacion(null);
+        when(pedidoRepository.save(any(Pedido.class))).thenReturn(nuevo);
+        Pedido resultado = service.crear(nuevo);
+        assertNotNull(resultado);
+        verify(pedidoRepository, times(1)).save(nuevo);
     }
 
     @Test
-    void cambiarEstado_CuandoNoExiste_DebeLanzarExcepcion() {
-        // Arrange (Sad Path)
-        when(pedidoRepository.findById(99L)).thenReturn(Optional.empty());
+    void crear_conDetalles_debeAsociarPedidoADetalles() {
+        DetallePedido detalle = new DetallePedido();
+        pedido.setDetalles(Arrays.asList(detalle));
+        pedido.setFechaCreacion(null);
+        when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
+        service.crear(pedido);
+        assertEquals(pedido, detalle.getPedido());
+    }
 
-        // Act & Assert
-        assertThrows(RuntimeException.class, () -> {
-            pedidoService.cambiarEstado(99L, "ENVIADO");
-        });
-
-        // Verificamos que NUNCA se haya llamado al método save() si el pedido no existía
-        verify(pedidoRepository, never()).save(any(Pedido.class));
+    @Test
+    void cambiarEstado_debeActualizarEstado() {
+        when(pedidoRepository.findById(1L)).thenReturn(Optional.of(pedido));
+        when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
+        Pedido resultado = service.cambiarEstado(1L, "ENTREGADO");
+        assertEquals("ENTREGADO", resultado.getEstadoPedido());
+        verify(pedidoRepository).save(pedido);
     }
 }

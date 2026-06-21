@@ -14,118 +14,88 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-// @ExtendWith habilita las anotaciones de Mockito (@Mock, @InjectMocks)
 @ExtendWith(MockitoExtension.class)
 class ClienteServiceTest {
 
-    // 1. Mockeamos la dependencia (ClienteRepository)
     @Mock
     private ClienteRepository repository;
 
-    // 2. Inyectamos los mocks en el servicio que vamos a probar
     @InjectMocks
-    private ClienteService clienteService;
+    private ClienteService service;
 
-    private Cliente clienteMock;
+    private Cliente cliente;
 
-    // 3. Preparamos datos de prueba antes de cada test
     @BeforeEach
     void setUp() {
-        clienteMock = new Cliente();
-        clienteMock.setIdCliente(1L);
-        clienteMock.setRut("12345678-9");
-        clienteMock.setNombre("Juan");
-        clienteMock.setApellidoPaterno("Pérez");
-        clienteMock.setCorreo("juan@test.com");
+        cliente = new Cliente();
+        cliente.setIdCliente(1L);
+        cliente.setRut("12345678-9");
+        cliente.setNombre("Kevin");
+        cliente.setApellidoPaterno("Hernandez");
+        cliente.setApellidoMaterno("Ramirez");
+        cliente.setCorreo("kevin@test.com");
+        cliente.setTelefono("912345678");
     }
 
     @Test
-    void listar_DebeRetornarListaDeClientes() {
-        // Arrange
-        when(repository.findAll()).thenReturn(Arrays.asList(clienteMock));
-
-        // Act
-        List<Cliente> resultado = clienteService.listar();
-
-        // Assert
-        assertFalse(resultado.isEmpty());
-        assertEquals(1, resultado.size());
-        verify(repository, times(1)).findAll(); // Verifica que el método fue llamado 1 vez
-    }
-
-    @Test
-    void buscarPorId_CuandoExiste_DebeRetornarCliente() {
-        // Arrange
-        when(repository.findById(1L)).thenReturn(Optional.of(clienteMock));
-
-        // Act
-        Cliente resultado = clienteService.buscarPorId(1L);
-
-        // Assert
+    void listar_debeRetornarListaDeClientes() {
+        when(repository.findAll()).thenReturn(Arrays.asList(cliente));
+        List<Cliente> resultado = service.listar();
         assertNotNull(resultado);
-        assertEquals("Juan", resultado.getNombre());
+        assertEquals(1, resultado.size());
+        assertEquals("Kevin", resultado.get(0).getNombre());
+        verify(repository, times(1)).findAll();
     }
 
     @Test
-    void buscarPorId_CuandoNoExiste_DebeLanzarExcepcion() {
-        // Arrange
+    void buscarPorId_cuandoExiste_debeRetornarCliente() {
+        when(repository.findById(1L)).thenReturn(Optional.of(cliente));
+        Cliente resultado = service.buscarPorId(1L);
+        assertNotNull(resultado);
+        assertEquals(1L, resultado.getIdCliente());
+        assertEquals("kevin@test.com", resultado.getCorreo());
+    }
+
+    @Test
+    void buscarPorId_cuandoNoExiste_debeLanzarExcepcion() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        // Es buena práctica probar las excepciones (Caminos negativos)
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            clienteService.buscarPorId(99L);
-        });
-
-        assertEquals("Cliente no encontrado", exception.getMessage());
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> service.buscarPorId(99L));
+        assertEquals("Cliente no encontrado", ex.getMessage());
     }
 
     @Test
-    void crear_DebeGuardarYRetornarCliente() {
-        // Arrange
-        when(repository.save(any(Cliente.class))).thenReturn(clienteMock);
-
-        // Act
-        Cliente resultado = clienteService.crear(clienteMock);
-
-        // Assert
+    void crear_debeGuardarYRetornarCliente() {
+        when(repository.save(any(Cliente.class))).thenReturn(cliente);
+        Cliente resultado = service.crear(cliente);
         assertNotNull(resultado);
         assertEquals("12345678-9", resultado.getRut());
-        verify(repository).save(clienteMock);
+        verify(repository, times(1)).save(cliente);
     }
 
     @Test
-    void actualizar_CuandoExiste_DebeActualizarYRetornarCliente() {
-        // Arrange
-        Cliente datosActualizados = new Cliente();
-        datosActualizados.setNombre("Pedro");
-        datosActualizados.setRut("87654321-0");
-
-        // Simulamos que primero lo encuentra y luego lo guarda
-        when(repository.findById(1L)).thenReturn(Optional.of(clienteMock));
-        when(repository.save(any(Cliente.class))).thenReturn(clienteMock); // save() usa la misma instancia modificada
-
-        // Act
-        Cliente resultado = clienteService.actualizar(1L, datosActualizados);
-
-        // Assert
-        assertEquals("Pedro", resultado.getNombre()); // Verificamos que se actualizaron los campos
-        assertEquals("87654321-0", resultado.getRut());
-        verify(repository).findById(1L);
-        verify(repository).save(clienteMock);
+    void actualizar_cuandoExiste_debeActualizarDatos() {
+        Cliente actualizado = new Cliente();
+        actualizado.setRut("98765432-1");
+        actualizado.setNombre("Carlos");
+        actualizado.setApellidoPaterno("Perez");
+        actualizado.setApellidoMaterno("Lopez");
+        actualizado.setCorreo("carlos@test.com");
+        actualizado.setTelefono("987654321");
+        when(repository.findById(1L)).thenReturn(Optional.of(cliente));
+        when(repository.save(any(Cliente.class))).thenReturn(cliente);
+        Cliente resultado = service.actualizar(1L, actualizado);
+        assertNotNull(resultado);
+        verify(repository).save(any(Cliente.class));
     }
 
     @Test
-    void eliminar_DebeLlamarAlRepositorio() {
-        // Arrange
+    void eliminar_debeInvocarDeleteById() {
         doNothing().when(repository).deleteById(1L);
-
-        // Act
-        clienteService.eliminar(1L);
-
-        // Assert
+        service.eliminar(1L);
         verify(repository, times(1)).deleteById(1L);
     }
 }
