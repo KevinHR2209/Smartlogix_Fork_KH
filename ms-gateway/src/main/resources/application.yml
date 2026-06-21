@@ -66,6 +66,19 @@ spring:
                 name: logisticaCB
                 fallbackUri: forward:/fallback/logistica
 
+# Configuración de Swagger Centralizado
+springdoc:
+  swagger-ui:
+    urls:
+      - name: MS Clientes
+        url: /api/clientes/v3/api-docs
+      - name: MS Inventario
+        url: /api/productos/v3/api-docs
+      - name: MS Ventas
+        url: /api/pedidos/v3/api-docs
+      - name: MS Logistica
+        url: /api/despachos/v3/api-docs
+
 # Configuración de Resilience4j
 resilience4j:
   circuitbreaker:

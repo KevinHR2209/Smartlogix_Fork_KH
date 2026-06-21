@@ -16,3 +16,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
+springdoc:
+  api-docs:
+    path: /api/clientes/v3/api-docs
