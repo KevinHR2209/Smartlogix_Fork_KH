@@ -30,8 +30,7 @@ class InventarioServiceTest {
 
     @BeforeEach
     void setUp() {
-        producto = new Producto(1L, "SKU-001", "Caja Grande", "Caja de cartón resistente",
-                5000, 500, "30x30x30", "activo");
+        Producto producto = new Producto(1L, "SKU", "Nombre", "Desc", 1000, 500, "10x10", "ACTIVO", 0);
     }
 
     @Test

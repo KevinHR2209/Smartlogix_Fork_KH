@@ -7,6 +7,7 @@ export interface Producto {
   pesoGramos: number;
   dimensiones: string;
   estado: string;
+  stockTotal?: number;
 }
 
 export interface Cliente {
@@ -17,6 +18,7 @@ export interface Cliente {
   apellidoMaterno: string;
   correo: string;
   telefono: string;
+  region?: string;
 }
 
 export interface Transportista {

@@ -25,4 +25,7 @@ public class Cliente {
     private String correo;
 
     private String telefono;
+
+    @Transient // No se guarda en la tabla, solo viaja en el JSON
+    private String region;
 }
