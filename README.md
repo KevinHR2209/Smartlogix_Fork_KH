@@ -1,117 +1,103 @@
-# SmartLogix - E-commerce & Logistics Platform
+# SmartLogix
 
-SmartLogix es una plataforma de e-commerce y gestión logística construida sobre una arquitectura de microservicios. Este proyecto demuestra la separación de dominios de negocio, comunicación a través de un API Gateway y un frontend moderno y reactivo.
-
-## 🏗️ Arquitectura del Sistema
-
-El proyecto está compuesto por los siguientes módulos:
-- **Frontend (`/frontend`)**: Interfaz de usuario SPA construida con Next.js y Tailwind CSS.
-- **API Gateway (`/ms-gateway`)**: Punto de entrada centralizado (Puerto 8080) construido con Spring Cloud Gateway.
-- **Microservicios (Spring Boot - Java 17)**:
-  - `ms_inventario`: Gestión del catálogo de productos.
-  - `ms-clientes`: Directorio y perfiles de usuarios.
-  - `ms-ventas`: Núcleo transaccional (Pedidos y Pagos).
-  - `ms-logistica`: Gestión de flota de transportistas y estados de despacho.
-- **Persistencia (`/smartlogix-infra`)**: Bases de datos PostgreSQL aisladas por servicio (Patrón *Database per Service*) orquestadas con Docker.
+SmartLogix es un sistema integral de comercio electrónico y gestión logística construido bajo una arquitectura de Microservicios. El proyecto utiliza Java 21 con Spring Boot para el backend, Next.js para el frontend y PostgreSQL como base de datos relacional, todo orquestado localmente mediante Docker Compose.
 
 ---
 
-## 🚀 Requisitos Previos
+## Arquitectura y Microservicios
 
-Para ejecutar este proyecto en tu entorno local, necesitas tener instalado:
-- **Docker** y **Docker Compose** (Para levantar las bases de datos).
-- **Java 17** o superior (Para compilar y correr los microservicios).
-- **Node.js** (v18+ recomendado) y **npm** (Para el frontend).
+El sistema está dividido en pequeños servicios independientes, cada uno con una responsabilidad única y su propia base de datos lógica. 
 
----
+* **API Gateway (`ms-gateway` - Puerto 8080):** Es el único punto de acceso público del ecosistema. Construido con Spring Cloud Gateway, recibe las peticiones del frontend, maneja las políticas de CORS globales y enruta el tráfico hacia los microservicios internos.
 
-## 🛠️ Guía de Ejecución Paso a Paso
+* **Inventario (`ms-inventario` - Puerto 8081):** Se encarga del catálogo de productos, control de stock y gestión de bodegas.
 
-Sigue estos pasos en orden para levantar todo el ecosistema correctamente. Te recomendamos abrir varias pestañas en tu terminal.
+* **Clientes (`ms-clientes` - Puerto 8082):** Administra el registro y perfilamiento de los clientes, validando datos únicos como el RUT y el correo electrónico.
 
-### Paso 1: Levantar la Infraestructura (Bases de Datos)
-Las bases de datos deben estar corriendo antes de iniciar cualquier microservicio.
-1. Abre una terminal y navega a la carpeta de infraestructura:
-   ```bash
-   cd smartlogix-infra
-   
-   (Opcional) Si estás en macOS/Linux, asegúrate de que el script de inicialización tenga permisos de ejecución:
+* **Ventas (`ms-ventas` - Puerto 8083):** Procesa el carrito de compras, registrando los pedidos, los detalles de compra (ítems) y la validación de pagos.
 
-    Bash
-    chmod +x init-multiple-dbs.sh
-    Levanta los contenedores en segundo plano:
+* **Logística (`ms-logistica` - Puerto 8084):** Gestiona la última milla. Crea despachos asociados a los pedidos, asigna transportistas y cambia los estados de entrega (Pendiente, En Ruta, Entregado).
 
-    Bash
-    docker compose up -d
+* **Frontend (`smartlogix-frontend` - Puerto 3000):** Interfaz de usuario construida con Next.js (Node 20), React y Tailwind CSS.
+
+* **Base de Datos (`smartlogix-postgres` - Puerto 5432):** Instancia única de PostgreSQL 15 que se inicializa automáticamente creando esquemas separados para cada microservicio gracias al script `init.sql`.
+
+## Base de datos y persistencia
+
+SmartLogix aplica el patrón de **Base de Datos por Microservicio** (Database-per-service) para garantizar un bajo acoplamiento. Físicamente, todas residen en un mismo contenedor de **PostgreSQL 15**, pero están separadas lógicamente.
+
+La inicialización de las bases de datos se realiza de forma automática a través del archivo `smartlogix-infra/init.sql`, el cual es ejecutado por Docker al crear el volumen por primera vez:
+
+    CREATE DATABASE ms_cliente;
+    CREATE DATABASE ms_inventario;
+    CREATE DATABASE ms_ventas;
+    CREATE DATABASE ms_logistica;
     
-### Paso 2: Levantar los Microservicios (Backend)
-    Debes ejecutar cada servicio de forma independiente. Abre una nueva pestaña en tu terminal para cada uno de los siguientes directorios y ejecuta el Maven Wrapper.
+**Tecnologías de Persistencia (JPA e Hibernate)**
 
-    Nota: El comando mostrado es para macOS/Linux (./mvnw). Si usas Windows, utiliza .\mvnw.cmd.
+La interacción con la base de datos se maneja a través de Spring Data JPA e Hibernate.
 
-    1. API Gateway:
+La creación de tablas y columnas (DDL) es gestionada automáticamente por Hibernate en base a las clases Java (anotadas con @Entity, @Table, @Column).
 
-    Bash
-    cd ms-gateway
-    ./mvnw spring-boot:run
-    2. MS Inventario:
+Las operaciones CRUD se exponen mediante interfaces que heredan de JpaRepository<T, ID>, evitando la escritura de consultas SQL manuales para las transacciones estándar.
 
-    Bash
-    cd ms_inventario
-    ./mvnw spring-boot:run
-    3. MS Clientes:
+Las llaves primarias utilizan @GeneratedValue(strategy = GenerationType.IDENTITY) delegando el autoincremento a PostgreSQL.
 
-    Bash
-    cd ms-clientes
-    ./mvnw spring-boot:run
-    4. MS Ventas:
+**Modelado por Microservicio**
+1. **Microservicio de Inventario (ms_inventario)**
+Encargado del almacenamiento físico y catálogo.
 
-    Bash
-    cd ms-ventas
-    ./mvnw spring-boot:run
-    5. MS Logística:
+**Producto:** Representa los artículos vendibles del catálogo (precio, stock disponible, SKU).
 
-    Bash
-    cd ms-logistica
-    ./mvnw spring-boot:run
-    (Espera a que todos los servicios reporten que han iniciado correctamente antes de pasar al frontend).
+**Bodega:** Ubicaciones físicas de almacenamiento.
 
-### Paso 3: Levantar el Frontend
-    Abre una última terminal para inicializar la interfaz de usuario.
+**ProductoBodega:** Tabla intermedia/entidad que maneja el stock específico de un producto dentro de una bodega concreta.
 
-    Entra a la carpeta del frontend:
+**Repositorios:** ProductoRepository (extiende JpaRepository<Producto, Long>).
 
-    Bash
-    cd frontend
-    Instala las dependencias:
+2. **Microservicio de Clientes (ms_cliente)**
+Almacena el perfilado de los compradores.
 
-    Bash
-    npm install
-    Inicia el servidor de desarrollo:
+**Cliente:** 
+Información personal, contacto y rut (único).
 
-    Bash
-    npm run dev
-    Abre tu navegador y visita: http://localhost:3000
+**DireccionCliente:** Múltiples direcciones de despacho asociadas a un mismo cliente.
 
-### 📱 Flujos Disponibles en la Aplicación
-    La interfaz de usuario está dividida en dos grandes áreas para demostrar el funcionamiento integral de la arquitectura:
+**Repositorios:** ClienteRepository, DireccionRepository.
 
-    1. Tienda (Simulador de Cliente) - Ruta: /
-    Simula la experiencia de compra de un usuario final.
+3. **Microservicio de Ventas (ms_ventas)**
+Núcleo del proceso de compra.
 
-    Catálogo Dinámico: Visualización de productos obtenidos desde el MS Inventario.
+**Pedido:** Cabecera de la transacción. Almacena la fecha, el total, el estado del pedido y el idCliente (referencia lógica al ms-clientes, sin llave foránea dura).
 
-    Carrito de Compras: Panel lateral (Side Drawer) para agregar múltiples productos y calcular totales.
+**DetallePedido:** Ítems comprados dentro de un pedido (referencia lógica al idProducto del ms-inventario).
 
-    Checkout Simulado: Permite seleccionar un cliente registrado y confirmar la compra. Esto se comunica con el MS Ventas para generar el Pedido y descontar lógicamente el total.
+**Pago:** Transacciones financieras asociadas a un pedido.
 
-    2. Panel de Administración (Backoffice) - Ruta: /admin/*
-    Barra lateral oscura que permite gestionar todos los dominios del sistema y simular procesos de negocio:
+**Repositorios:** PedidoRepository, PagoRepository.
 
-    📦 Inventario: CRUD completo de productos. Permite crear, editar (nombre, precio, descripción) y eliminar artículos del catálogo.
+4. Microservicio de Logística (ms_logistica)
+Gestión de última milla y entregas.
 
-    👥 Clientes: Directorio interactivo para registrar compradores de prueba, editar su información de contacto y gestionarlos. (Es necesario crear al menos un cliente aquí antes de realizar una compra en la Tienda).
+**Despacho:** Cabecera del envío. Contiene la dirección, el estado (PENDIENTE, EN_RUTA, ENTREGADO) y la referencia lógica al idPedido del ms-ventas.
 
-    🚚 Flota: Panel para registrar vehículos y conductores (transportistas) en el sistema logístico.
+**Transportista:** Entidad asignable (@ManyToOne) a un despacho, con los datos de la empresa o persona que realiza la entrega.
 
-    📋 Transacciones: Monitor en tiempo real de los pedidos generados en la tienda. Permite a los administradores actualizar el ciclo de vida del pedido, cambiando su estado a "DESPACHADO".
+**Repositorios:** DespachoRepository, TransportistaRepository.
+
+Para mantener la independencia de los microservicios, no existen llaves foráneas (Foreign Keys) entre diferentes bases de datos. Las relaciones inter-dominio (ej: Un Pedido con un Cliente) se manejan guardando el ID como un campo numérico simple (referencia lógica) y los datos completos se cruzan vía peticiones de red a través del API Gateway o clientes internos.
+
+##  Puesta en marcha local del proyecto
+
+Este proyecto utiliza herramientas de contenedorización para no tener que instalar Java, Node o PostgreSQL en tu máquina local.
+
+### Prerrequisitos
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y en ejecución.
+
+### Instrucciones de ejecución
+
+1. Abre tu terminal favorita en la carpeta raíz del proyecto (donde se encuentra el archivo `docker-compose.yml`).
+2. Ejecuta el siguiente comando para borrar cachés antiguos e iniciar el modo de desarrollo en vivo:
+   ```bash
+   docker compose down -v
+   docker compose watch
