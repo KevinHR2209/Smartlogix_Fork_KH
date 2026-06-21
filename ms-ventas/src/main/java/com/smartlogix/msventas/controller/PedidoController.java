@@ -25,9 +25,13 @@ public class PedidoController {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
+
     @PostMapping
-    public ResponseEntity<Pedido> crear(@RequestBody Pedido pedido) {
-        Pedido creado = service.crear(pedido);
+    public ResponseEntity<Pedido> crear(
+            @RequestBody Pedido pedido,
+            @RequestParam(required = false, defaultValue = "Metropolitana") String regionDestino) {
+
+        Pedido creado = service.crear(pedido, regionDestino);
         return ResponseEntity.status(201).body(creado);
     }
 

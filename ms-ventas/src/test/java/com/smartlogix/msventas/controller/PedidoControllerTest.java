@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -78,7 +79,8 @@ class PedidoControllerTest {
 
     @Test
     void crear_debeRetornar201() throws Exception {
-        when(service.crear(any(Pedido.class))).thenReturn(pedido);
+        // CORRECCIÓN: Agregamos anyString() como segundo parámetro
+        when(service.crear(any(Pedido.class), anyString())).thenReturn(pedido);
         mockMvc.perform(post("/api/pedidos")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(pedido)))
@@ -91,7 +93,9 @@ class PedidoControllerTest {
         Pedido nuevo = new Pedido();
         nuevo.setIdPedido(3L);
         nuevo.setEstadoPedido("EN_PROCESO");
-        when(service.crear(any(Pedido.class))).thenReturn(nuevo);
+
+        // CORRECCIÓN: Agregamos anyString() como segundo parámetro
+        when(service.crear(any(Pedido.class), anyString())).thenReturn(nuevo);
         mockMvc.perform(post("/api/pedidos")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nuevo)))

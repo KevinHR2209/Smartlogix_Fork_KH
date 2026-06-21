@@ -4,6 +4,8 @@ import com.smartlogix.inventario.entity.Producto;
 import com.smartlogix.inventario.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.smartlogix.inventario.dto.DescuentoStockDto;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -39,4 +41,10 @@ public class ProductoController {
     public void eliminar(@PathVariable Long id) {
         productoService.eliminar(id);
     }
+
+    @PutMapping("/{id}/descontar-stock")
+        public ResponseEntity<?> descontarStock(@PathVariable Long id, @RequestBody DescuentoStockDto request) {
+            productoService.descontarStockGeolocalizado(id, request.getCantidad(), request.getRegionDestino());
+            return ResponseEntity.ok().build();
+        }
 }

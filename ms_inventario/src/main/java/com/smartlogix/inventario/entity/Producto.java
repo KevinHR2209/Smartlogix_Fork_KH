@@ -37,4 +37,10 @@ public class Producto {
 
     @Column(name = "estado", length = 50)
     private String estado;
+
+    @Transient // Esto le dice a Hibernate: "No busques esta columna en la BD, es solo para el JSON"
+        private Integer stockTotal;
 }
+
+    public Integer getStockTotal() { return stockTotal; }
+    public void setStockTotal(Integer stockTotal) { this.stockTotal = stockTotal; }
