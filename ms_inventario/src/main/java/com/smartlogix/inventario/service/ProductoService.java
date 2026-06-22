@@ -26,8 +26,6 @@ public class ProductoService {
     @Autowired
     private BodegaRepository bodegaRepository;
 
-    // Mapa de distribución de ventas (Región -> ID Bodega)
-    // 1 = Valparaíso, 2 = Coquimbo, 3 = Metropolitana
     private final Map<String, Integer> matrizDistribucion = Map.of(
             "Valparaíso", 1,
             "Coquimbo", 2,
@@ -35,38 +33,49 @@ public class ProductoService {
     );
 
     public List<Producto> listarTodos() {
-            List<Producto> productos = productoRepository.findAll();
-            // Sumamos el stock de todas las bodegas para cada producto antes de enviarlo al frontend
-            for (Producto p : productos) {
-                int total = productoBodegaRepository.findByProductoIdProducto(p.getIdProducto())
-                        .stream().mapToInt(ProductoBodega::getStockDisponible).sum();
-                p.setStockTotal(total);
-            }
-            return productos;
+        List<Producto> productos = productoRepository.findAll();
+        for (Producto p : productos) {
+            int total = productoBodegaRepository.findByProductoIdProducto(p.getIdProducto())
+                    .stream().mapToInt(ProductoBodega::getStockDisponible).sum();
+            p.setStockTotal(total);
         }
+        return productos;
+    }
 
     @Transactional
     public Producto guardar(Producto producto) {
-        boolean esNuevo = producto.getIdProducto() == null;
         Producto productoGuardado = productoRepository.save(producto);
 
-        // Si se crea desde el botón del frontend, le asignamos stock aleatorio en TODAS las bodegas
-        if (esNuevo) {
-            List<Bodega> bodegas = bodegaRepository.findAll();
-            Random random = new Random();
+        List<Bodega> bodegas = bodegaRepository.findAll();
+        Random random = new Random();
 
-            for (Bodega bodega : bodegas) {
-                ProductoBodega stockInicial = new ProductoBodega();
-                stockInicial.setProducto(productoGuardado);
-                stockInicial.setBodega(bodega);
-                stockInicial.setStockDisponible(random.nextInt(91) + 10); // Random entre 10 y 100
-                stockInicial.setStockReservado(0);
-                productoBodegaRepository.save(stockInicial);
-            }
-            System.out.println("✅ NUEVO PRODUCTO: Stock aleatorio asignado en " + bodegas.size() + " bodegas.");
+        for (Bodega bodega : bodegas) {
+            ProductoBodega stockInicial = new ProductoBodega();
+            stockInicial.setProducto(productoGuardado);
+            stockInicial.setBodega(bodega);
+            stockInicial.setStockDisponible(random.nextInt(91) + 10);
+            stockInicial.setStockReservado(0);
+            productoBodegaRepository.save(stockInicial);
         }
+        System.out.println("✅ NUEVO PRODUCTO: Stock aleatorio asignado en " + bodegas.size() + " bodegas.");
 
         return productoGuardado;
+    }
+
+    @Transactional
+    public Producto actualizar(Long id, Producto productoNuevo) {
+        Producto existente = productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado: " + id));
+
+        existente.setSku(productoNuevo.getSku());
+        existente.setNombre(productoNuevo.getNombre());
+        existente.setDescripcion(productoNuevo.getDescripcion());
+        existente.setPrecioActual(productoNuevo.getPrecioActual());
+        existente.setPesoGramos(productoNuevo.getPesoGramos());
+        existente.setDimensiones(productoNuevo.getDimensiones());
+        existente.setEstado(productoNuevo.getEstado());
+
+        return productoRepository.save(existente);
     }
 
     public Producto buscarPorId(Long id) {
@@ -81,7 +90,6 @@ public class ProductoService {
     public void descontarStockGeolocalizado(Long idProducto, Integer cantidadRestante, String regionDestino) {
         List<ProductoBodega> stockDisponible = productoBodegaRepository.findByProductoIdProducto(idProducto);
 
-        // Bodega por defecto es la 3 (Metropolitana) si la región no está en el mapa
         Integer idBodegaPreferida = matrizDistribucion.getOrDefault(regionDestino, 3);
 
         stockDisponible.sort((b1, b2) -> {

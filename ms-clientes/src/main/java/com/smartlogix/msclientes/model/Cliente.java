@@ -2,6 +2,8 @@ package com.smartlogix.msclientes.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "cliente")
@@ -26,6 +28,11 @@ public class Cliente {
 
     private String telefono;
 
-    @Transient // No se guarda en la tabla, solo viaja en el JSON
+    @Transient
     private String region;
+
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @JsonManagedReference
+    private List<DireccionCliente> direcciones;
 }

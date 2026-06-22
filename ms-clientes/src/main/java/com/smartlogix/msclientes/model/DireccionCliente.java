@@ -2,6 +2,7 @@ package com.smartlogix.msclientes.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "direccion_cliente")
@@ -16,6 +17,8 @@ public class DireccionCliente {
 
     @ManyToOne
     @JoinColumn(name = "id_cliente")
+    @ToString.Exclude
+    @JsonBackReference
     private Cliente cliente;
 
     private Integer idComuna;

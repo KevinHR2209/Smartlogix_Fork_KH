@@ -33,8 +33,7 @@ public class ProductoController {
 
     @PutMapping("/{id}")
     public Producto actualizar(@PathVariable Long id, @RequestBody Producto producto) {
-        producto.setIdProducto(id);
-        return productoService.guardar(producto);
+        return productoService.actualizar(id, producto); // ✅ usa el método dedicado
     }
 
     @DeleteMapping("/{id}")
@@ -43,8 +42,8 @@ public class ProductoController {
     }
 
     @PutMapping("/{id}/descontar-stock")
-        public ResponseEntity<?> descontarStock(@PathVariable Long id, @RequestBody DescuentoStockDto request) {
-            productoService.descontarStockGeolocalizado(id, request.getCantidad(), request.getRegionDestino());
-            return ResponseEntity.ok().build();
-        }
+    public ResponseEntity<?> descontarStock(@PathVariable Long id, @RequestBody DescuentoStockDto request) {
+        productoService.descontarStockGeolocalizado(id, request.getCantidad(), request.getRegionDestino());
+        return ResponseEntity.ok().build();
+    }
 }

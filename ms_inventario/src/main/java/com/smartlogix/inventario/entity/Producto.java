@@ -1,9 +1,12 @@
 package com.smartlogix.inventario.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -38,6 +41,11 @@ public class Producto {
     @Column(name = "estado", length = 50)
     private String estado;
 
-    @Transient // Esto le dice a Hibernate: "No busques esta columna en la BD, es solo para el JSON"
-        private Integer stockTotal;
+    @Transient
+    private Integer stockTotal;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @JsonIgnore
+    private List<ProductoBodega> productosBodega;
 }
