@@ -1,5 +1,6 @@
 package com.smartlogix.mslogistica.service;
 
+import com.smartlogix.mslogistica.client.VentasClient;
 import com.smartlogix.mslogistica.model.Despacho;
 import com.smartlogix.mslogistica.model.Transportista;
 import com.smartlogix.mslogistica.repository.DespachoRepository;
@@ -16,6 +17,7 @@ public class DespachoService {
 
     private final DespachoRepository despachoRepository;
     private final TransportistaRepository transportistaRepository;
+    private final VentasClient ventasClient;
 
     public List<Despacho> listar() {
         return despachoRepository.findAll();
@@ -27,6 +29,8 @@ public class DespachoService {
     }
 
     public Despacho crear(Despacho despacho) {
+        ventasClient.validarPedido(despacho.getIdPedido());
+
         if (despacho.getFechaCreacion() == null) {
             despacho.setFechaCreacion(OffsetDateTime.now());
         }

@@ -1,5 +1,6 @@
 package com.smartlogix.msventas.service;
 
+import com.smartlogix.msventas.client.ClienteClient;
 import com.smartlogix.msventas.client.InventarioClient;
 import com.smartlogix.msventas.model.DetallePedido;
 import com.smartlogix.msventas.model.Pedido;
@@ -17,6 +18,7 @@ public class PedidoService {
 
     private final PedidoRepository pedidoRepository;
     private final InventarioClient inventarioClient;
+    private final ClienteClient clienteClient;
 
     public List<Pedido> listar() {
         return pedidoRepository.findAll();
@@ -27,9 +29,11 @@ public class PedidoService {
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
     }
 
-    // Agregamos @Transactional y el parámetro de región
     @Transactional
     public Pedido crear(Pedido pedido, String regionDestino) {
+
+        clienteClient.validarCliente(pedido.getIdCliente());
+
         if (pedido.getFechaCreacion() == null) {
             pedido.setFechaCreacion(OffsetDateTime.now());
         }
@@ -37,8 +41,6 @@ public class PedidoService {
         if (pedido.getDetalles() != null) {
             for (DetallePedido d : pedido.getDetalles()) {
                 d.setPedido(pedido);
-
-                // Consumimos el endpoint de inventario
                 inventarioClient.descontarStock(d.getIdProducto(), d.getCantidad(), regionDestino);
             }
         }

@@ -1,5 +1,6 @@
 package com.smartlogix.msventas.service;
 
+import com.smartlogix.msventas.client.ClienteClient;
 import com.smartlogix.msventas.client.InventarioClient;
 import com.smartlogix.msventas.model.DetallePedido;
 import com.smartlogix.msventas.model.Pedido;
@@ -30,7 +31,10 @@ class PedidoServiceTest {
     private PedidoRepository pedidoRepository;
 
     @Mock
-    private InventarioClient inventarioClient; // Agregamos el mock del cliente HTTP
+    private ClienteClient clienteClient;
+
+    @Mock
+    private InventarioClient inventarioClient;
 
     @InjectMocks
     private PedidoService service;
@@ -41,6 +45,7 @@ class PedidoServiceTest {
     void setUp() {
         pedido = new Pedido();
         pedido.setIdPedido(1L);
+        pedido.setIdCliente(1L); // Set de prueba para que pase la validación por defecto
         pedido.setEstadoPedido("PENDIENTE");
         pedido.setFechaCreacion(OffsetDateTime.now());
     }
@@ -73,37 +78,63 @@ class PedidoServiceTest {
     @Test
     void crear_conFechaNull_debeAsignarFechaAutomatica() {
         Pedido nuevo = new Pedido();
+        nuevo.setIdCliente(1L); // Asignamos ID
         nuevo.setEstadoPedido("PENDIENTE");
         nuevo.setFechaCreacion(null);
+
+        // Simulamos validación exitosa de cliente
+        doNothing().when(clienteClient).validarCliente(1L);
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(nuevo);
 
-        // Pasamos la región de prueba
         Pedido resultado = service.crear(nuevo, "Metropolitana");
 
         assertNotNull(resultado);
+        verify(clienteClient, times(1)).validarCliente(1L);
         verify(pedidoRepository, times(1)).save(nuevo);
     }
 
     @Test
-    void crear_conDetalles_debeAsociarPedidoADetalles() {
+    void crear_conDetalles_debeAsociarPedidoADetallesYDescontarStock() {
         DetallePedido detalle = new DetallePedido();
-        detalle.setIdProducto(100L); // Set de prueba para evitar NullPointerException
-        detalle.setCantidad(2);      // Set de prueba para evitar NullPointerException
+        detalle.setIdProducto(100L);
+        detalle.setCantidad(2);
 
         pedido.setDetalles(Arrays.asList(detalle));
         pedido.setFechaCreacion(null);
 
-        // Le decimos a Mockito que simule la llamada exitosa por red sin hacer nada real
+        // Simulamos validación exitosa de cliente e inventario
+        doNothing().when(clienteClient).validarCliente(1L);
         doNothing().when(inventarioClient).descontarStock(anyLong(), anyInt(), anyString());
-
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
 
-        // Pasamos la región de prueba
         service.crear(pedido, "Metropolitana");
 
         assertEquals(pedido, detalle.getPedido());
-        // Verificamos que el servicio haya intentado comunicarse con el inventario
+        // Verificamos que se llamó a ambos clientes externos
+        verify(clienteClient, times(1)).validarCliente(1L);
         verify(inventarioClient, times(1)).descontarStock(100L, 2, "Metropolitana");
+    }
+
+    @Test
+    void crear_cuandoClienteNoExiste_debeLanzarExcepcionYNoGuardar() {
+        Pedido nuevo = new Pedido();
+        nuevo.setIdCliente(99L); // ID Fantasma
+
+        // Simulamos que el ms-clientes arroja un error (Simulando un 404 Not Found)
+        doThrow(new RuntimeException("Error en ms-ventas: El cliente con ID 99 no existe."))
+                .when(clienteClient).validarCliente(99L);
+
+        // Verificamos que la excepción detiene la ejecución
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> {
+            service.crear(nuevo, "RM");
+        });
+
+        assertEquals("Error en ms-ventas: El cliente con ID 99 no existe.", ex.getMessage());
+
+        // VERIFICACIÓN CRUCIAL: Aseguramos que la base de datos NUNCA guardó nada
+        verify(pedidoRepository, never()).save(any(Pedido.class));
+        // Aseguramos que NUNCA intentó descontar stock
+        verify(inventarioClient, never()).descontarStock(anyLong(), anyInt(), anyString());
     }
 
     @Test

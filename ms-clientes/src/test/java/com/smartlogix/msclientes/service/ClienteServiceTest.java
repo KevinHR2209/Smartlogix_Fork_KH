@@ -1,7 +1,9 @@
 package com.smartlogix.msclientes.service;
 
 import com.smartlogix.msclientes.model.Cliente;
+import com.smartlogix.msclientes.model.DireccionCliente;
 import com.smartlogix.msclientes.repository.ClienteRepository;
+import com.smartlogix.msclientes.repository.DireccionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +25,9 @@ class ClienteServiceTest {
     @Mock
     private ClienteRepository repository;
 
+    @Mock
+    private DireccionRepository direccionRepository;
+
     @InjectMocks
     private ClienteService service;
 
@@ -43,7 +48,11 @@ class ClienteServiceTest {
     @Test
     void listar_debeRetornarListaDeClientes() {
         when(repository.findAll()).thenReturn(Arrays.asList(cliente));
+
+        when(direccionRepository.findAll()).thenReturn(Arrays.asList());
+
         List<Cliente> resultado = service.listar();
+
         assertNotNull(resultado);
         assertEquals(1, resultado.size());
         assertEquals("Kevin", resultado.get(0).getNombre());
@@ -70,10 +79,16 @@ class ClienteServiceTest {
     @Test
     void crear_debeGuardarYRetornarCliente() {
         when(repository.save(any(Cliente.class))).thenReturn(cliente);
+
+        when(direccionRepository.save(any(DireccionCliente.class))).thenAnswer(i -> i.getArguments()[0]);
+
         Cliente resultado = service.crear(cliente);
+
         assertNotNull(resultado);
         assertEquals("12345678-9", resultado.getRut());
+
         verify(repository, times(1)).save(cliente);
+        verify(direccionRepository, times(1)).save(any(DireccionCliente.class));
     }
 
     @Test
