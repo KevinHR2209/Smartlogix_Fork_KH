@@ -57,7 +57,7 @@ public class ProductoService {
             stockInicial.setStockReservado(0);
             productoBodegaRepository.save(stockInicial);
         }
-        System.out.println("✅ NUEVO PRODUCTO: Stock aleatorio asignado en " + bodegas.size() + " bodegas.");
+        System.out.println("NUEVO PRODUCTO: Stock aleatorio asignado en " + bodegas.size() + " bodegas.");
 
         return productoGuardado;
     }

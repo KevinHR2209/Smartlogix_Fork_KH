@@ -7,11 +7,11 @@ import com.smartlogix.msclientes.repository.DireccionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,88 +29,220 @@ class ClienteServiceTest {
     private DireccionRepository direccionRepository;
 
     @InjectMocks
-    private ClienteService service;
+    private ClienteService clienteService;
 
     private Cliente cliente;
+    private DireccionCliente direccion;
 
     @BeforeEach
     void setUp() {
-        cliente = new Cliente();
-        cliente.setIdCliente(1L);
-        cliente.setRut("12345678-9");
-        cliente.setNombre("Kevin");
-        cliente.setApellidoPaterno("Hernandez");
-        cliente.setApellidoMaterno("Ramirez");
-        cliente.setCorreo("kevin@test.com");
-        cliente.setTelefono("912345678");
+        cliente = Cliente.builder()
+                .idCliente(1L)
+                .rut("12345678-9")
+                .nombre("Carlos")
+                .apellidoPaterno("González")
+                .apellidoMaterno("Pérez")
+                .correo("carlos@email.com")
+                .telefono("+56912345678")
+                .build();
+
+        direccion = DireccionCliente.builder()
+                .idDireccion(1L)
+                .cliente(cliente)
+                .calle("Avenida Errázuriz")
+                .numero("500")
+                .detalle("Valparaíso")
+                .idComuna(1)
+                .esPrincipal(true)
+                .build();
     }
 
+    // ─── listar ──────────────────────────────────────────────────────────────
+
     @Test
-    void listar_debeRetornarListaDeClientes() {
-        when(repository.findAll()).thenReturn(Arrays.asList(cliente));
+    void listar_retornaClientesConRegion() {
+        when(repository.findAll()).thenReturn(List.of(cliente));
+        when(direccionRepository.findAll()).thenReturn(List.of(direccion));
 
-        when(direccionRepository.findAll()).thenReturn(Arrays.asList());
+        List<Cliente> resultado = clienteService.listar();
 
-        List<Cliente> resultado = service.listar();
-
-        assertNotNull(resultado);
         assertEquals(1, resultado.size());
-        assertEquals("Kevin", resultado.get(0).getNombre());
-        verify(repository, times(1)).findAll();
+        assertEquals("Valparaíso", resultado.get(0).getRegion());
     }
 
     @Test
-    void buscarPorId_cuandoExiste_debeRetornarCliente() {
+    void listar_clienteSinDireccionPrincipal_regionEsNull() {
+        DireccionCliente sinPrincipal = DireccionCliente.builder()
+                .idDireccion(2L)
+                .cliente(cliente)
+                .detalle("Coquimbo")
+                .esPrincipal(false)
+                .build();
+
+        when(repository.findAll()).thenReturn(List.of(cliente));
+        when(direccionRepository.findAll()).thenReturn(List.of(sinPrincipal));
+
+        List<Cliente> resultado = clienteService.listar();
+
+        assertNull(resultado.get(0).getRegion());
+    }
+
+    @Test
+    void listar_sinClientes_retornaListaVacia() {
+        when(repository.findAll()).thenReturn(List.of());
+
+        List<Cliente> resultado = clienteService.listar();
+
+        assertTrue(resultado.isEmpty());
+        // si no hay clientes, no se consultan direcciones
+        verify(direccionRepository, never()).findAll();
+    }
+
+    // ─── buscarPorId ─────────────────────────────────────────────────────────
+
+    @Test
+    void buscarPorId_existente_retornaCliente() {
         when(repository.findById(1L)).thenReturn(Optional.of(cliente));
-        Cliente resultado = service.buscarPorId(1L);
-        assertNotNull(resultado);
-        assertEquals(1L, resultado.getIdCliente());
-        assertEquals("kevin@test.com", resultado.getCorreo());
-    }
 
-    @Test
-    void buscarPorId_cuandoNoExiste_debeLanzarExcepcion() {
-        when(repository.findById(99L)).thenReturn(Optional.empty());
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> service.buscarPorId(99L));
-        assertEquals("Cliente no encontrado", ex.getMessage());
-    }
-
-    @Test
-    void crear_debeGuardarYRetornarCliente() {
-        when(repository.save(any(Cliente.class))).thenReturn(cliente);
-
-        when(direccionRepository.save(any(DireccionCliente.class))).thenAnswer(i -> i.getArguments()[0]);
-
-        Cliente resultado = service.crear(cliente);
+        Cliente resultado = clienteService.buscarPorId(1L);
 
         assertNotNull(resultado);
         assertEquals("12345678-9", resultado.getRut());
+    }
 
-        verify(repository, times(1)).save(cliente);
+    @Test
+    void buscarPorId_noExistente_lanzaExcepcion() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> clienteService.buscarPorId(99L));
+
+        assertEquals("Cliente no encontrado", ex.getMessage());
+    }
+
+    // ─── crear ────────────────────────────────────────────────────────────────
+
+    @Test
+    void crear_guardaClienteYCreaUnadireccion() {
+        Cliente nuevo = Cliente.builder()
+                .rut("98765432-1")
+                .nombre("Ana")
+                .correo("ana@email.com")
+                .build();
+
+        Cliente guardado = Cliente.builder()
+                .idCliente(2L)
+                .rut("98765432-1")
+                .nombre("Ana")
+                .correo("ana@email.com")
+                .build();
+
+        when(repository.save(nuevo)).thenReturn(guardado);
+        when(direccionRepository.save(any(DireccionCliente.class)))
+                .thenAnswer(inv -> inv.getArgument(0));
+
+        Cliente resultado = clienteService.crear(nuevo);
+
+        assertNotNull(resultado);
+        assertEquals(2L, resultado.getIdCliente());
+        // debe guardar exactamente una dirección
         verify(direccionRepository, times(1)).save(any(DireccionCliente.class));
     }
 
     @Test
-    void actualizar_cuandoExiste_debeActualizarDatos() {
-        Cliente actualizado = new Cliente();
-        actualizado.setRut("98765432-1");
-        actualizado.setNombre("Carlos");
-        actualizado.setApellidoPaterno("Perez");
-        actualizado.setApellidoMaterno("Lopez");
-        actualizado.setCorreo("carlos@test.com");
-        actualizado.setTelefono("987654321");
-        when(repository.findById(1L)).thenReturn(Optional.of(cliente));
-        when(repository.save(any(Cliente.class))).thenReturn(cliente);
-        Cliente resultado = service.actualizar(1L, actualizado);
-        assertNotNull(resultado);
-        verify(repository).save(any(Cliente.class));
+    void crear_direccionGenerada_esPrincipalTrue() {
+        when(repository.save(any())).thenReturn(cliente);
+
+        ArgumentCaptor<DireccionCliente> captor = ArgumentCaptor.forClass(DireccionCliente.class);
+        when(direccionRepository.save(captor.capture()))
+                .thenAnswer(inv -> inv.getArgument(0));
+
+        clienteService.crear(cliente);
+
+        DireccionCliente dirCreada = captor.getValue();
+        assertTrue(dirCreada.getEsPrincipal());
     }
 
     @Test
-    void eliminar_debeInvocarDeleteById() {
+    void crear_direccionGenerada_tieneRegionValida() {
+        List<String> regionesValidas = List.of("Valparaíso", "Coquimbo", "Metropolitana");
+
+        when(repository.save(any())).thenReturn(cliente);
+
+        ArgumentCaptor<DireccionCliente> captor = ArgumentCaptor.forClass(DireccionCliente.class);
+        when(direccionRepository.save(captor.capture()))
+                .thenAnswer(inv -> inv.getArgument(0));
+
+        clienteService.crear(cliente);
+
+        String regionGenerada = captor.getValue().getDetalle();
+        assertTrue(regionesValidas.contains(regionGenerada),
+                "La región generada '" + regionGenerada + "' no es válida");
+    }
+
+    @Test
+    void crear_retornaClienteConRegionAsignada() {
+        when(repository.save(any())).thenReturn(cliente);
+        when(direccionRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        Cliente resultado = clienteService.crear(cliente);
+
+        assertNotNull(resultado.getRegion(),
+                "El cliente retornado debe tener región asignada");
+    }
+
+    // ─── actualizar ───────────────────────────────────────────────────────────
+
+    @Test
+    void actualizar_modificaTodosLosCampos() {
+        Cliente cambios = Cliente.builder()
+                .rut("11111111-1")
+                .nombre("Pedro")
+                .apellidoPaterno("Martínez")
+                .apellidoMaterno("López")
+                .correo("pedro@email.com")
+                .telefono("+56911111111")
+                .build();
+
+        when(repository.findById(1L)).thenReturn(Optional.of(cliente));
+        when(repository.save(any(Cliente.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Cliente resultado = clienteService.actualizar(1L, cambios);
+
+        assertEquals("11111111-1", resultado.getRut());
+        assertEquals("Pedro", resultado.getNombre());
+        assertEquals("Martínez", resultado.getApellidoPaterno());
+        assertEquals("pedro@email.com", resultado.getCorreo());
+        verify(repository).save(cliente);
+    }
+
+    @Test
+    void actualizar_noExistente_lanzaExcepcion() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class,
+                () -> clienteService.actualizar(99L, new Cliente()));
+    }
+
+    @Test
+    void actualizar_noTocaDirecciones() {
+        when(repository.findById(1L)).thenReturn(Optional.of(cliente));
+        when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        clienteService.actualizar(1L, cliente);
+
+        verify(direccionRepository, never()).save(any());
+        verify(direccionRepository, never()).deleteById(any());
+    }
+
+    // ─── eliminar ─────────────────────────────────────────────────────────────
+
+    @Test
+    void eliminar_llamaDeleteById() {
         doNothing().when(repository).deleteById(1L);
-        service.eliminar(1L);
+
+        clienteService.eliminar(1L);
+
         verify(repository, times(1)).deleteById(1L);
     }
 }
