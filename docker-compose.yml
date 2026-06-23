@@ -87,6 +87,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ms_ventas
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
+      - URL_MS_CLIENTES=http://ms--clientes:8082
+      - URL_MS_INVENTARIO=http://ms--inventario:8081
     command: mvn clean spring-boot:run
     depends_on:
       postgres:

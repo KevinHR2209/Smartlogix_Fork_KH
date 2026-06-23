@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import { Producto, CartItem, Cliente } from '@/types';
 
+const API = process.env.NEXT_PUBLIC_API_URL;  // ← definida una sola vez arriba
+
 export default function TiendaPage() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [clientes, setClientes] = useState<Cliente[]>([]);
@@ -11,12 +13,12 @@ export default function TiendaPage() {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/productos')
+    fetch(`${API}/api/productos`)
         .then(res => res.json())
         .then(data => { if (Array.isArray(data)) setProductos(data); })
         .catch(err => console.error(err));
 
-    fetch('http://localhost:8080/api/clientes')
+    fetch(`${API}/api/clientes`)
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) {
@@ -44,9 +46,8 @@ export default function TiendaPage() {
       return;
     }
 
-    // Identificamos al cliente y extraemos su región
     const clienteSeleccionado = clientes.find(c => c.idCliente === parseInt(idClienteSeleccionado));
-    const regionDestino = clienteSeleccionado?.region || "Metropolitana"; // Fallback seguro
+    const regionDestino = clienteSeleccionado?.region || "Metropolitana";
 
     const pedidoPayload = {
       idCliente: parseInt(idClienteSeleccionado),
@@ -60,8 +61,8 @@ export default function TiendaPage() {
     };
 
     try {
-      // AQUÍ OCURRE LA MAGIA: Enviamos la región por Query Param al Gateway
-      const resPedido = await fetch(`http://localhost:8080/api/pedidos?regionDestino=${encodeURIComponent(regionDestino)}`, {
+      // ✅ línea 66 corregida
+      const resPedido = await fetch(`${API}/api/pedidos?regionDestino=${encodeURIComponent(regionDestino)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(pedidoPayload)
@@ -74,8 +75,8 @@ export default function TiendaPage() {
       setCarrito([]);
       setIsCartOpen(false);
 
-      // Actualizamos los productos para refrescar el stock visualmente
-      fetch('http://localhost:8080/api/productos')
+      // ✅ línea 80 corregida
+      fetch(`${API}/api/productos`)
           .then(res => res.json())
           .then(data => { if (Array.isArray(data)) setProductos(data); });
 
@@ -129,7 +130,6 @@ export default function TiendaPage() {
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex flex-col gap-1">
                       <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-stone-100 px-2 py-1 rounded-md w-max">{p.sku}</span>
-                      {/* Etiqueta de Stock */}
                       <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-md w-max ${
                           p.stockTotal && p.stockTotal > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                       }`}>
@@ -143,7 +143,7 @@ export default function TiendaPage() {
                 </div>
                 <button
                     onClick={() => agregarAlCarrito(p)}
-                    disabled={!p.stockTotal || p.stockTotal <= 0} // Desactiva si no hay stock
+                    disabled={!p.stockTotal || p.stockTotal <= 0}
                     className={`mt-6 w-full py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm border ${
                         p.stockTotal && p.stockTotal > 0
                             ? 'bg-white text-zinc-900 border-zinc-200 hover:bg-zinc-50'
