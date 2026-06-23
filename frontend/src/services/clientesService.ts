@@ -3,6 +3,7 @@ import { Cliente } from '@/types';
 
 export const clientesService = {
   getAll: () => apiGet<Cliente[]>('/api/clientes'),
+  getById: (id: number) => apiGet<Cliente>(`/api/clientes/${id}`),
   create: (cliente: Omit<Cliente, 'idCliente'>) =>
     apiPost<Cliente>('/api/clientes', cliente),
   update: (id: number, cliente: Cliente) =>
