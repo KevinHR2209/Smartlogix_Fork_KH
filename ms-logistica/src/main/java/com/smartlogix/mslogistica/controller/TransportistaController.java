@@ -25,4 +25,32 @@ public class TransportistaController {
         Transportista guardado = transportistaRepository.save(transportista);
         return ResponseEntity.status(201).body(guardado);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Transportista> actualizar(
+            @PathVariable Long id,
+            @RequestBody Transportista transportistaActualizado
+    ) {
+        return transportistaRepository.findById(id)
+                .map(transportista -> {
+                    transportista.setNombreCompleto(transportistaActualizado.getNombreCompleto());
+                    transportista.setPatenteVehiculo(transportistaActualizado.getPatenteVehiculo());
+                    transportista.setTelefonoContacto(transportistaActualizado.getTelefonoContacto());
+                    transportista.setEstado(transportistaActualizado.getEstado());
+
+                    Transportista guardado = transportistaRepository.save(transportista);
+                    return ResponseEntity.ok(guardado);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        if (!transportistaRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        transportistaRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
