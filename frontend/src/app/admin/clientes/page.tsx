@@ -1,110 +1,437 @@
-'use client';
-import { useState } from 'react';
-import { useClientes } from '@/hooks/useClientes';
-import { clientesService } from '@/services/clientesService';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { AdminTable } from '@/components/ui/AdminTable';
-import { ClienteForm } from '@/components/forms/ClienteForm';
-import { Cliente } from '@/types';
-import { randomInt } from '@/lib/utils';
+"use client";
 
-export default function AdminClientes() {
-  const { clientes, recargar } = useClientes();
-  const [editando, setEditando] = useState<Cliente | null>(null);
+import { useEffect, useMemo, useState } from "react";
+import { apiFetch } from "@/lib/api/client";
+import { endpoints } from "@/lib/api/endpoints";
+import { Cliente } from "@/types";
 
-  const handleCrear = async () => {
-    const num = randomInt(1000, 9999);
-    await clientesService.create({
-      rut: `${num}1234-5`,
-      nombre: `Juan ${num}`,
-      apellidoPaterno: 'Pérez',
-      apellidoMaterno: 'González',
-      correo: `juan${num}@correo.com`,
-      telefono: '+56912345678',
+const emptyForm: Cliente = {
+  rut: "",
+  nombre: "",
+  apellidoPaterno: "",
+  apellidoMaterno: "",
+  correo: "",
+  telefono: "",
+  region: "",
+};
+
+type FormErrors = Partial<Record<keyof Cliente, string>>;
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const rutRegex = /^[0-9]{1,2}\.?[0-9]{3}\.?[0-9]{3}-[0-9kK]{1}$/;
+const telefonoRegex = /^[+]?[0-9\s-]{8,20}$/;
+
+export default function AdminClientesPage() {
+  const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState<Cliente | null>(null);
+  const [form, setForm] = useState<Cliente>(emptyForm);
+  const [mensaje, setMensaje] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  const loadClientes = async () => {
+    try {
+      setLoading(true);
+      const data = await apiFetch<Cliente[]>(endpoints.clientes);
+      setClientes(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
+      setMensaje("No se pudieron cargar los clientes.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadClientes();
+  }, []);
+
+  const clientesFiltrados = useMemo(() => {
+    const term = search.toLowerCase();
+    return clientes.filter((c) =>
+      c.nombre.toLowerCase().includes(term) ||
+      c.apellidoPaterno.toLowerCase().includes(term) ||
+      c.apellidoMaterno.toLowerCase().includes(term) ||
+      c.rut.toLowerCase().includes(term) ||
+      c.correo.toLowerCase().includes(term)
+    );
+  }, [clientes, search]);
+
+  const seleccionarCliente = (cliente: Cliente) => {
+    setSelected(cliente);
+    setForm({
+      idCliente: cliente.idCliente,
+      rut: cliente.rut,
+      nombre: cliente.nombre,
+      apellidoPaterno: cliente.apellidoPaterno,
+      apellidoMaterno: cliente.apellidoMaterno,
+      correo: cliente.correo,
+      telefono: cliente.telefono,
+      region: cliente.region ?? "",
     });
-    recargar();
+    setErrors({});
+    setMensaje("");
   };
 
-  const handleGuardar = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editando?.idCliente) return;
-    await clientesService.update(editando.idCliente, editando);
-    setEditando(null);
-    recargar();
+  const nuevoCliente = () => {
+    setSelected(null);
+    setForm(emptyForm);
+    setErrors({});
+    setMensaje("");
   };
 
-  const handleEliminar = async (id: number) => {
-    await clientesService.remove(id);
-    recargar();
+  const handleChange = (field: keyof Cliente, value: string) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [field]: undefined,
+    }));
   };
 
-  const columns = [
-    {
-      header: 'ID',
-      accessor: (c: Cliente) => (
-        <span className="font-bold text-zinc-400">#{c.idCliente}</span>
-      ),
-    },
-    {
-      header: 'Nombre',
-      accessor: (c: Cliente) => (
-        <span className="font-semibold text-zinc-800">
-          {c.nombre} {c.apellidoPaterno}
-        </span>
-      ),
-    },
-    {
-      header: 'Correo',
-      accessor: (c: Cliente) => <span className="text-zinc-500">{c.correo}</span>,
-    },
-    {
-      header: 'Teléfono',
-      accessor: (c: Cliente) => <span className="text-zinc-500">{c.telefono}</span>,
-    },
-    {
-      header: 'Acciones',
-      className: 'text-right',
-      accessor: (c: Cliente) => (
-        <span className="space-x-4">
-          <button
-            onClick={() => setEditando(c)}
-            className="text-zinc-400 hover:text-zinc-900 font-semibold transition-colors"
-          >
-            Editar
-          </button>
-          <button
-            onClick={() => handleEliminar(c.idCliente!)}
-            className="text-red-400 hover:text-red-600 font-semibold transition-colors"
-          >
-            Eliminar
-          </button>
-        </span>
-      ),
-    },
-  ];
+  const validarFormulario = () => {
+    const nuevosErrores: FormErrors = {};
+
+    const rut = form.rut.trim();
+    const nombre = form.nombre.trim();
+    const apellidoPaterno = form.apellidoPaterno.trim();
+    const apellidoMaterno = form.apellidoMaterno.trim();
+    const correo = form.correo.trim();
+    const telefono = form.telefono.trim();
+
+    if (!rut) {
+      nuevosErrores.rut = "El RUT es obligatorio.";
+    } else if (!rutRegex.test(rut)) {
+      nuevosErrores.rut = "Ingresa un RUT válido. Ej: 12.345.678-9";
+    }
+
+    if (!nombre) {
+      nuevosErrores.nombre = "El nombre es obligatorio.";
+    } else if (nombre.length < 2) {
+      nuevosErrores.nombre = "El nombre debe tener al menos 2 caracteres.";
+    }
+
+    if (!apellidoPaterno) {
+      nuevosErrores.apellidoPaterno = "El apellido paterno es obligatorio.";
+    }
+
+    if (!apellidoMaterno) {
+      nuevosErrores.apellidoMaterno = "El apellido materno es obligatorio.";
+    }
+
+    if (!correo) {
+      nuevosErrores.correo = "El correo es obligatorio.";
+    } else if (!emailRegex.test(correo)) {
+      nuevosErrores.correo = "Ingresa un correo válido. Ej: nombre@dominio.com";
+    }
+
+    if (!telefono) {
+      nuevosErrores.telefono = "El teléfono es obligatorio.";
+    } else if (!telefonoRegex.test(telefono)) {
+      nuevosErrores.telefono = "Ingresa un teléfono válido.";
+    }
+
+    setErrors(nuevosErrores);
+
+    return Object.keys(nuevosErrores).length === 0;
+  };
+
+  const guardarCliente = async () => {
+    setMensaje("");
+
+    if (!validarFormulario()) {
+      setMensaje("Revisa los campos marcados.");
+      return;
+    }
+
+    try {
+      setSaving(true);
+
+      const url = selected?.idCliente
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/clientes/${selected.idCliente}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/api/clientes`;
+
+      const method = selected?.idCliente ? "PUT" : "POST";
+
+      const body = {
+        rut: form.rut.trim(),
+        nombre: form.nombre.trim(),
+        apellidoPaterno: form.apellidoPaterno.trim(),
+        apellidoMaterno: form.apellidoMaterno.trim(),
+        correo: form.correo.trim().toLowerCase(),
+        telefono: form.telefono.trim(),
+        region: form.region?.trim() ? form.region.trim() : null,
+      };
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        throw new Error(
+          selected?.idCliente
+            ? "No se pudo actualizar el cliente."
+            : "No se pudo crear el cliente."
+        );
+      }
+
+      setMensaje(
+        selected?.idCliente
+          ? "Cliente actualizado correctamente."
+          : "Cliente creado correctamente."
+      );
+
+      await loadClientes();
+      nuevoCliente();
+    } catch (error: any) {
+      setMensaje(error.message || "Ocurrió un error guardando el cliente.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const eliminarCliente = async (idCliente?: number) => {
+    if (!idCliente) return;
+
+    const confirmado = window.confirm("¿Seguro que deseas eliminar este cliente?");
+    if (!confirmado) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/clientes/${idCliente}`,
+        { method: "DELETE" }
+      );
+
+      if (!res.ok) {
+        throw new Error("No se pudo eliminar el cliente.");
+      }
+
+      setMensaje("Cliente eliminado correctamente.");
+
+      if (selected?.idCliente === idCliente) {
+        nuevoCliente();
+      }
+
+      await loadClientes();
+    } catch (error: any) {
+      setMensaje(error.message || "Error eliminando cliente.");
+    }
+  };
+
+  const inputClass = (field: keyof Cliente) =>
+    `input-base ${errors[field] ? "border-red-500 focus:border-red-500" : ""}`;
 
   return (
-    <div className="animate-in fade-in duration-500">
-      <PageHeader
-        titulo="Directorio de Clientes"
-        subtitulo="Gestiona la información de los compradores."
-        labelAccion="+ Crear Cliente de Prueba"
-        onAccion={handleCrear}
-      />
-      {editando && (
-        <ClienteForm
-          cliente={editando}
-          onChange={setEditando}
-          onGuardar={handleGuardar}
-          onCancelar={() => setEditando(null)}
-        />
+    <main className="container-app py-10">
+      <section className="mb-8 flex flex-col gap-3">
+        <p className="text-sm uppercase tracking-[0.25em] text-zinc-500 dark:text-zinc-400">
+          Administración
+        </p>
+        <h1 className="text-4xl font-bold tracking-tight">Administrar clientes</h1>
+        <p className="text-zinc-600 dark:text-zinc-400">
+          Crea, edita y elimina clientes desde el panel.
+        </p>
+      </section>
+
+      {mensaje && (
+        <div className="mb-6 rounded-2xl border border-zinc-200 bg-white p-4 text-sm dark:border-zinc-800 dark:bg-zinc-900">
+          {mensaje}
+        </div>
       )}
-      <AdminTable
-        columns={columns}
-        data={clientes}
-        keyExtractor={c => c.idCliente!}
-        emptyMessage="No hay clientes registrados en la base de datos."
-      />
-    </div>
+
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <div className="card-base p-6">
+          <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <h2 className="text-xl font-semibold">Clientes</h2>
+            <input
+              className="input-base max-w-md"
+              placeholder="Buscar por nombre, rut o correo"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          {loading ? (
+            <div className="py-10 text-zinc-500 dark:text-zinc-400">
+              Cargando clientes...
+            </div>
+          ) : clientesFiltrados.length === 0 ? (
+            <div className="py-10 text-zinc-500 dark:text-zinc-400">
+              No hay clientes para mostrar.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {clientesFiltrados.map((cliente) => (
+                <article
+                  key={cliente.idCliente}
+                  className={`rounded-2xl border p-4 transition ${
+                    selected?.idCliente === cliente.idCliente
+                      ? "border-zinc-900 bg-zinc-50 dark:border-zinc-100 dark:bg-zinc-800"
+                      : "border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
+                  }`}
+                >
+                  <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">
+                        {cliente.rut}
+                      </p>
+                      <h3 className="mt-1 text-lg font-semibold">
+                        {cliente.nombre} {cliente.apellidoPaterno} {cliente.apellidoMaterno}
+                      </h3>
+                      <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+                        {cliente.correo}
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-3 text-sm text-zinc-600 dark:text-zinc-300">
+                        <span>{cliente.telefono}</span>
+                        <span>{cliente.region || "Sin región"}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => seleccionarCliente(cliente)}
+                        className="btn-secondary"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => eliminarCliente(cliente.idCliente)}
+                        className="rounded-xl border border-red-200 px-4 py-3 font-semibold text-red-600 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="card-base p-6">
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-xl font-semibold">
+              {selected ? "Editar cliente" : "Nuevo cliente"}
+            </h2>
+            <button onClick={nuevoCliente} className="btn-secondary">
+              Nuevo
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="mb-2 block text-sm font-medium">RUT</label>
+              <input
+                className={inputClass("rut")}
+                value={form.rut}
+                onChange={(e) => handleChange("rut", e.target.value)}
+                placeholder="12.345.678-9"
+              />
+              {errors.rut && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.rut}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium">Nombre</label>
+              <input
+                className={inputClass("nombre")}
+                value={form.nombre}
+                onChange={(e) => handleChange("nombre", e.target.value)}
+              />
+              {errors.nombre && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.nombre}</p>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-2 block text-sm font-medium">Apellido paterno</label>
+                <input
+                  className={inputClass("apellidoPaterno")}
+                  value={form.apellidoPaterno}
+                  onChange={(e) => handleChange("apellidoPaterno", e.target.value)}
+                />
+                {errors.apellidoPaterno && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.apellidoPaterno}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium">Apellido materno</label>
+                <input
+                  className={inputClass("apellidoMaterno")}
+                  value={form.apellidoMaterno}
+                  onChange={(e) => handleChange("apellidoMaterno", e.target.value)}
+                />
+                {errors.apellidoMaterno && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.apellidoMaterno}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium">Correo</label>
+              <input
+                type="email"
+                className={inputClass("correo")}
+                value={form.correo}
+                onChange={(e) => handleChange("correo", e.target.value)}
+                placeholder="nombre@dominio.com"
+                required
+              />
+              {errors.correo && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.correo}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium">Teléfono</label>
+              <input
+                className={inputClass("telefono")}
+                value={form.telefono}
+                onChange={(e) => handleChange("telefono", e.target.value)}
+                placeholder="+56912345678"
+              />
+              {errors.telefono && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.telefono}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium">Región</label>
+              <input
+                className="input-base"
+                value={form.region ?? ""}
+                onChange={(e) => handleChange("region", e.target.value)}
+              />
+            </div>
+
+            <button
+              onClick={guardarCliente}
+              className="btn-primary w-full"
+              disabled={saving}
+            >
+              {saving
+                ? "Guardando..."
+                : selected?.idCliente
+                ? "Guardar cambios"
+                : "Crear cliente"}
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

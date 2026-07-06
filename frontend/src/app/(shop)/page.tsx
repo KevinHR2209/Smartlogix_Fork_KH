@@ -9,10 +9,10 @@ export default function HomePage() {
             Smartlogix
           </p>
           <h1 className="max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">
-            Ecommerce moderno, simple y listo para escalar
+            Ecommerce moderno, simple y listo para separar usuario y administración
           </h1>
           <p className="max-w-2xl text-zinc-600 dark:text-zinc-400">
-            Explora productos, revisa detalles y administra tu tienda con vistas separadas.
+            Navega el catálogo, revisa productos y prepara la base del panel de administración.
           </p>
         </div>
 

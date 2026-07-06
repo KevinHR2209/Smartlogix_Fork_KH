@@ -48,3 +48,13 @@ export interface Pedido {
   estadoPedido: string;
   detalles?: DetallePedido[];
 }
+
+export interface LoginFormData {
+  email: string;
+  password: string;
+}
+
+export interface ProductFiltersState {
+  search: string;
+  onlyStock: boolean;
+}
