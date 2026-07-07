@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { apiFetch } from "@/lib/api/client";
-import { endpoints } from "@/lib/api/endpoints";
+import { pedidosService } from "@/services/pedidosService";
+import { formatCurrency } from "@/lib/utils/currency";
 import { Pedido } from "@/types";
 
 const ESTADOS = [
@@ -31,10 +31,12 @@ export default function AdminVentasPage() {
   const loadPedidos = async () => {
     try {
       setLoading(true);
-      const data = await apiFetch<Pedido[]>(endpoints.pedidos);
+      setMensaje("");
+      const data = await pedidosService.getAll();
       setPedidos(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error(error);
+      setPedidos([]);
       setMensaje("No se pudieron cargar los pedidos.");
     } finally {
       setLoading(false);
@@ -68,24 +70,14 @@ export default function AdminVentasPage() {
 
     try {
       setSavingId(idPedido);
+      setMensaje("");
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/pedidos/${idPedido}/estado?estado=${encodeURIComponent(
-          estado
-        )}`,
-        {
-          method: "PUT",
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error("No se pudo actualizar el estado del pedido.");
-      }
+      await pedidosService.cambiarEstado(idPedido, estado);
 
       setMensaje(`Pedido #${idPedido} actualizado a ${estado}.`);
       await loadPedidos();
     } catch (error: any) {
-      setMensaje(error.message || "Error actualizando el estado.");
+      setMensaje(error?.message || "Error actualizando el estado.");
     } finally {
       setSavingId(null);
     }
@@ -144,7 +136,7 @@ export default function AdminVentasPage() {
                     <div className="flex flex-wrap gap-3 text-sm text-zinc-600 dark:text-zinc-300">
                       <span>Cliente: {pedido.idCliente}</span>
                       <span>Estado: {pedido.estadoPedido}</span>
-                      <span>Monto: ${pedido.montoTotal}</span>
+                      <span>Monto: {formatCurrency(Number(pedido.montoTotal ?? 0))}</span>
                       <span>Items: {pedido.detalles?.length ?? 0}</span>
                     </div>
 
@@ -186,7 +178,10 @@ export default function AdminVentasPage() {
                         >
                           <span>Producto: {detalle.idProducto}</span>
                           <span>Cantidad: {detalle.cantidad}</span>
-                          <span>Precio snapshot: ${detalle.precioUnitarioSnapshot}</span>
+                          <span>
+                            Precio snapshot:{" "}
+                            {formatCurrency(Number(detalle.precioUnitarioSnapshot ?? 0))}
+                          </span>
                         </div>
                       ))}
                     </div>

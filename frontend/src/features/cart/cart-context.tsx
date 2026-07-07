@@ -7,9 +7,10 @@ import {
   useContext,
   useMemo,
   useState,
+  type ReactNode,
 } from "react";
 
-interface CartContextType {
+export interface CartContextType {
   items: CartItem[];
   isOpen: boolean;
   openCart: () => void;
@@ -22,30 +23,48 @@ interface CartContextType {
   totalPrice: number;
 }
 
-const CartContext = createContext<CartContextType | undefined>(undefined);
+const CartContext = createContext<CartContextType | null>(null);
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
+interface CartProviderProps {
+  children: ReactNode;
+}
+
+export function CartProvider({ children }: CartProviderProps) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const openCart = useCallback(() => setIsOpen(true), []);
-  const closeCart = useCallback(() => setIsOpen(false), []);
+  const openCart = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
+  const closeCart = useCallback(() => {
+    setIsOpen(false);
+  }, []);
 
   const addItem = useCallback((producto: Producto) => {
-    if (!producto.idProducto) return;
+    const idProducto = Number(producto.idProducto);
+
+    if (!idProducto) return;
 
     setItems((prev) => {
-      const existing = prev.find((item) => item.idProducto === producto.idProducto);
+      const existing = prev.find((item) => item.idProducto === idProducto);
 
       if (existing) {
         return prev.map((item) =>
-          item.idProducto === producto.idProducto
+          item.idProducto === idProducto
             ? { ...item, cantidad: item.cantidad + 1 }
             : item
         );
       }
 
-      return [...prev, { ...producto, cantidad: 1 }];
+      return [
+        ...prev,
+        {
+          ...producto,
+          idProducto,
+          cantidad: 1,
+        },
+      ];
     });
 
     setIsOpen(true);
@@ -71,17 +90,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems([]);
   }, []);
 
-  const totalItems = useMemo(
-    () => items.reduce((acc, item) => acc + item.cantidad, 0),
-    [items]
-  );
+  const totalItems = useMemo(() => {
+    return items.reduce((acc, item) => acc + item.cantidad, 0);
+  }, [items]);
 
-  const totalPrice = useMemo(
-    () => items.reduce((acc, item) => acc + item.precioActual * item.cantidad, 0),
-    [items]
-  );
+  const totalPrice = useMemo(() => {
+    return items.reduce(
+      (acc, item) => acc + Number(item.precioActual ?? 0) * item.cantidad,
+      0
+    );
+  }, [items]);
 
-  const value = useMemo(
+  const value = useMemo<CartContextType>(
     () => ({
       items,
       isOpen,

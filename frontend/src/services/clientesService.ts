@@ -1,12 +1,21 @@
-import { apiGet, apiPost, apiPut, apiDelete } from './api';
-import { Cliente } from '@/types';
+import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api/client";
+import { endpoints } from "@/lib/api/endpoints";
+import { Cliente } from "@/types";
+
+type ClientePayload = Omit<Cliente, "idCliente">;
 
 export const clientesService = {
-  getAll: () => apiGet<Cliente[]>('/api/clientes'),
-  getById: (id: number) => apiGet<Cliente>(`/api/clientes/${id}`),
-  create: (cliente: Omit<Cliente, 'idCliente'>) =>
-    apiPost<Cliente>('/api/clientes', cliente),
-  update: (id: number, cliente: Cliente) =>
-    apiPut<Cliente>(`/api/clientes/${id}`, cliente),
-  remove: (id: number) => apiDelete(`/api/clientes/${id}`),
+  getAll: () => apiGet<Cliente[]>(endpoints.clientes),
+
+  getById: (id: number) =>
+    apiGet<Cliente>(`${endpoints.clientes}/${id}`),
+
+  create: (cliente: ClientePayload) =>
+    apiPost<Cliente>(endpoints.clientes, cliente),
+
+  update: (id: number, cliente: ClientePayload) =>
+    apiPut<Cliente>(`${endpoints.clientes}/${id}`, cliente),
+
+  remove: (id: number) =>
+    apiDelete<void>(`${endpoints.clientes}/${id}`),
 };

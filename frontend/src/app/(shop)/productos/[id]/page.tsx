@@ -1,43 +1,68 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiFetch } from "@/lib/api/client";
-import { endpoints } from "@/lib/api/endpoints";
-import { Producto } from "@/types";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+
 import { useCart } from "@/features/cart/cart-context";
+import { productosService } from "@/services/productosService";
+import { formatCurrency } from "@/lib/utils/currency";
+import { Producto } from "@/types";
 
-interface ProductDetailPageProps {
-  params: Promise<{ id: string }>;
-}
-
-export default function ProductDetailPage({ params }: ProductDetailPageProps) {
+export default function ProductDetailPage() {
+  const params = useParams<{ id: string }>();
   const [producto, setProducto] = useState<Producto | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { addItem } = useCart();
 
   useEffect(() => {
-    const load = async () => {
-      const { id } = await params;
+    const id = Number(params.id);
 
+    if (Number.isNaN(id) || id <= 0) {
+      setError("El identificador del producto no es válido.");
+      setProducto(null);
+      setLoading(false);
+      return;
+    }
+
+    const loadProducto = async () => {
       try {
-        const productos = await apiFetch<Producto[]>(endpoints.productos);
-        const found = productos.find((item) => item.idProducto === Number(id)) ?? null;
-        setProducto(found);
-      } catch (error) {
-        console.error("Error cargando producto", error);
+        setLoading(true);
+        setError(null);
+
+        const data = await productosService.getById(id);
+        setProducto(data);
+      } catch (err) {
+        console.error("Error cargando producto", err);
+        setError("No se pudo cargar el producto.");
+        setProducto(null);
       } finally {
         setLoading(false);
       }
     };
 
-    load();
-  }, [params]);
+    loadProducto();
+  }, [params.id]);
 
   if (loading) {
     return (
       <main className="container-app py-16">
         <div className="card-base p-8">Cargando producto...</div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="container-app py-16">
+        <div className="card-base p-8">
+          <h1 className="text-2xl font-bold">Error al cargar producto</h1>
+          <p className="mt-3 text-zinc-500 dark:text-zinc-400">{error}</p>
+          <Link href="/productos" className="btn-primary mt-6 inline-flex">
+            Volver al catálogo
+          </Link>
+        </div>
       </main>
     );
   }
@@ -76,6 +101,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             <span className="rounded-md bg-zinc-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:bg-zinc-800 dark:text-zinc-300">
               {producto.sku}
             </span>
+
             <span
               className={`rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-[0.2em] ${
                 disponible
@@ -88,11 +114,14 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
           </div>
 
           <h1 className="text-4xl font-bold tracking-tight">{producto.nombre}</h1>
+
           <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
             {producto.descripcion}
           </p>
 
-          <div className="mt-8 text-4xl font-bold">${producto.precioActual}</div>
+          <div className="mt-8 text-4xl font-bold">
+            {formatCurrency(producto.precioActual)}
+          </div>
 
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-[var(--border)] p-4">

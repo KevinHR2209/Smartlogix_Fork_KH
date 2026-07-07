@@ -29,22 +29,25 @@ export default function AdminTransportistasPage() {
 
   const transportistasFiltrados = useMemo(() => {
     const term = search.toLowerCase();
-    return transportistas.filter((t) =>
-      t.nombreCompleto.toLowerCase().includes(term) ||
-      t.patenteVehiculo.toLowerCase().includes(term) ||
-      t.telefonoContacto.toLowerCase().includes(term) ||
-      t.estado.toLowerCase().includes(term)
-    );
+
+    return transportistas.filter((t) => {
+      return (
+        (t.nombreCompleto ?? "").toLowerCase().includes(term) ||
+        (t.patenteVehiculo ?? "").toLowerCase().includes(term) ||
+        (t.telefonoContacto ?? "").toLowerCase().includes(term) ||
+        (t.estado ?? "").toLowerCase().includes(term)
+      );
+    });
   }, [transportistas, search]);
 
   const seleccionarTransportista = (transportista: Transportista) => {
     setSelected(transportista);
     setForm({
       idTransportista: transportista.idTransportista,
-      nombreCompleto: transportista.nombreCompleto,
-      patenteVehiculo: transportista.patenteVehiculo,
-      telefonoContacto: transportista.telefonoContacto,
-      estado: transportista.estado,
+      nombreCompleto: transportista.nombreCompleto ?? "",
+      patenteVehiculo: transportista.patenteVehiculo ?? "",
+      telefonoContacto: transportista.telefonoContacto ?? "",
+      estado: transportista.estado ?? "ACTIVO",
     });
     setErrors({});
     setMensaje("");
@@ -114,35 +117,28 @@ export default function AdminTransportistasPage() {
     try {
       setSaving(true);
 
-      const body: Transportista = {
+      const payload = {
         nombreCompleto: form.nombreCompleto.trim(),
         patenteVehiculo: form.patenteVehiculo.trim().toUpperCase(),
         telefonoContacto: form.telefonoContacto.trim(),
         estado: form.estado.trim().toUpperCase(),
       };
 
-      const res = selected?.idTransportista
-        ? await transportistasService.update(selected.idTransportista, body)
-        : await transportistasService.create(body);
-
-      if (!res.ok) {
-        throw new Error(
-          selected?.idTransportista
-            ? "No se pudo actualizar el transportista."
-            : "No se pudo crear el transportista."
-        );
+      if (selected?.idTransportista) {
+        await transportistasService.update(selected.idTransportista, {
+          ...payload,
+          idTransportista: selected.idTransportista,
+        });
+        setMensaje("Transportista actualizado correctamente.");
+      } else {
+        await transportistasService.create(payload as Transportista);
+        setMensaje("Transportista creado correctamente.");
       }
-
-      setMensaje(
-        selected?.idTransportista
-          ? "Transportista actualizado correctamente."
-          : "Transportista creado correctamente."
-      );
 
       await recargar();
       nuevoTransportista();
     } catch (error: any) {
-      setMensaje(error.message || "Ocurrió un error guardando el transportista.");
+      setMensaje(error?.message || "Ocurrió un error guardando el transportista.");
     } finally {
       setSaving(false);
     }
@@ -155,12 +151,7 @@ export default function AdminTransportistasPage() {
     if (!confirmado) return;
 
     try {
-      const res = await transportistasService.remove(idTransportista);
-
-      if (!res.ok) {
-        throw new Error("No se pudo eliminar el transportista.");
-      }
-
+      await transportistasService.remove(idTransportista);
       setMensaje("Transportista eliminado correctamente.");
 
       if (selected?.idTransportista === idTransportista) {
@@ -169,7 +160,7 @@ export default function AdminTransportistasPage() {
 
       await recargar();
     } catch (error: any) {
-      setMensaje(error.message || "Error eliminando transportista.");
+      setMensaje(error?.message || "Error eliminando transportista.");
     }
   };
 
@@ -239,7 +230,7 @@ export default function AdminTransportistasPage() {
                       <div className="mt-3 flex flex-wrap gap-3 text-sm text-zinc-600 dark:text-zinc-300">
                         <span
                           className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                            transportista.estado === "ACTIVO"
+                            (transportista.estado ?? "").toUpperCase() === "ACTIVO"
                               ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
                               : "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
                           }`}

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { apiFetch } from "@/lib/api/client";
-import { endpoints } from "@/lib/api/endpoints";
+import { productosService } from "@/services/productosService";
+import { formatCurrency } from "@/lib/utils/currency";
 import { Producto } from "@/types";
 
 const emptyForm: Producto = {
@@ -16,6 +16,8 @@ const emptyForm: Producto = {
   stockTotal: 0,
 };
 
+type FormErrors = Partial<Record<keyof Producto, string>>;
+
 export default function AdminProductosPage() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,14 +26,17 @@ export default function AdminProductosPage() {
   const [form, setForm] = useState<Producto>(emptyForm);
   const [mensaje, setMensaje] = useState("");
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const loadProductos = async () => {
     try {
       setLoading(true);
-      const data = await apiFetch<Producto[]>(endpoints.productos);
+      setMensaje("");
+      const data = await productosService.getAll();
       setProductos(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error(error);
+      setProductos([]);
       setMensaje("No se pudieron cargar los productos.");
     } finally {
       setLoading(false);
@@ -67,12 +72,14 @@ export default function AdminProductosPage() {
       estado: producto.estado ?? "ACTIVO",
       stockTotal: Number(producto.stockTotal ?? 0),
     });
+    setErrors({});
     setMensaje("");
   };
 
   const nuevoProducto = () => {
     setSelected(null);
     setForm(emptyForm);
+    setErrors({});
     setMensaje("");
   };
 
@@ -81,36 +88,60 @@ export default function AdminProductosPage() {
       ...prev,
       [field]: value,
     }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [field]: undefined,
+    }));
   };
 
   const validarFormulario = () => {
-    if (!form.sku.trim()) return "El SKU es obligatorio.";
-    if (!form.nombre.trim()) return "El nombre es obligatorio.";
-    if (!form.descripcion.trim()) return "La descripción es obligatoria.";
-    if (Number(form.precioActual) < 0) return "El precio no puede ser negativo.";
-    if (Number(form.pesoGramos) < 0) return "El peso no puede ser negativo.";
-    if (Number(form.stockTotal ?? 0) < 0) return "El stock no puede ser negativo.";
-    if (!(form.estado ?? "").trim()) return "El estado es obligatorio.";
-    return null;
+    const nuevosErrores: FormErrors = {};
+
+    if (!form.sku.trim()) {
+      nuevosErrores.sku = "El SKU es obligatorio.";
+    }
+
+    if (!form.nombre.trim()) {
+      nuevosErrores.nombre = "El nombre es obligatorio.";
+    }
+
+    if (!form.descripcion.trim()) {
+      nuevosErrores.descripcion = "La descripción es obligatoria.";
+    }
+
+    if (Number(form.precioActual) < 0) {
+      nuevosErrores.precioActual = "El precio no puede ser negativo.";
+    }
+
+    if (Number(form.pesoGramos) < 0) {
+      nuevosErrores.pesoGramos = "El peso no puede ser negativo.";
+    }
+
+    if (Number(form.stockTotal ?? 0) < 0) {
+      nuevosErrores.stockTotal = "El stock no puede ser negativo.";
+    }
+
+    if (!(form.estado ?? "").trim()) {
+      nuevosErrores.estado = "El estado es obligatorio.";
+    }
+
+    setErrors(nuevosErrores);
+    return Object.keys(nuevosErrores).length === 0;
   };
 
   const guardarProducto = async () => {
-    const errorValidacion = validarFormulario();
-    if (errorValidacion) {
-      setMensaje(errorValidacion);
+    setMensaje("");
+
+    if (!validarFormulario()) {
+      setMensaje("Revisa los campos marcados.");
       return;
     }
 
     try {
       setSaving(true);
 
-      const url = selected?.idProducto
-        ? `${process.env.NEXT_PUBLIC_API_URL}/api/productos/${selected.idProducto}`
-        : `${process.env.NEXT_PUBLIC_API_URL}/api/productos`;
-
-      const method = selected?.idProducto ? "PUT" : "POST";
-
-      const body = {
+      const payload = {
         sku: form.sku.trim(),
         nombre: form.nombre.trim(),
         descripcion: form.descripcion.trim(),
@@ -121,30 +152,21 @@ export default function AdminProductosPage() {
         stockTotal: Number(form.stockTotal ?? 0),
       };
 
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      if (!res.ok) {
-        throw new Error(
-          selected?.idProducto
-            ? "No se pudo actualizar el producto."
-            : "No se pudo crear el producto."
-        );
+      if (selected?.idProducto) {
+        await productosService.update(selected.idProducto, {
+          ...payload,
+          idProducto: selected.idProducto,
+        });
+        setMensaje("Producto actualizado correctamente.");
+      } else {
+        await productosService.create(payload);
+        setMensaje("Producto creado correctamente.");
       }
-
-      setMensaje(
-        selected?.idProducto
-          ? "Producto actualizado correctamente."
-          : "Producto creado correctamente."
-      );
 
       await loadProductos();
       nuevoProducto();
     } catch (error: any) {
-      setMensaje(error.message || "Ocurrió un error guardando el producto.");
+      setMensaje(error?.message || "Ocurrió un error guardando el producto.");
     } finally {
       setSaving(false);
     }
@@ -157,15 +179,7 @@ export default function AdminProductosPage() {
     if (!confirmado) return;
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/productos/${idProducto}`,
-        { method: "DELETE" }
-      );
-
-      if (!res.ok) {
-        throw new Error("No se pudo eliminar el producto.");
-      }
-
+      await productosService.remove(idProducto);
       setMensaje("Producto eliminado correctamente.");
 
       if (selected?.idProducto === idProducto) {
@@ -174,9 +188,12 @@ export default function AdminProductosPage() {
 
       await loadProductos();
     } catch (error: any) {
-      setMensaje(error.message || "Error eliminando producto.");
+      setMensaje(error?.message || "Error eliminando producto.");
     }
   };
+
+  const inputClass = (field: keyof Producto) =>
+    `input-base ${errors[field] ? "border-red-500 focus:border-red-500" : ""}`;
 
   return (
     <main className="container-app py-10">
@@ -237,7 +254,7 @@ export default function AdminProductosPage() {
                         {producto.descripcion}
                       </p>
                       <div className="mt-3 flex flex-wrap gap-3 text-sm text-zinc-600 dark:text-zinc-300">
-                        <span>${producto.precioActual}</span>
+                        <span>{formatCurrency(producto.precioActual)}</span>
                         <span>Stock: {producto.stockTotal ?? 0}</span>
                         <span
                           className={`rounded-full px-3 py-1 text-xs font-semibold ${
@@ -286,28 +303,39 @@ export default function AdminProductosPage() {
             <div>
               <label className="mb-2 block text-sm font-medium">SKU</label>
               <input
-                className="input-base"
+                className={inputClass("sku")}
                 value={form.sku}
                 onChange={(e) => handleChange("sku", e.target.value)}
               />
+              {errors.sku && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.sku}</p>
+              )}
             </div>
 
             <div>
               <label className="mb-2 block text-sm font-medium">Nombre</label>
               <input
-                className="input-base"
+                className={inputClass("nombre")}
                 value={form.nombre}
                 onChange={(e) => handleChange("nombre", e.target.value)}
               />
+              {errors.nombre && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.nombre}</p>
+              )}
             </div>
 
             <div>
               <label className="mb-2 block text-sm font-medium">Descripción</label>
               <textarea
-                className="input-base min-h-28"
+                className={inputClass("descripcion")}
                 value={form.descripcion}
                 onChange={(e) => handleChange("descripcion", e.target.value)}
               />
+              {errors.descripcion && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  {errors.descripcion}
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -316,10 +344,15 @@ export default function AdminProductosPage() {
                 <input
                   type="number"
                   min="0"
-                  className="input-base"
+                  className={inputClass("precioActual")}
                   value={form.precioActual}
                   onChange={(e) => handleChange("precioActual", Number(e.target.value))}
                 />
+                {errors.precioActual && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.precioActual}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -327,10 +360,15 @@ export default function AdminProductosPage() {
                 <input
                   type="number"
                   min="0"
-                  className="input-base"
+                  className={inputClass("stockTotal")}
                   value={form.stockTotal ?? 0}
                   onChange={(e) => handleChange("stockTotal", Number(e.target.value))}
                 />
+                {errors.stockTotal && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.stockTotal}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -338,16 +376,21 @@ export default function AdminProductosPage() {
                 <input
                   type="number"
                   min="0"
-                  className="input-base"
+                  className={inputClass("pesoGramos")}
                   value={form.pesoGramos}
                   onChange={(e) => handleChange("pesoGramos", Number(e.target.value))}
                 />
+                {errors.pesoGramos && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.pesoGramos}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="mb-2 block text-sm font-medium">Dimensiones</label>
                 <input
-                  className="input-base"
+                  className={inputClass("dimensiones")}
                   value={form.dimensiones}
                   onChange={(e) => handleChange("dimensiones", e.target.value)}
                 />
@@ -357,13 +400,16 @@ export default function AdminProductosPage() {
             <div>
               <label className="mb-2 block text-sm font-medium">Estado</label>
               <select
-                className="input-base"
+                className={inputClass("estado")}
                 value={form.estado}
                 onChange={(e) => handleChange("estado", e.target.value)}
               >
                 <option value="ACTIVO">ACTIVO</option>
                 <option value="INACTIVO">INACTIVO</option>
               </select>
+              {errors.estado && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.estado}</p>
+              )}
             </div>
 
             <button

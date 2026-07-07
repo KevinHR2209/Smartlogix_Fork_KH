@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { apiFetch } from "@/lib/api/client";
-import { endpoints } from "@/lib/api/endpoints";
 import { Producto } from "@/types";
-import { ProductFilters } from "@/components/products/product-filters";
+import { ProductFilters } from "@/features/productos/components/product-filters";
 import { ProductGrid } from "@/components/products/product-grid";
 import { useCart } from "@/features/cart/cart-context";
+import { productosService } from "@/services/productosService";
 
 export default function ProductosPage() {
   const [productos, setProductos] = useState<Producto[]>([]);
@@ -18,7 +17,7 @@ export default function ProductosPage() {
   useEffect(() => {
     const loadProductos = async () => {
       try {
-        const data = await apiFetch<Producto[]>(endpoints.productos);
+        const data = await productosService.getAll();
         if (Array.isArray(data)) {
           setProductos(data);
         }
@@ -32,21 +31,21 @@ export default function ProductosPage() {
     loadProductos();
   }, []);
 
-    const productosFiltrados = useMemo(() => {
+  const productosFiltrados = useMemo(() => {
     return productos.filter((producto) => {
-        const term = search.toLowerCase();
+      const term = search.toLowerCase();
 
-        const matchSearch =
+      const matchSearch =
         (producto.nombre ?? "").toLowerCase().includes(term) ||
         (producto.descripcion ?? "").toLowerCase().includes(term) ||
         (producto.sku ?? "").toLowerCase().includes(term);
 
-        const matchStock = onlyStock ? (producto.stockTotal ?? 0) > 0 : true;
-        const matchEstado = (producto.estado ?? "").toUpperCase() === "ACTIVO";
+      const matchStock = onlyStock ? (producto.stockTotal ?? 0) > 0 : true;
+      const matchEstado = (producto.estado ?? "").toUpperCase() === "ACTIVO";
 
-        return matchSearch && matchStock && matchEstado;
+      return matchSearch && matchStock && matchEstado;
     });
-    }, [productos, search, onlyStock]);
+  }, [productos, search, onlyStock]);
 
   return (
     <main className="container-app py-10">

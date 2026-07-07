@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { apiFetch } from "@/lib/api/client";
-import { endpoints } from "@/lib/api/endpoints";
+import { clientesService } from "@/services/clientesService";
 import { Cliente } from "@/types";
 
 const emptyForm: Cliente = {
@@ -34,10 +33,12 @@ export default function AdminClientesPage() {
   const loadClientes = async () => {
     try {
       setLoading(true);
-      const data = await apiFetch<Cliente[]>(endpoints.clientes);
+      setMensaje("");
+      const data = await clientesService.getAll();
       setClientes(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error(error);
+      setClientes([]);
       setMensaje("No se pudieron cargar los clientes.");
     } finally {
       setLoading(false);
@@ -50,25 +51,28 @@ export default function AdminClientesPage() {
 
   const clientesFiltrados = useMemo(() => {
     const term = search.toLowerCase();
-    return clientes.filter((c) =>
-      c.nombre.toLowerCase().includes(term) ||
-      c.apellidoPaterno.toLowerCase().includes(term) ||
-      c.apellidoMaterno.toLowerCase().includes(term) ||
-      c.rut.toLowerCase().includes(term) ||
-      c.correo.toLowerCase().includes(term)
-    );
+
+    return clientes.filter((c) => {
+      return (
+        (c.nombre ?? "").toLowerCase().includes(term) ||
+        (c.apellidoPaterno ?? "").toLowerCase().includes(term) ||
+        (c.apellidoMaterno ?? "").toLowerCase().includes(term) ||
+        (c.rut ?? "").toLowerCase().includes(term) ||
+        (c.correo ?? "").toLowerCase().includes(term)
+      );
+    });
   }, [clientes, search]);
 
   const seleccionarCliente = (cliente: Cliente) => {
     setSelected(cliente);
     setForm({
       idCliente: cliente.idCliente,
-      rut: cliente.rut,
-      nombre: cliente.nombre,
-      apellidoPaterno: cliente.apellidoPaterno,
-      apellidoMaterno: cliente.apellidoMaterno,
-      correo: cliente.correo,
-      telefono: cliente.telefono,
+      rut: cliente.rut ?? "",
+      nombre: cliente.nombre ?? "",
+      apellidoPaterno: cliente.apellidoPaterno ?? "",
+      apellidoMaterno: cliente.apellidoMaterno ?? "",
+      correo: cliente.correo ?? "",
+      telefono: cliente.telefono ?? "",
       region: cliente.region ?? "",
     });
     setErrors({});
@@ -137,7 +141,6 @@ export default function AdminClientesPage() {
     }
 
     setErrors(nuevosErrores);
-
     return Object.keys(nuevosErrores).length === 0;
   };
 
@@ -152,46 +155,28 @@ export default function AdminClientesPage() {
     try {
       setSaving(true);
 
-      const url = selected?.idCliente
-        ? `${process.env.NEXT_PUBLIC_API_URL}/api/clientes/${selected.idCliente}`
-        : `${process.env.NEXT_PUBLIC_API_URL}/api/clientes`;
-
-      const method = selected?.idCliente ? "PUT" : "POST";
-
-      const body = {
+      const payload = {
         rut: form.rut.trim(),
         nombre: form.nombre.trim(),
         apellidoPaterno: form.apellidoPaterno.trim(),
         apellidoMaterno: form.apellidoMaterno.trim(),
         correo: form.correo.trim().toLowerCase(),
         telefono: form.telefono.trim(),
-        region: form.region?.trim() ? form.region.trim() : null,
+        region: form.region?.trim() ? form.region.trim() : "",
       };
 
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      if (!res.ok) {
-        throw new Error(
-          selected?.idCliente
-            ? "No se pudo actualizar el cliente."
-            : "No se pudo crear el cliente."
-        );
+      if (selected?.idCliente) {
+        await clientesService.update(selected.idCliente, payload);
+        setMensaje("Cliente actualizado correctamente.");
+      } else {
+        await clientesService.create(payload);
+        setMensaje("Cliente creado correctamente.");
       }
-
-      setMensaje(
-        selected?.idCliente
-          ? "Cliente actualizado correctamente."
-          : "Cliente creado correctamente."
-      );
 
       await loadClientes();
       nuevoCliente();
     } catch (error: any) {
-      setMensaje(error.message || "Ocurrió un error guardando el cliente.");
+      setMensaje(error?.message || "Ocurrió un error guardando el cliente.");
     } finally {
       setSaving(false);
     }
@@ -204,15 +189,7 @@ export default function AdminClientesPage() {
     if (!confirmado) return;
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/clientes/${idCliente}`,
-        { method: "DELETE" }
-      );
-
-      if (!res.ok) {
-        throw new Error("No se pudo eliminar el cliente.");
-      }
-
+      await clientesService.remove(idCliente);
       setMensaje("Cliente eliminado correctamente.");
 
       if (selected?.idCliente === idCliente) {
@@ -221,7 +198,7 @@ export default function AdminClientesPage() {
 
       await loadClientes();
     } catch (error: any) {
-      setMensaje(error.message || "Error eliminando cliente.");
+      setMensaje(error?.message || "Error eliminando cliente.");
     }
   };
 
@@ -389,7 +366,6 @@ export default function AdminClientesPage() {
                 value={form.correo}
                 onChange={(e) => handleChange("correo", e.target.value)}
                 placeholder="nombre@dominio.com"
-                required
               />
               {errors.correo && (
                 <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.correo}</p>

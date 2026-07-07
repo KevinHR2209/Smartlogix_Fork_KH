@@ -2,6 +2,18 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 
+const adminLinks = [
+  { label: "Inicio", href: "/admin" },
+  { label: "Clientes", href: "/admin/clientes" },
+  { label: "Productos", href: "/admin/productos" },
+  { label: "Ventas", href: "/admin/ventas" },
+  { label: "Transportistas", href: "/admin/transportistas" },
+];
+
+const quickLinks = [
+  { label: "Ver catálogo", href: "/productos" },
+];
+
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -16,46 +28,37 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </div>
 
           <nav className="space-y-2">
-            <Link
-              href="/admin"
-              className="block rounded-lg px-3 py-2 text-sm transition hover:bg-accent hover:text-accent-foreground"
-            >
-              Dashboard
-            </Link>
-
-            <Link
-              href="/admin/clientes"
-              className="block rounded-lg px-3 py-2 text-sm transition hover:bg-accent hover:text-accent-foreground"
-            >
-              Clientes
-            </Link>
-
-            <Link
-              href="/admin/productos"
-              className="block rounded-lg px-3 py-2 text-sm transition hover:bg-accent hover:text-accent-foreground"
-            >
-              Productos
-            </Link>
-
-            <Link
-              href="/admin/ventas"
-              className="block rounded-lg px-3 py-2 text-sm transition hover:bg-accent hover:text-accent-foreground"
-            >
-              Ventas
-            </Link>
-
-            <Link
-              href="/admin/transportistas"
-              className="block rounded-lg px-3 py-2 text-sm transition hover:bg-accent hover:text-accent-foreground"
-            >
-              Transportistas
-            </Link>
+            {adminLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="block rounded-lg px-3 py-2 text-sm transition hover:bg-accent hover:text-accent-foreground"
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
+
+          <div className="mt-8 border-t pt-4">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              Vista cliente
+            </p>
+
+            <div className="space-y-2">
+              {quickLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="block rounded-lg px-3 py-2 text-sm transition hover:bg-accent hover:text-accent-foreground"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
         </aside>
 
-        <main className="p-6">
-          {children}
-        </main>
+        <main className="p-6">{children}</main>
       </div>
     </div>
   );

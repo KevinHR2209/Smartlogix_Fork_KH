@@ -23,9 +23,6 @@ export default function HomePage() {
           <Link href="/login" className="btn-secondary">
             Iniciar sesión
           </Link>
-          <Link href="/admin/dashboard" className="btn-secondary">
-            Ir a admin
-          </Link>
         </div>
       </section>
     </main>
