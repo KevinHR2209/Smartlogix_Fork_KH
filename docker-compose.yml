@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # 1. BASE DE DATOS
   postgres:
     image: postgres:15-alpine
     container_name: smartlogix-postgres
@@ -18,12 +17,11 @@ services:
       test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
 
-  # 2. MICROSERVICIOS
   ms-gateway:
     image: maven:3.9.6-eclipse-temurin-21-alpine
-    container_name: ms--gateway
+    container_name: ms-gateway
     working_dir: /app
     ports:
       - "8080:8080"
@@ -31,14 +29,25 @@ services:
       - ./ms-gateway:/app
       - maven_cache:/root/.m2
     environment:
-      - URL_MS_INVENTARIO=http://ms--inventario:8081
-      - URL_MS_VENTAS=http://ms--ventas:8083
-      - URL_MS_CLIENTES=http://ms--clientes:8082
-      - URL_MS_LOGISTICA=http://ms--logistica:8084
+      - URL_MS_AUTH=http://ms-autenticacion:8085
+      - URL_MS_INVENTARIO=http://ms-inventario:8081
+      - URL_MS_VENTAS=http://ms-ventas:8083
+      - URL_MS_CLIENTES=http://ms-clientes:8082
+      - URL_MS_LOGISTICA=http://ms-logistica:8084
     command: mvn clean spring-boot:run
     depends_on:
       postgres:
         condition: service_healthy
+      ms-autenticacion:
+        condition: service_started
+      ms-inventario:
+        condition: service_started
+      ms-ventas:
+        condition: service_started
+      ms-clientes:
+        condition: service_started
+      ms-logistica:
+        condition: service_started
     develop:
       watch:
         - action: sync+restart
@@ -48,9 +57,35 @@ services:
           path: ./ms-gateway/pom.xml
           target: /app/pom.xml
 
+  ms-autenticacion:
+    image: maven:3.9.6-eclipse-temurin-21-alpine
+    container_name: ms-autenticacion
+    working_dir: /app
+    ports:
+      - "8085:8085"
+    volumes:
+      - ./ms-autenticacion:/app
+      - maven_cache:/root/.m2
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ms_autenticacion
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+    command: mvn clean spring-boot:run
+    depends_on:
+      postgres:
+        condition: service_healthy
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./ms-autenticacion/src
+          target: /app/src
+        - action: sync+restart
+          path: ./ms-autenticacion/pom.xml
+          target: /app/pom.xml
+
   ms-inventario:
     image: maven:3.9.6-eclipse-temurin-21-alpine
-    container_name: ms--inventario
+    container_name: ms-inventario
     working_dir: /app
     ports:
       - "8081:8081"
@@ -71,12 +106,12 @@ services:
           path: ./ms_inventario/src
           target: /app/src
         - action: sync+restart
-          path: ./ms-clientes/pom.xml
+          path: ./ms_inventario/pom.xml
           target: /app/pom.xml
 
   ms-ventas:
     image: maven:3.9.6-eclipse-temurin-21-alpine
-    container_name: ms--ventas
+    container_name: ms-ventas
     working_dir: /app
     ports:
       - "8083:8083"
@@ -87,24 +122,28 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ms_ventas
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
-      - URL_MS_CLIENTES=http://ms--clientes:8082
-      - URL_MS_INVENTARIO=http://ms--inventario:8081
+      - URL_MS_CLIENTES=http://ms-clientes:8082
+      - URL_MS_INVENTARIO=http://ms-inventario:8081
     command: mvn clean spring-boot:run
     depends_on:
       postgres:
         condition: service_healthy
+      ms-clientes:
+        condition: service_started
+      ms-inventario:
+        condition: service_started
     develop:
       watch:
         - action: sync+restart
           path: ./ms-ventas/src
           target: /app/src
         - action: sync+restart
-          path: ./ms-clientes/pom.xml
+          path: ./ms-ventas/pom.xml
           target: /app/pom.xml
 
   ms-clientes:
     image: maven:3.9.6-eclipse-temurin-21-alpine
-    container_name: ms--clientes
+    container_name: ms-clientes
     working_dir: /app
     ports:
       - "8082:8082"
@@ -130,7 +169,7 @@ services:
 
   ms-logistica:
     image: maven:3.9.6-eclipse-temurin-21-alpine
-    container_name: ms--logistica
+    container_name: ms-logistica
     working_dir: /app
     ports:
       - "8084:8084"
@@ -151,10 +190,9 @@ services:
           path: ./ms-logistica/src
           target: /app/src
         - action: sync+restart
-          path: ./ms-clientes/pom.xml
+          path: ./ms-logistica/pom.xml
           target: /app/pom.xml
 
-  # 3. FRONTEND
   frontend:
     image: node:20-alpine
     container_name: smartlogix-frontend
@@ -167,6 +205,9 @@ services:
     command: sh -c "npm install && npm run dev"
     environment:
       - WATCHPACK_POLLING=true
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+    depends_on:
+      - ms-gateway
 
 volumes:
   pgdata:

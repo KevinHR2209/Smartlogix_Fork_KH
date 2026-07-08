@@ -1,0 +1,36 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: ms-autenticacion
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ms_autenticacion}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: never
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET:VGhpc0VzVW5TZWNyZXRvQmFzZTY0TXV5TGFyZ29QYXJhU21hcnRsb2dpeA==}
+    expiration: ${APP_JWT_EXPIRATION:86400000}
+
+logging:
+  level:
+    org.springframework.security: INFO

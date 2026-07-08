@@ -2,6 +2,7 @@ CREATE DATABASE ms_cliente;
 CREATE DATABASE ms_inventario;
 CREATE DATABASE ms_ventas;
 CREATE DATABASE ms_logistica;
+CREATE DATABASE ms_autenticacion;
 
 \connect ms_cliente
 
@@ -27,17 +28,17 @@ CREATE TABLE direccion_cliente (
     FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente)
 );
 
-INSERT INTO cliente (id_cliente, rut, nombre, apellido_paterno, apellido_materno, correo, telefono) VALUES
-(1, '11.111.111-1', 'Juan', 'Pérez', 'Soto', 'juan.perez@smartlogix.cl', '+56911111111'),
-(2, '22.222.222-2', 'María', 'González', 'Rojas', 'maria.gonzalez@smartlogix.cl', '+56922222222'),
-(3, '33.333.333-3', 'Carlos', 'Muñoz', 'Díaz', 'carlos.munoz@smartlogix.cl', '+56933333333'),
-(4, '44.444.444-4', 'Fernanda', 'Castillo', 'Vega', 'fernanda.castillo@smartlogix.cl', '+56944444444');
+INSERT INTO cliente (rut, nombre, apellido_paterno, apellido_materno, correo, telefono) VALUES
+('11.111.111-1', 'Juan', 'Pérez', 'Soto', 'juan.perez@smartlogix.cl', '+56911111111'),
+('22.222.222-2', 'María', 'González', 'Rojas', 'maria.gonzalez@smartlogix.cl', '+56922222222'),
+('33.333.333-3', 'Carlos', 'Muñoz', 'Díaz', 'carlos.munoz@smartlogix.cl', '+56933333333'),
+('44.444.444-4', 'Fernanda', 'Castillo', 'Vega', 'fernanda.castillo@smartlogix.cl', '+56944444444');
 
-INSERT INTO direccion_cliente (id_direccion, id_cliente, id_comuna, calle, numero, detalle, es_principal) VALUES
-(1, 1, 13101, 'Av. Providencia', '1234', 'Depto 401', true),
-(2, 2, 13114, 'Gran Avenida', '4567', 'Casa azul', true),
-(3, 3, 13119, 'Av. La Florida', '890', 'Block B depto 22', true),
-(4, 4, 13123, 'Camino Agrícola', '1550', 'Oficina 7', true);
+INSERT INTO direccion_cliente (id_cliente, id_comuna, calle, numero, detalle, es_principal) VALUES
+(1, 13101, 'Av. Providencia', '1234', 'Depto 401', true),
+(2, 13114, 'Gran Avenida', '4567', 'Casa azul', true),
+(3, 13119, 'Av. La Florida', '890', 'Block B depto 22', true),
+(4, 13123, 'Camino Agrícola', '1550', 'Oficina 7', true);
 
 \connect ms_inventario
 
@@ -68,27 +69,27 @@ CREATE TABLE producto_bodega (
   CONSTRAINT fk_pb_producto FOREIGN KEY (id_producto) REFERENCES producto(id_producto)
 );
 
-INSERT INTO bodega (id_bodega, nombre, direccion_fisica) VALUES
-(1, 'Bodega Central Santiago', 'Ruta 68 Km 18, Pudahuel'),
-(2, 'Bodega Norte', 'Av. Industrial 2450, Quilicura');
+INSERT INTO bodega (nombre, direccion_fisica) VALUES
+('Bodega Central Santiago', 'Ruta 68 Km 18, Pudahuel'),
+('Bodega Norte', 'Av. Industrial 2450, Quilicura');
 
-INSERT INTO producto (id_producto, sku, nombre, descripcion, precio_actual, peso_gramos, dimensiones, estado) VALUES
-(1, 'SKU-IPH-001', 'iPhone 15 128GB', 'Smartphone Apple iPhone 15 de 128GB color negro.', 799990, 171, '147x71x8 mm', 'ACTIVO'),
-(2, 'SKU-SAM-002', 'Samsung Galaxy S24 256GB', 'Smartphone Samsung Galaxy S24 de 256GB.', 699990, 168, '146x70x8 mm', 'ACTIVO'),
-(3, 'SKU-XIA-003', 'Xiaomi Redmi Note 13', 'Smartphone Xiaomi Redmi Note 13.', 249990, 188, '162x75x8 mm', 'ACTIVO'),
-(4, 'SKU-MOT-004', 'Motorola Edge 50 Fusion', 'Equipo Motorola Edge 50 Fusion.', 329990, 175, '161x73x8 mm', 'ACTIVO'),
-(5, 'SKU-HUA-005', 'Huawei Watch GT', 'Reloj inteligente Huawei Watch GT.', 189990, 65, '46x46x11 mm', 'INACTIVO');
+INSERT INTO producto (sku, nombre, descripcion, precio_actual, peso_gramos, dimensiones, estado) VALUES
+('SKU-IPH-001', 'iPhone 15 128GB', 'Smartphone Apple iPhone 15 de 128GB color negro.', 799990, 171, '147x71x8 mm', 'ACTIVO'),
+('SKU-SAM-002', 'Samsung Galaxy S24 256GB', 'Smartphone Samsung Galaxy S24 de 256GB.', 699990, 168, '146x70x8 mm', 'ACTIVO'),
+('SKU-XIA-003', 'Xiaomi Redmi Note 13', 'Smartphone Xiaomi Redmi Note 13.', 249990, 188, '162x75x8 mm', 'ACTIVO'),
+('SKU-MOT-004', 'Motorola Edge 50 Fusion', 'Equipo Motorola Edge 50 Fusion.', 329990, 175, '161x73x8 mm', 'ACTIVO'),
+('SKU-HUA-005', 'Huawei Watch GT', 'Reloj inteligente Huawei Watch GT.', 189990, 65, '46x46x11 mm', 'INACTIVO');
 
-INSERT INTO producto_bodega (id_inventario, id_bodega, id_producto, stock_disponible, stock_reservado) VALUES
-(1, 1, 1, 15, 2),
-(2, 2, 1, 8, 1),
-(3, 1, 2, 20, 3),
-(4, 2, 2, 10, 0),
-(5, 1, 3, 30, 4),
-(6, 2, 3, 12, 2),
-(7, 1, 4, 18, 1),
-(8, 2, 4, 7, 0),
-(9, 1, 5, 5, 0);
+INSERT INTO producto_bodega (id_bodega, id_producto, stock_disponible, stock_reservado) VALUES
+(1, 1, 15, 2),
+(2, 1, 8, 1),
+(1, 2, 20, 3),
+(2, 2, 10, 0),
+(1, 3, 30, 4),
+(2, 3, 12, 2),
+(1, 4, 18, 1),
+(2, 4, 7, 0),
+(1, 5, 5, 0);
 
 \connect ms_ventas
 
@@ -109,17 +110,17 @@ CREATE TABLE detalle_pedido (
   CONSTRAINT fk_detalle_pedido FOREIGN KEY (id_pedido) REFERENCES pedido(id_pedido)
 );
 
-INSERT INTO pedido (id_pedido, id_cliente, fecha_creacion, monto_total, estado_pedido) VALUES
-(1, 1, '2026-07-01 10:15:00+00', 1599980, 'PENDIENTE'),
-(2, 2, '2026-07-02 12:40:00+00', 699990, 'PAGADO'),
-(3, 3, '2026-07-03 09:05:00+00', 499980, 'ENVIADO'),
-(4, 4, '2026-07-04 17:20:00+00', 329990, 'ENTREGADO');
+INSERT INTO pedido (id_cliente, fecha_creacion, monto_total, estado_pedido) VALUES
+(1, '2026-07-01 10:15:00+00', 1599980, 'PENDIENTE'),
+(2, '2026-07-02 12:40:00+00', 699990, 'PAGADO'),
+(3, '2026-07-03 09:05:00+00', 499980, 'ENVIADO'),
+(4, '2026-07-04 17:20:00+00', 329990, 'ENTREGADO');
 
-INSERT INTO detalle_pedido (id_detalle, id_pedido, id_producto, cantidad, precio_unitario_snapshot) VALUES
-(1, 1, 1, 2, 799990),
-(2, 2, 2, 1, 699990),
-(3, 3, 3, 2, 249990),
-(4, 4, 4, 1, 329990);
+INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, precio_unitario_snapshot) VALUES
+(1, 1, 2, 799990),
+(2, 2, 1, 699990),
+(3, 3, 2, 249990),
+(4, 4, 1, 329990);
 
 \connect ms_logistica
 
@@ -143,13 +144,28 @@ CREATE TABLE despacho (
   CONSTRAINT fk_despacho_transportista FOREIGN KEY (id_transportista) REFERENCES transportista(id_transportista)
 );
 
-INSERT INTO transportista (id_transportista, nombre_completo, patente_vehiculo, telefono_contacto, estado) VALUES
-(1, 'Pedro Ramírez', 'LJTX-41', '+56955550001', 'ACTIVO'),
-(2, 'Ana Contreras', 'PKDW-82', '+56955550002', 'ACTIVO'),
-(3, 'Luis Sepúlveda', 'TRQA-19', '+56955550003', 'INACTIVO');
+INSERT INTO transportista (nombre_completo, patente_vehiculo, telefono_contacto, estado) VALUES
+('Pedro Ramírez', 'LJTX-41', '+56955550001', 'ACTIVO'),
+('Ana Contreras', 'PKDW-82', '+56955550002', 'ACTIVO'),
+('Luis Sepúlveda', 'TRQA-19', '+56955550003', 'INACTIVO');
 
-INSERT INTO despacho (id_despacho, id_pedido, direccion_entrega, comuna_entrega, estado_despacho, fecha_creacion, fecha_entrega_estimada, id_transportista) VALUES
-(1, 1, 'Av. Providencia 1234, Depto 401', 'Providencia', 'PENDIENTE', '2026-07-01 10:30:00+00', '2026-07-06 18:00:00+00', 1),
-(2, 2, 'Gran Avenida 4567', 'San Miguel', 'EN_RUTA', '2026-07-02 13:10:00+00', '2026-07-06 20:00:00+00', 2),
-(3, 3, 'Av. La Florida 890', 'La Florida', 'ENTREGADO', '2026-07-03 09:30:00+00', '2026-07-05 16:00:00+00', 1),
-(4, 4, 'Camino Agrícola 1550, Oficina 7', 'Macul', 'ENTREGADO', '2026-07-04 18:00:00+00', '2026-07-05 14:00:00+00', 2);
+INSERT INTO despacho (id_pedido, direccion_entrega, comuna_entrega, estado_despacho, fecha_creacion, fecha_entrega_estimada, id_transportista) VALUES
+(1, 'Av. Providencia 1234, Depto 401', 'Providencia', 'PENDIENTE', '2026-07-01 10:30:00+00', '2026-07-06 18:00:00+00', 1),
+(2, 'Gran Avenida 4567', 'San Miguel', 'EN_RUTA', '2026-07-02 13:10:00+00', '2026-07-06 20:00:00+00', 2),
+(3, 'Av. La Florida 890', 'La Florida', 'ENTREGADO', '2026-07-03 09:30:00+00', '2026-07-05 16:00:00+00', 1),
+(4, 'Camino Agrícola 1550, Oficina 7', 'Macul', 'ENTREGADO', '2026-07-04 18:00:00+00', '2026-07-05 14:00:00+00', 2);
+
+\connect ms_autenticacion
+
+CREATE TABLE usuarios (
+  id_usuario BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  correo VARCHAR(150) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  rol VARCHAR(30) NOT NULL,
+  activo BOOLEAN NOT NULL DEFAULT true
+);
+
+INSERT INTO usuarios (nombre, correo, password, rol, activo) VALUES
+('Administrador', 'admin@smartlogix.cl', '$2y$10$.DVAwXwyGMMrV91aay6iMuczlYoflKQsvp6h7DgK1.8VOip6CE6uS', 'ADMIN', true),
+('Cliente Demo', 'cliente@smartlogix.cl', '$2y$10$.DVAwXwyGMMrV91aay6iMuczlYoflKQsvp6h7DgK1.8VOip6CE6uS', 'CLIENTE', true);

@@ -22,7 +22,16 @@ spring:
             allowedHeaders:
               - "*"
       routes:
-        # 1. RUTA DE INVENTARIO
+        - id: ms-auth-route
+          uri: ${URL_MS_AUTH:http://localhost:8085}
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: authCB
+                fallbackUri: forward:/fallback/auth
+
         - id: ms-inventario-route
           uri: ${URL_MS_INVENTARIO:http://localhost:8081}
           predicates:
@@ -33,7 +42,6 @@ spring:
                 name: inventarioCB
                 fallbackUri: forward:/fallback/inventario
 
-        # 2. RUTA DE VENTAS
         - id: ms-ventas-route
           uri: ${URL_MS_VENTAS:http://localhost:8083}
           predicates:
@@ -44,7 +52,6 @@ spring:
                 name: ventasCB
                 fallbackUri: forward:/fallback/ventas
 
-        # 3. RUTA DE CLIENTES
         - id: ms-clientes-route
           uri: ${URL_MS_CLIENTES:http://localhost:8082}
           predicates:
@@ -55,7 +62,6 @@ spring:
                 name: clientesCB
                 fallbackUri: forward:/fallback/clientes
 
-        # 4. RUTA DE LOGISTICA
         - id: ms-logistica-route
           uri: ${URL_MS_LOGISTICA:http://localhost:8084}
           predicates:
@@ -66,10 +72,11 @@ spring:
                 name: logisticaCB
                 fallbackUri: forward:/fallback/logistica
 
-# Configuración de Swagger Centralizado
 springdoc:
   swagger-ui:
     urls:
+      - name: MS Autenticacion
+        url: /api/auth/v3/api-docs
       - name: MS Clientes
         url: /api/clientes/v3/api-docs
       - name: MS Inventario
@@ -79,7 +86,6 @@ springdoc:
       - name: MS Logistica
         url: /api/despachos/v3/api-docs
 
-# Configuración de Resilience4j
 resilience4j:
   circuitbreaker:
     configs:
@@ -88,6 +94,8 @@ resilience4j:
         failureRateThreshold: 50
         waitDurationInOpenState: 10s
     instances:
+      authCB:
+        baseConfig: default
       inventarioCB:
         baseConfig: default
       ventasCB:
