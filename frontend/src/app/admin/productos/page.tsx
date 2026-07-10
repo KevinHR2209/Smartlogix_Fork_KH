@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { productosService } from "@/services/productosService";
+import { productosService } from "@/features/productos/services/productosService";
 import { formatCurrency } from "@/lib/utils/currency";
-import { Producto } from "@/types";
+import { Producto } from "@/features/productos/types/producto";
 
 const emptyForm: Producto = {
   sku: "",

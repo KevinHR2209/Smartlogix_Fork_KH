@@ -1,3 +1,5 @@
+import { getToken } from "@/lib/auth";
+
 function getApiBaseUrl(): string {
   const url = process.env.NEXT_PUBLIC_API_URL;
 
@@ -17,10 +19,13 @@ function buildUrl(path: string): string {
 }
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  const token = typeof window !== "undefined" ? getToken() : null;
+
   const response = await fetch(buildUrl(path), {
     ...options,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options?.headers || {}),
     },
     cache: "no-store",

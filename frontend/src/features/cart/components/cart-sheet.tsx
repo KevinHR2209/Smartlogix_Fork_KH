@@ -1,6 +1,6 @@
 "use client";
 
-import { useCart } from "@/features/cart/cart-context";
+import { useCart } from "@/features/cart/context/cart-context";
 import { formatCurrency } from "@/lib/utils/currency";
 
 export function CartSheet() {

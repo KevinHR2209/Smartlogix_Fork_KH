@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { clientesService } from "@/services/clientesService";
-import { Cliente } from "@/types";
+import { clientesService } from "@/features/clientes/services/clientesService";
+import { Cliente } from "@/features/clientes/types/cliente";
 
 const emptyForm: Cliente = {
   rut: "",

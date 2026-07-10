@@ -1,10 +1,13 @@
 package com.smartlogix.msclientes.controller;
 
+import com.smartlogix.msclientes.dto.CrearClienteDesdeAuthRequest;
 import com.smartlogix.msclientes.model.Cliente;
 import com.smartlogix.msclientes.service.ClienteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -26,6 +29,11 @@ public class ClienteController {
     @PostMapping
     public ResponseEntity<Cliente> crear(@RequestBody Cliente cliente) {
         return ResponseEntity.status(201).body(service.crear(cliente));
+    }
+
+    @PostMapping("/desde-auth")
+    public ResponseEntity<Cliente> crearDesdeAuth(@Valid @RequestBody CrearClienteDesdeAuthRequest request) {
+        return ResponseEntity.status(201).body(service.crearDesdeAuth(request));
     }
 
     @PutMapping("/{id}")

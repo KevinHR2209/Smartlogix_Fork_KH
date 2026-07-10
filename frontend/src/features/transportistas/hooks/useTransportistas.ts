@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
-import { transportistasService } from '@/services/transportistasService';
-import { Transportista } from '@/types';
+import { transportistasService } from '../services/transportistasService';
+import { Transportista } from '../types/transportista';
 
 export function useTransportistas() {
   const [transportistas, setTransportistas] = useState<Transportista[]>([]);

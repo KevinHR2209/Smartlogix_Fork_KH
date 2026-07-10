@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Producto } from "@/types";
+import { Producto } from "@/features/productos/types/producto";
 import { ProductFilters } from "@/features/productos/components/product-filters";
-import { ProductGrid } from "@/components/products/product-grid";
-import { useCart } from "@/features/cart/cart-context";
-import { productosService } from "@/services/productosService";
+import { ProductGrid } from "@/features/productos/components/product-grid";
+import { useCart } from "@/features/cart/context/cart-context";
+import { productosService } from "@/features/productos/services/productosService";
 
 export default function ProductosPage() {
   const [productos, setProductos] = useState<Producto[]>([]);

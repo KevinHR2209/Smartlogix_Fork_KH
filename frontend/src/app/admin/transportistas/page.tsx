@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Transportista } from "@/types";
-import { useTransportistas } from "@/hooks/useTransportistas";
-import { transportistasService } from "@/services/transportistasService";
+import { Transportista } from "@/features/transportistas/types/transportista";
+import { useTransportistas } from "@/features/transportistas/hooks/useTransportistas";
+import { transportistasService } from "@/features/transportistas/services/transportistasService";
 
 const emptyForm: Transportista = {
   nombreCompleto: "",

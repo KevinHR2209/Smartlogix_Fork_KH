@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { pedidosService } from "@/services/pedidosService";
+import { pedidosService } from "@/features/pedidos/services/pedidosService";
 import { formatCurrency } from "@/lib/utils/currency";
-import { Pedido } from "@/types";
+import { Pedido } from "@/features/pedidos/types/pedido";
 
 const ESTADOS = [
   "PENDIENTE",

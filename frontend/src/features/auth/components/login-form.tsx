@@ -1,23 +1,31 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
-import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api/client";
-import { saveSession, type AuthSession } from "@/lib/auth";
-
-type LoginResponse = AuthSession;
+import { FormEvent, useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { login } = useAuth();
 
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("registered") === "1") {
+      setSuccess("Cuenta creada correctamente. Ahora puedes iniciar sesión.");
+    }
+  }, [searchParams]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
     if (!correo.trim() || !password.trim()) {
       setError("Debes ingresar correo y contraseña.");
@@ -27,18 +35,18 @@ export function LoginForm() {
     try {
       setLoading(true);
 
-      const response = await apiPost<LoginResponse>("/api/auth/login", {
+      const response = await login({
         correo,
         password,
       });
 
-      saveSession(response);
-
       if (response.rol === "ADMIN") {
         router.push("/admin");
       } else {
-        router.push("/");
+        router.push("/productos");
       }
+
+      router.refresh();
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "No se pudo iniciar sesión";
@@ -92,6 +100,7 @@ export function LoginForm() {
             />
           </div>
 
+          {success ? <p className="text-sm text-emerald-400">{success}</p> : null}
           {error ? <p className="text-sm text-red-400">{error}</p> : null}
 
           <button
@@ -102,6 +111,13 @@ export function LoginForm() {
             {loading ? "Entrando..." : "Entrar"}
           </button>
         </form>
+
+        <p className="mt-6 text-sm text-white/60">
+          ¿No tienes cuenta?{" "}
+          <Link href="/register" className="text-white underline">
+            Crear cuenta
+          </Link>
+        </p>
       </section>
     </main>
   );

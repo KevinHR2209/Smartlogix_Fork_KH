@@ -17,7 +17,7 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPedido;
 
-    private Long idCliente; // referencia lógica al ms-clientes
+    private Long idCliente;
 
     private OffsetDateTime fechaCreacion;
 

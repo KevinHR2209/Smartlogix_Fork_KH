@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Producto } from "@/types";
+import { Producto } from "../types/producto";
 import { formatCurrency } from "@/lib/utils/currency";
 
 interface ProductCardProps {

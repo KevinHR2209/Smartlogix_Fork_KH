@@ -1,10 +1,10 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
-import { pedidosService } from '@/services/pedidosService';
-import { Pedido } from '@/types';
+import { productosService } from '../services/productosService';
+import { Producto } from '../types/producto';
 
-export function usePedidos() {
-  const [pedidos, setPedidos] = useState<Pedido[]>([]);
+export function useProductos() {
+  const [productos, setProductos] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -12,11 +12,10 @@ export function usePedidos() {
     try {
       setLoading(true);
       setError(null);
-      const data = await pedidosService.getAll();
-      setPedidos(Array.isArray(data) ? data : []);
+      const data = await productosService.getAll();
+      setProductos(data);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Error desconocido');
-      setPedidos([]);
     } finally {
       setLoading(false);
     }
@@ -24,5 +23,5 @@ export function usePedidos() {
 
   useEffect(() => { cargar(); }, [cargar]);
 
-  return { pedidos, loading, error, recargar: cargar };
+  return { productos, loading, error, recargar: cargar };
 }

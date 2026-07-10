@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-import { useCart } from "@/features/cart/cart-context";
-import { productosService } from "@/services/productosService";
+import { useCart } from "@/features/cart/context/cart-context";
+import { productosService } from "@/features/productos/services/productosService";
 import { formatCurrency } from "@/lib/utils/currency";
-import { Producto } from "@/types";
+import { Producto } from "@/features/productos/types/producto";
 
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();

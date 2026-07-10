@@ -1,5 +1,5 @@
 'use client';
-import { Producto } from '@/types';
+import { Producto } from '../types/producto';
 
 interface ProductoFormProps {
   producto: Producto;

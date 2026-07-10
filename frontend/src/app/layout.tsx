@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { AppProviders } from "@/components/providers/app-providers";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "Smartlogix",
-  description: "Ecommerce Smartlogix",
+  description: "Smartlogix",
 };
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body>
-        <AppProviders>{children}</AppProviders>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

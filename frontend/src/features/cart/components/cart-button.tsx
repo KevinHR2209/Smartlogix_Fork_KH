@@ -1,6 +1,6 @@
 "use client";
 
-import { useCart } from "@/features/cart/cart-context";
+import { useCart } from "@/features/cart/context/cart-context";
 
 export function CartButton() {
   const { openCart, totalItems } = useCart();

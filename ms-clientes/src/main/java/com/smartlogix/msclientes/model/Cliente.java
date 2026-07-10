@@ -1,9 +1,11 @@
 package com.smartlogix.msclientes.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "cliente")
@@ -12,20 +14,31 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @AllArgsConstructor
 @Builder
 public class Cliente {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_cliente")
     private Long idCliente;
 
-    @Column(unique = true)
+    @Column(name = "id_usuario_auth", unique = true)
+    private Long idUsuarioAuth;
+
+    @Column(name = "rut", unique = true)
     private String rut;
 
+    @Column(name = "nombre")
     private String nombre;
+
+    @Column(name = "apellido_paterno")
     private String apellidoPaterno;
+
+    @Column(name = "apellido_materno")
     private String apellidoMaterno;
 
-    @Column(unique = true)
+    @Column(name = "correo", unique = true)
     private String correo;
 
+    @Column(name = "telefono")
     private String telefono;
 
     @Transient
@@ -33,6 +46,8 @@ public class Cliente {
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @JsonManagedReference
-    private List<DireccionCliente> direcciones;
+    @Builder.Default
+    private List<DireccionCliente> direcciones = new ArrayList<>();
 }

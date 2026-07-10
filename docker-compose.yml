@@ -70,18 +70,13 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ms_autenticacion
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
+      - APP_CLIENTES_BASE_URL=http://ms-clientes:8082
     command: mvn clean spring-boot:run
     depends_on:
       postgres:
         condition: service_healthy
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./ms-autenticacion/src
-          target: /app/src
-        - action: sync+restart
-          path: ./ms-autenticacion/pom.xml
-          target: /app/pom.xml
+      ms-clientes:
+        condition: service_started
 
   ms-inventario:
     image: maven:3.9.6-eclipse-temurin-21-alpine
