@@ -1,6 +1,6 @@
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api/client";
 import { endpoints } from "@/lib/api/endpoints";
-import { Producto } from "@/types";
+import { Producto } from "../types/producto";
 
 export const productosService = {
   getAll: () => apiGet<Producto[]>(endpoints.productos),

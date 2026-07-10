@@ -3,17 +3,21 @@ package com.smartlogix.inventario.service;
 import com.smartlogix.inventario.dto.BodegaRequest;
 import com.smartlogix.inventario.dto.BodegaResponse;
 import com.smartlogix.inventario.entity.Bodega;
+import com.smartlogix.inventario.entity.ProductoBodega;
 import com.smartlogix.inventario.repository.BodegaRepository;
+import com.smartlogix.inventario.repository.ProductoBodegaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
 public class BodegaService {
 
     private final BodegaRepository bodegaRepository;
+    private final ProductoBodegaRepository productoBodegaRepository;
 
     public List<BodegaResponse> listar() {
         return bodegaRepository.findAll()
@@ -42,8 +46,20 @@ public class BodegaService {
         return toResponse(bodegaRepository.save(bodega));
     }
 
+    @Transactional
     public void eliminar(Integer id) {
-        Bodega bodega = obtenerEntidad(id);
+        Bodega bodega = bodegaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Bodega no encontrada con id: " + id));
+
+        List<ProductoBodega> inventarioAsociado =
+                productoBodegaRepository.findByBodegaIdBodega(id);
+
+        if (!inventarioAsociado.isEmpty()) {
+            throw new IllegalStateException(
+                    "No se puede eliminar la bodega porque tiene inventario asociado."
+            );
+        }
+
         bodegaRepository.delete(bodega);
     }
 

@@ -11,6 +11,8 @@ const adminLinks = [
   { label: "Inicio", href: "/admin" },
   { label: "Clientes", href: "/admin/clientes" },
   { label: "Productos", href: "/admin/productos" },
+  { label: "Bodegas", href: "/admin/bodegas" },
+  { label: "Inventario", href: "/admin/inventario" },
   { label: "Ventas", href: "/admin/ventas" },
   { label: "Transportistas", href: "/admin/transportistas" },
 ];
