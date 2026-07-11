@@ -7,16 +7,19 @@ import lombok.Data;
 @Data
 public class TransferenciaStockRequest {
 
-    @NotNull
-    private Long idProducto;
+    @NotNull(message = "La presentación es obligatoria")
+    private Long idPresentacion;       // antes era idProducto
 
-    @NotNull
+    @NotNull(message = "La bodega origen es obligatoria")
     private Integer idBodegaOrigen;
 
-    @NotNull
+    @NotNull(message = "La bodega destino es obligatoria")
     private Integer idBodegaDestino;
 
-    @NotNull
-    @Min(1)
+    @NotNull(message = "La cantidad es obligatoria")
+    @Min(value = 1, message = "La cantidad mínima es 1")
     private Integer cantidad;
+
+    private String observacion;
+    private String usuarioResponsable;
 }

@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public class AjusteStockRequest {
 
-    @NotNull
-    private Integer cantidad;
+    @NotNull(message = "La cantidad es obligatoria")
+    private Integer cantidad; // positivo = entrada, negativo = salida
 }

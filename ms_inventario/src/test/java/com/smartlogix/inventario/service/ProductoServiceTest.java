@@ -1,11 +1,9 @@
 package com.smartlogix.inventario.service;
 
 import com.smartlogix.inventario.entity.Bodega;
-import com.smartlogix.inventario.entity.Producto;
+import com.smartlogix.inventario.entity.Perfume;
 import com.smartlogix.inventario.entity.ProductoBodega;
 import com.smartlogix.inventario.repository.BodegaRepository;
-import com.smartlogix.inventario.repository.ProductoBodegaRepository;
-import com.smartlogix.inventario.repository.ProductoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +34,7 @@ class ProductoServiceTest {
     @InjectMocks
     private ProductoService productoService;
 
-    private Producto producto;
+    private Perfume producto;
     private Bodega bodega1;
     private Bodega bodega2;
     private ProductoBodega stockB1;
@@ -44,7 +42,7 @@ class ProductoServiceTest {
 
     @BeforeEach
     void setUp() {
-        producto = new Producto();
+        producto = new Perfume();
         producto.setIdProducto(1L);
         producto.setSku("TEC-001");
         producto.setNombre("Teclado Mecánico");
@@ -85,7 +83,7 @@ class ProductoServiceTest {
         when(productoBodegaRepository.findByProductoIdProducto(1L))
                 .thenReturn(List.of(stockB1, stockB2));
 
-        List<Producto> resultado = productoService.listarTodos();
+        List<Perfume> resultado = productoService.listarTodos();
 
         assertEquals(1, resultado.size());
         assertEquals(80, resultado.get(0).getStockTotal()); // 50 + 30
@@ -97,7 +95,7 @@ class ProductoServiceTest {
         when(productoBodegaRepository.findByProductoIdProducto(1L))
                 .thenReturn(List.of());
 
-        List<Producto> resultado = productoService.listarTodos();
+        List<Perfume> resultado = productoService.listarTodos();
 
         assertEquals(0, resultado.get(0).getStockTotal());
     }
@@ -106,12 +104,12 @@ class ProductoServiceTest {
 
     @Test
     void guardar_productoNuevo_asignaStockEnTodasLasBodegas() {
-        Producto nuevo = new Producto();
+        Perfume nuevo = new Perfume();
         nuevo.setIdProducto(null); // es nuevo
         nuevo.setSku("MOU-002");
         nuevo.setNombre("Mouse Gamer");
 
-        Producto guardado = new Producto();
+        Perfume guardado = new Perfume();
         guardado.setIdProducto(5L);
         guardado.setSku("MOU-002");
 
@@ -120,7 +118,7 @@ class ProductoServiceTest {
         when(productoBodegaRepository.save(any(ProductoBodega.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
 
-        Producto resultado = productoService.guardar(nuevo);
+        Perfume resultado = productoService.guardar(nuevo);
 
         assertNotNull(resultado);
         assertEquals(5L, resultado.getIdProducto());
@@ -130,10 +128,10 @@ class ProductoServiceTest {
 
     @Test
     void guardar_productoNuevo_stockInicialEntre10y100() {
-        Producto nuevo = new Producto();
+        Perfume nuevo = new Perfume();
         nuevo.setSku("MON-003");
 
-        Producto guardado = new Producto();
+        Perfume guardado = new Perfume();
         guardado.setIdProducto(6L);
 
         when(productoRepository.save(nuevo)).thenReturn(guardado);
@@ -155,7 +153,7 @@ class ProductoServiceTest {
 
     @Test
     void actualizar_modificaCamposCorrectamente() {
-        Producto cambios = new Producto();
+        Perfume cambios = new Perfume();
         cambios.setSku("TEC-001-V2");
         cambios.setNombre("Teclado Mecánico Pro");
         cambios.setPrecioActual(55000);
@@ -165,9 +163,9 @@ class ProductoServiceTest {
         cambios.setEstado("ACTIVO");
 
         when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
-        when(productoRepository.save(any(Producto.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(productoRepository.save(any(Perfume.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        Producto resultado = productoService.actualizar(1L, cambios);
+        Perfume resultado = productoService.actualizar(1L, cambios);
 
         assertEquals("TEC-001-V2", resultado.getSku());
         assertEquals("Teclado Mecánico Pro", resultado.getNombre());
@@ -180,7 +178,7 @@ class ProductoServiceTest {
         when(productoRepository.findById(99L)).thenReturn(Optional.empty());
 
         RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> productoService.actualizar(99L, new Producto()));
+                () -> productoService.actualizar(99L, new Perfume()));
 
         assertTrue(ex.getMessage().contains("99"));
     }
@@ -190,7 +188,7 @@ class ProductoServiceTest {
         when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
         when(productoRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        productoService.actualizar(1L, new Producto());
+        productoService.actualizar(1L, new Perfume());
 
         // nunca debe tocar la tabla producto_bodega al actualizar
         verify(productoBodegaRepository, never()).save(any());
@@ -203,7 +201,7 @@ class ProductoServiceTest {
     void buscarPorId_existente_retornaProducto() {
         when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
 
-        Producto resultado = productoService.buscarPorId(1L);
+        Perfume resultado = productoService.buscarPorId(1L);
 
         assertNotNull(resultado);
         assertEquals("TEC-001", resultado.getSku());

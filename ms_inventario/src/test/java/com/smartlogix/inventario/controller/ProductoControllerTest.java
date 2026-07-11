@@ -1,9 +1,7 @@
 package com.smartlogix.inventario.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smartlogix.inventario.dto.DescuentoStockDto;
-import com.smartlogix.inventario.entity.Producto;
-import com.smartlogix.inventario.service.ProductoService;
+import com.smartlogix.inventario.entity.Perfume;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +29,11 @@ class ProductoControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private Producto producto;
+    private Perfume producto;
 
     @BeforeEach
     void setUp() {
-        producto = new Producto();
+        producto = new Perfume();
         producto.setIdProducto(1L);
         producto.setSku("TEC-001");
         producto.setNombre("Teclado Mecánico");
@@ -79,18 +77,18 @@ class ProductoControllerTest {
 
     @Test
     void crear_retornaProductoGuardado() throws Exception {
-        Producto nuevo = new Producto();
+        Perfume nuevo = new Perfume();
         nuevo.setSku("MOU-002");
         nuevo.setNombre("Mouse Gamer");
         nuevo.setPrecioActual(35000);
         nuevo.setEstado("ACTIVO");
 
-        Producto guardado = new Producto();
+        Perfume guardado = new Perfume();
         guardado.setIdProducto(2L);
         guardado.setSku("MOU-002");
         guardado.setNombre("Mouse Gamer");
 
-        when(productoService.guardar(any(Producto.class))).thenReturn(guardado);
+        when(productoService.guardar(any(Perfume.class))).thenReturn(guardado);
 
         mockMvc.perform(post("/api/productos")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -102,18 +100,18 @@ class ProductoControllerTest {
 
     @Test
     void actualizar_retornaProductoActualizado() throws Exception {
-        Producto cambios = new Producto();
+        Perfume cambios = new Perfume();
         cambios.setSku("TEC-001-V2");
         cambios.setNombre("Teclado Pro");
         cambios.setPrecioActual(55000);
         cambios.setEstado("ACTIVO");
 
-        Producto actualizado = new Producto();
+        Perfume actualizado = new Perfume();
         actualizado.setIdProducto(1L);
         actualizado.setSku("TEC-001-V2");
         actualizado.setNombre("Teclado Pro");
 
-        when(productoService.actualizar(eq(1L), any(Producto.class))).thenReturn(actualizado);
+        when(productoService.actualizar(eq(1L), any(Perfume.class))).thenReturn(actualizado);
 
         mockMvc.perform(put("/api/productos/1")
                         .contentType(MediaType.APPLICATION_JSON)

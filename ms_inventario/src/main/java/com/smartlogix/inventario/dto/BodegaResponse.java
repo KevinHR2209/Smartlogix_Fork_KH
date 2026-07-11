@@ -8,5 +8,6 @@ import lombok.Data;
 public class BodegaResponse {
     private Integer idBodega;
     private String nombre;
-    private String direccionFisica;
+    private Boolean activa;
+    private DireccionBodegaResponse direccion;
 }

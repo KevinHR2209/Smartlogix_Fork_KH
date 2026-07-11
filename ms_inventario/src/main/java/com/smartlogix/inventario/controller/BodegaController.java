@@ -18,12 +18,17 @@ public class BodegaController {
     private final BodegaService bodegaService;
 
     @GetMapping
-    public List<BodegaResponse> listar() {
-        return bodegaService.listar();
+    public ResponseEntity<List<BodegaResponse>> listar() {
+        return ResponseEntity.ok(bodegaService.listarTodas());
+    }
+
+    @GetMapping("/activas")
+    public ResponseEntity<List<BodegaResponse>> listarActivas() {
+        return ResponseEntity.ok(bodegaService.listarActivas());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BodegaResponse> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<BodegaResponse> obtener(@PathVariable Integer id) {
         return ResponseEntity.ok(bodegaService.buscarPorId(id));
     }
 
@@ -35,14 +40,7 @@ public class BodegaController {
     @PutMapping("/{id}")
     public ResponseEntity<BodegaResponse> actualizar(
             @PathVariable Integer id,
-            @Valid @RequestBody BodegaRequest request
-    ) {
+            @Valid @RequestBody BodegaRequest request) {
         return ResponseEntity.ok(bodegaService.actualizar(id, request));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
-        bodegaService.eliminar(id);
-        return ResponseEntity.noContent().build();
     }
 }

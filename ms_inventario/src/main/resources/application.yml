@@ -17,6 +17,7 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
 springdoc:
   api-docs:
-    path: /api/productos/v3/api-docs
+    path: /api/inventario/v3/api-docs

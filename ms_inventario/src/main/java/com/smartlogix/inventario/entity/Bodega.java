@@ -1,15 +1,12 @@
 package com.smartlogix.inventario.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(name = "bodega")
+@Data @NoArgsConstructor @AllArgsConstructor
+@Entity @Table(name = "bodega")
 public class Bodega {
 
     @Id
@@ -17,9 +14,17 @@ public class Bodega {
     @Column(name = "id_bodega")
     private Integer idBodega;
 
-    @Column(name = "nombre", length = 100)
+    @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    @Column(name = "direccion_fisica", length = 200)
-    private String direccionFisica;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_direccion_bodega", nullable = false)
+    private DireccionBodega direccionBodega;
+
+    @Column(name = "activa")
+    private Boolean activa = true;
+
+    @OneToMany(mappedBy = "bodega", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude @JsonIgnore
+    private List<Inventario> inventarios;
 }

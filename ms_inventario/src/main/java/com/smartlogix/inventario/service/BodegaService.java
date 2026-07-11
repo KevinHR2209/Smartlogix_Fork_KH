@@ -1,27 +1,30 @@
 package com.smartlogix.inventario.service;
 
-import com.smartlogix.inventario.dto.BodegaRequest;
-import com.smartlogix.inventario.dto.BodegaResponse;
-import com.smartlogix.inventario.entity.Bodega;
-import com.smartlogix.inventario.entity.ProductoBodega;
-import com.smartlogix.inventario.repository.BodegaRepository;
-import com.smartlogix.inventario.repository.ProductoBodegaRepository;
+import com.smartlogix.inventario.dto.*;
+import com.smartlogix.inventario.entity.*;
+import com.smartlogix.inventario.exception.ResourceNotFoundException;
+import com.smartlogix.inventario.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class BodegaService {
 
     private final BodegaRepository bodegaRepository;
-    private final ProductoBodegaRepository productoBodegaRepository;
+    private final ComunaRepository comunaRepository;
 
-    public List<BodegaResponse> listar() {
-        return bodegaRepository.findAll()
-                .stream()
+    public List<BodegaResponse> listarTodas() {
+        return bodegaRepository.findAll().stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public List<BodegaResponse> listarActivas() {
+        return bodegaRepository.findByActivaTrue().stream()
                 .map(this::toResponse)
                 .toList();
     }
@@ -30,49 +33,71 @@ public class BodegaService {
         return toResponse(obtenerEntidad(id));
     }
 
+    @Transactional
     public BodegaResponse crear(BodegaRequest request) {
+        Comuna comuna = comunaRepository.findById(request.getDireccion().getIdComuna())
+                .orElseThrow(() -> new RuntimeException("Comuna no encontrada con id: "
+                        + request.getDireccion().getIdComuna()));
+
+        DireccionBodega direccion = new DireccionBodega();
+        direccion.setComuna(comuna);
+        direccion.setCalle(request.getDireccion().getCalle());
+        direccion.setNumero(request.getDireccion().getNumero());
+        direccion.setDetalle(request.getDireccion().getDetalle());
+
         Bodega bodega = new Bodega();
         bodega.setNombre(request.getNombre());
-        bodega.setDireccionFisica(request.getDireccionFisica());
-
-        return toResponse(bodegaRepository.save(bodega));
-    }
-
-    public BodegaResponse actualizar(Integer id, BodegaRequest request) {
-        Bodega bodega = obtenerEntidad(id);
-        bodega.setNombre(request.getNombre());
-        bodega.setDireccionFisica(request.getDireccionFisica());
+        bodega.setDireccionBodega(direccion);
+        bodega.setActiva(request.getActiva() != null ? request.getActiva() : true);
 
         return toResponse(bodegaRepository.save(bodega));
     }
 
     @Transactional
-    public void eliminar(Integer id) {
-        Bodega bodega = bodegaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Bodega no encontrada con id: " + id));
+    public BodegaResponse actualizar(Integer id, BodegaRequest request) {
+        Bodega bodega = obtenerEntidad(id);
 
-        List<ProductoBodega> inventarioAsociado =
-                productoBodegaRepository.findByBodegaIdBodega(id);
+        Comuna comuna = comunaRepository.findById(request.getDireccion().getIdComuna())
+                .orElseThrow(() -> new RuntimeException("Comuna no encontrada con id: "
+                        + request.getDireccion().getIdComuna()));
 
-        if (!inventarioAsociado.isEmpty()) {
-            throw new IllegalStateException(
-                    "No se puede eliminar la bodega porque tiene inventario asociado."
-            );
-        }
+        bodega.getDireccionBodega().setComuna(comuna);
+        bodega.getDireccionBodega().setCalle(request.getDireccion().getCalle());
+        bodega.getDireccionBodega().setNumero(request.getDireccion().getNumero());
+        bodega.getDireccionBodega().setDetalle(request.getDireccion().getDetalle());
+        bodega.setNombre(request.getNombre());
+        bodega.setActiva(request.getActiva());
 
-        bodegaRepository.delete(bodega);
+        return toResponse(bodegaRepository.save(bodega));
+    }
+
+    public Bodega obtenerEntidadParaUso(Integer id) {
+        return obtenerEntidad(id);
     }
 
     private Bodega obtenerEntidad(Integer id) {
         return bodegaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Bodega no encontrada con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Bodega", id));
     }
 
-    private BodegaResponse toResponse(Bodega bodega) {
+    private BodegaResponse toResponse(Bodega b) {
+        DireccionBodega dir = b.getDireccionBodega();
+        DireccionBodegaResponse dirResponse = DireccionBodegaResponse.builder()
+                .idDireccionBodega(dir.getIdDireccionBodega())
+                .idComuna(dir.getComuna().getIdComuna())
+                .nombreComuna(dir.getComuna().getNombreComuna())
+                .nombreProvincia(dir.getComuna().getProvincia().getNombreProvincia())
+                .nombreRegion(dir.getComuna().getProvincia().getRegion().getNombreRegion())
+                .calle(dir.getCalle())
+                .numero(dir.getNumero())
+                .detalle(dir.getDetalle())
+                .build();
+
         return BodegaResponse.builder()
-                .idBodega(bodega.getIdBodega())
-                .nombre(bodega.getNombre())
-                .direccionFisica(bodega.getDireccionFisica())
+                .idBodega(b.getIdBodega())
+                .nombre(b.getNombre())
+                .activa(b.getActiva())
+                .direccion(dirResponse)
                 .build();
     }
 }

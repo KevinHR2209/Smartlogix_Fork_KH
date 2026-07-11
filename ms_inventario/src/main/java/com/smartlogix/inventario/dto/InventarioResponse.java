@@ -2,6 +2,8 @@ package com.smartlogix.inventario.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 
 @Data
 @Builder
@@ -9,9 +11,16 @@ public class InventarioResponse {
     private Long idInventario;
     private Integer idBodega;
     private String nombreBodega;
-    private Long idProducto;
-    private String sku;
-    private String nombreProducto;
+    private Long idPresentacion;
+    private Integer volumenMl;
+    private String tipoEnvase;
+    private BigDecimal precioActual;
+    private Long idPerfume;
+    private String nombrePerfume;
+    private String skuPerfume;
     private Integer stockDisponible;
     private Integer stockReservado;
+    private Integer stockMinimo;
+    private Boolean stockBajo;         // true si stockDisponible <= stockMinimo
+    private OffsetDateTime ultimaActualizacion;
 }

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
 import { pedidosService } from '../services/pedidosService';
-import { Pedido } from '@/types';
+import { Pedido } from '../types/pedido';
 
 export function usePedidos() {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
