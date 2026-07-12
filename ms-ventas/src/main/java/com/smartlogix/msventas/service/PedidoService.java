@@ -38,58 +38,51 @@ public class PedidoService {
     }
 
     @Transactional
-    public Pedido crear(Pedido pedido, String regionDestino) {
+        public Pedido crear(PedidoRequest request) {
 
-        // ── Validar cliente ──────────────────────────────────────────────────
-        try {
-            clienteClient.validarCliente(pedido.getIdCliente());
-        } catch (HttpClientErrorException.NotFound e) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Cliente con id " + pedido.getIdCliente() + " no existe");
-        } catch (HttpClientErrorException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Error al validar cliente: " + e.getStatusCode());
-        } catch (HttpServerErrorException | ResourceAccessException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.SERVICE_UNAVAILABLE,
-                    "Servicio de clientes no disponible. Intente nuevamente.");
-        }
-
-        if (pedido.getFechaCreacion() == null) {
-            pedido.setFechaCreacion(OffsetDateTime.now());
-        }
-
-        // ── Descontar stock por cada detalle (usando idPresentacion) ─────────
-        if (pedido.getDetalles() != null) {
-            for (DetallePedido d : pedido.getDetalles()) {
-                d.setPedido(pedido);
-                try {
-                    inventarioClient.descontarStock(d.getIdPresentacion(), d.getCantidad(), regionDestino);
-                } catch (HttpClientErrorException.NotFound e) {
-                    throw new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST,
-                            "Presentación con id " + d.getIdPresentacion() + " no encontrada en inventario");
-                } catch (HttpClientErrorException.UnprocessableEntity e) {
-                    throw new ResponseStatusException(
-                            HttpStatus.UNPROCESSABLE_ENTITY,
-                            "Stock insuficiente para la presentación con id " + d.getIdPresentacion());
-                } catch (HttpClientErrorException e) {
-                    throw new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST,
-                            "Error al descontar stock de la presentación " + d.getIdPresentacion()
-                                    + ": " + e.getStatusCode());
-                } catch (HttpServerErrorException | ResourceAccessException e) {
-                    throw new ResponseStatusException(
-                            HttpStatus.SERVICE_UNAVAILABLE,
-                            "Servicio de inventario no disponible. Intente nuevamente.");
-                }
+            // 1. Validar cliente
+            try {
+                clienteClient.validarCliente(request.idCliente());
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cliente no válido o servicio inaccesible.");
             }
-        }
 
-        return pedidoRepository.save(pedido);
-    }
+            // 2. Preparar la cabecera del pedido
+            Pedido pedido = new Pedido();
+            pedido.setIdCliente(request.idCliente());
+            pedido.setFechaCreacion(OffsetDateTime.now());
+            pedido.setEstadoPedido("PENDIENTE_PAGO"); // <-- Estado inicial correcto
+
+            int montoTotalCalculado = 0;
+            List<DetallePedido> detalles = new ArrayList<>();
+
+            // 3. Procesar detalles de forma segura
+            for (DetallePedidoRequest item : request.detalles()) {
+
+                // A. Consultar precio REAL en inventario (Ignoramos el del frontend)
+                PresentacionResponse presentacion = inventarioClient.obtenerPresentacion(item.idPresentacion());
+                int precioReal = presentacion.precioActual().intValue();
+
+                // B. Reservar el stock (Aún no descontarlo)
+                inventarioClient.reservarStock(item.idPresentacion(), item.cantidad());
+
+                // C. Armar el detalle
+                DetallePedido detalle = new DetallePedido();
+                detalle.setPedido(pedido);
+                detalle.setIdPresentacion(item.idPresentacion());
+                detalle.setCantidad(item.cantidad());
+                detalle.setPrecioUnitarioSnapshot(precioReal);
+
+                detalles.add(detalle);
+                montoTotalCalculado += (precioReal * item.cantidad());
+            }
+
+            pedido.setDetalles(detalles);
+            pedido.setMontoTotal(montoTotalCalculado);
+
+            // 4. Guardar en base de datos
+            return pedidoRepository.save(pedido);
+        }
 
     public Pedido cambiarEstado(Long id, String estado) {
         Pedido pedido = buscarPorId(id);
