@@ -9,29 +9,29 @@ import lombok.Data;
 @Data
 public class CrearClienteDesdeAuthRequest {
 
-    @NotNull
+    @NotNull(message = "El id de usuario auth es obligatorio")
     private Long idUsuarioAuth;
 
-    @NotBlank
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
-    @NotBlank
+    @NotBlank(message = "El apellido paterno es obligatorio")
     private String apellidoPaterno;
 
-    @NotBlank
+    @NotBlank(message = "El apellido materno es obligatorio")
     private String apellidoMaterno;
 
-    @Email
-    @NotBlank
+    @Email(message = "El correo debe tener formato válido")
+    @NotBlank(message = "El correo es obligatorio")
     private String correo;
 
-    @NotBlank
+    @NotBlank(message = "El RUT es obligatorio")
     private String rut;
 
-    @NotBlank
+    @NotBlank(message = "El teléfono es obligatorio")
     private String telefono;
 
     @Valid
-    @NotNull
+    @NotNull(message = "La dirección principal es obligatoria")
     private DireccionPrincipalRequest direccionPrincipal;
 }

@@ -41,9 +41,6 @@ public class Cliente {
     @Column(name = "telefono")
     private String telefono;
 
-    @Transient
-    private String region;
-
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

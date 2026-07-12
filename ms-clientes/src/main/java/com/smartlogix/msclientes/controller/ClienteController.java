@@ -1,7 +1,8 @@
 package com.smartlogix.msclientes.controller;
 
+import com.smartlogix.msclientes.dto.ClienteResponse;
 import com.smartlogix.msclientes.dto.CrearClienteDesdeAuthRequest;
-import com.smartlogix.msclientes.model.Cliente;
+import com.smartlogix.msclientes.dto.DireccionClienteResponse;
 import com.smartlogix.msclientes.service.ClienteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,36 +15,47 @@ import java.util.List;
 @RequestMapping("/api/clientes")
 @RequiredArgsConstructor
 public class ClienteController {
+
     private final ClienteService service;
 
     @GetMapping
-    public List<Cliente> listar() {
-        return service.listar();
+    public ResponseEntity<List<ClienteResponse>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(service.buscarPorId(id));
-    }
-
-    @PostMapping
-    public ResponseEntity<Cliente> crear(@RequestBody Cliente cliente) {
-        return ResponseEntity.status(201).body(service.crear(cliente));
+    public ResponseEntity<ClienteResponse> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarPorIdDto(id));
     }
 
     @PostMapping("/desde-auth")
-    public ResponseEntity<Cliente> crearDesdeAuth(@Valid @RequestBody CrearClienteDesdeAuthRequest request) {
+    public ResponseEntity<ClienteResponse> crearDesdeAuth(
+            @Valid @RequestBody CrearClienteDesdeAuthRequest request) {
         return ResponseEntity.status(201).body(service.crearDesdeAuth(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> actualizar(@PathVariable Long id, @RequestBody Cliente cliente) {
-        return ResponseEntity.ok(service.actualizar(id, cliente));
+    public ResponseEntity<ClienteResponse> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody CrearClienteDesdeAuthRequest request) {
+        return ResponseEntity.ok(service.actualizar(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // ── Direcciones del cliente ───────────────────────────────────────────────
+
+    @GetMapping("/{id}/direcciones")
+    public ResponseEntity<List<DireccionClienteResponse>> listarDirecciones(@PathVariable Long id) {
+        return ResponseEntity.ok(service.listarDirecciones(id));
+    }
+
+    @GetMapping("/{id}/direccion-principal")
+    public ResponseEntity<DireccionClienteResponse> getDireccionPrincipal(@PathVariable Long id) {
+        return ResponseEntity.ok(service.obtenerDireccionPrincipal(id));
     }
 }

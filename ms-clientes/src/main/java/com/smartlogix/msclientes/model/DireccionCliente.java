@@ -24,8 +24,11 @@ public class DireccionCliente {
     @JsonBackReference
     private Cliente cliente;
 
-    @Column(name = "id_comuna")
-    private Integer idComuna;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_comuna")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Comuna comuna;  // relación real, no solo Integer
 
     @Column(name = "calle")
     private String calle;

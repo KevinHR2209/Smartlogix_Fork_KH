@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class DireccionPrincipalRequest {
+public class DireccionRequest {
 
     @NotNull(message = "La comuna es obligatoria")
     private Integer idComuna;
@@ -17,4 +17,6 @@ public class DireccionPrincipalRequest {
     private String numero;
 
     private String detalle;
+
+    private Boolean esPrincipal = false;
 }
