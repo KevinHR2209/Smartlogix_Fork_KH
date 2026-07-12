@@ -1,32 +1,18 @@
-package com.smartlogix.mslogistica.model;
+package com.smartlogix.mslogistica.dto;
 
-import jakarta.persistence.*;
-import lombok.*;
-
+import lombok.Builder;
+import lombok.Data;
 import java.time.OffsetDateTime;
 
-@Entity
-@Table(name = "despacho")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class Despacho {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class DespachoResponse {
     private Long idDespacho;
-
-    private Long idPedido; // referencia lógica a ms-ventas
-
+    private Long idPedido;
     private String direccionEntrega;
-
     private String comunaEntrega;
-
-    private String estadoDespacho; // PENDIENTE, EN_RUTA, ENTREGADO, CANCELADO, PROBLEMA_ENTREGA
-
+    private String estadoDespacho;
     private OffsetDateTime fechaCreacion;
-
     private OffsetDateTime fechaEntregaEstimada;
 
     // ── CAMPOS COURIER ────────────────────────────────────────────────────────
