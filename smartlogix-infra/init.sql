@@ -7,45 +7,87 @@ CREATE DATABASE ms_autenticacion;
 -- =========================
 -- ms_cliente
 -- =========================
+
 \connect ms_cliente
 
+-- ============================================================
+-- BD: ms_cliente  (ecommerce perfumes)
+-- ============================================================
+
 CREATE TABLE "region" (
-                          "id_region" int PRIMARY KEY,
-                          "nombre_region" varchar(100)
+  "id_region"      int PRIMARY KEY,
+  "codigo_region"  varchar(10) UNIQUE,
+  "nombre_region"  varchar(100) NOT NULL
 );
 
 CREATE TABLE "provincia" (
-                             "id_provincia" int PRIMARY KEY,
-                             "id_region" int,
-                             "nombre_provincia" varchar(100)
+  "id_provincia"      int PRIMARY KEY,
+  "id_region"         int NOT NULL,
+  "nombre_provincia"  varchar(100) NOT NULL
 );
 
 CREATE TABLE "comuna" (
-                          "id_comuna" int PRIMARY KEY,
-                          "id_provincia" int,
-                          "nombre_comuna" varchar(100)
+  "id_comuna"      int PRIMARY KEY,
+  "id_provincia"   int NOT NULL,
+  "nombre_comuna"  varchar(100) NOT NULL
 );
 
 CREATE TABLE "cliente" (
-                           "id_cliente" bigserial PRIMARY KEY,
-                           "rut" varchar(12) UNIQUE,
-                           "nombre" varchar(100),
-                           "apellido_paterno" varchar(100),
-                           "apellido_materno" varchar(100),
-                           "correo" varchar(150) UNIQUE,
-                           "telefono" varchar(20)
+  "id_cliente"       bigserial PRIMARY KEY,
+  "id_usuario_auth"  bigint UNIQUE,
+  "rut"              varchar(12) UNIQUE,
+  "nombre"           varchar(100),
+  "apellido_paterno" varchar(100),
+  "apellido_materno" varchar(100),
+  "correo"           varchar(150) UNIQUE,
+  "telefono"         varchar(20)
 );
 
 CREATE TABLE "direccion_cliente" (
-                                     "id_direccion" bigserial PRIMARY KEY,
-                                     "id_cliente" bigint,
-                                     "id_comuna" int,
-                                     "calle" varchar(150),
-                                     "numero" varchar(20),
-                                     "detalle" varchar(200),
-                                     "es_principal" boolean DEFAULT true
+  "id_direccion"  bigserial PRIMARY KEY,
+  "id_cliente"    bigint NOT NULL,
+  "id_comuna"     int,
+  "calle"         varchar(150),
+  "numero"        varchar(20),
+  "detalle"       varchar(200),
+  "es_principal"  boolean DEFAULT true
 );
 
+-- Claves foráneas
+ALTER TABLE "provincia"        ADD FOREIGN KEY ("id_region")    REFERENCES "region"   ("id_region");
+ALTER TABLE "comuna"           ADD FOREIGN KEY ("id_provincia")  REFERENCES "provincia" ("id_provincia");
+ALTER TABLE "direccion_cliente" ADD FOREIGN KEY ("id_cliente")   REFERENCES "cliente"  ("id_cliente");
+ALTER TABLE "direccion_cliente" ADD FOREIGN KEY ("id_comuna")    REFERENCES "comuna"   ("id_comuna");
+
+-- Datos iniciales: muestra de regiones, provincias y comunas de Chile
+INSERT INTO "region" VALUES
+  (1,  'I',    'Tarapacá'),
+  (2,  'II',   'Antofagasta'),
+  (4,  'IV',   'Coquimbo'),
+  (5,  'V',    'Valparaíso'),
+  (13, 'RM',   'Metropolitana de Santiago'),
+  (8,  'VIII', 'Biobío');
+
+INSERT INTO "provincia" VALUES
+   (11,  1,  'Iquique'),
+   (21,  2,  'Antofagasta'),
+   (41,  4,  'Elqui'),
+   (51,  5,  'Valparaíso'),
+   (131, 13, 'Santiago'),
+   (132, 13, 'Cordillera'),
+   (81,  8,  'Concepción');
+
+INSERT INTO "comuna" VALUES
+   (1101, 11,  'Iquique'),
+   (1102, 11,  'Alto Hospicio'),
+   (2101, 21,  'Antofagasta'),
+   (4101, 41,  'La Serena'),
+   (4102, 41,  'Coquimbo'),
+   (5101, 51,  'Valparaíso'),
+   (5102, 51,  'Viña del Mar'),
+   (13101, 131, 'Santiago'),
+   (13201, 132, 'Puente Alto'),
+   (8101, 81,  'Concepción');
 -- =========================
 -- ms_inventario (Esquema de Perfumes)
 -- =========================
