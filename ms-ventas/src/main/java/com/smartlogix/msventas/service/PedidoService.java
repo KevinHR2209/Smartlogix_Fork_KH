@@ -6,6 +6,7 @@ import com.smartlogix.msventas.model.DetallePedido;
 import com.smartlogix.msventas.model.Pedido;
 import com.smartlogix.msventas.repository.PedidoRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PedidoService {
@@ -59,24 +61,24 @@ public class PedidoService {
             pedido.setFechaCreacion(OffsetDateTime.now());
         }
 
-        // ── Descontar stock por cada detalle ─────────────────────────────────
+        // ── Descontar stock por cada detalle (usando idPresentacion) ─────────
         if (pedido.getDetalles() != null) {
             for (DetallePedido d : pedido.getDetalles()) {
                 d.setPedido(pedido);
                 try {
-                    inventarioClient.descontarStock(d.getIdProducto(), d.getCantidad(), regionDestino);
+                    inventarioClient.descontarStock(d.getIdPresentacion(), d.getCantidad(), regionDestino);
                 } catch (HttpClientErrorException.NotFound e) {
                     throw new ResponseStatusException(
                             HttpStatus.BAD_REQUEST,
-                            "Producto con id " + d.getIdProducto() + " no encontrado en inventario");
+                            "Presentación con id " + d.getIdPresentacion() + " no encontrada en inventario");
                 } catch (HttpClientErrorException.UnprocessableEntity e) {
                     throw new ResponseStatusException(
                             HttpStatus.UNPROCESSABLE_ENTITY,
-                            "Stock insuficiente para el producto con id " + d.getIdProducto());
+                            "Stock insuficiente para la presentación con id " + d.getIdPresentacion());
                 } catch (HttpClientErrorException e) {
                     throw new ResponseStatusException(
                             HttpStatus.BAD_REQUEST,
-                            "Error al descontar stock del producto " + d.getIdProducto()
+                            "Error al descontar stock de la presentación " + d.getIdPresentacion()
                                     + ": " + e.getStatusCode());
                 } catch (HttpServerErrorException | ResourceAccessException e) {
                     throw new ResponseStatusException(
@@ -93,5 +95,27 @@ public class PedidoService {
         Pedido pedido = buscarPorId(id);
         pedido.setEstadoPedido(estado);
         return pedidoRepository.save(pedido);
+    }
+
+    // ── Transacción Compensatoria (Limpiador / Error de pago) ───────────────
+    @Transactional
+    public void cancelarPedidoYLiberarStock(Long idPedido) {
+        Pedido pedido = buscarPorId(idPedido);
+
+        if ("PENDIENTE_PAGO".equals(pedido.getEstadoPedido())) {
+            pedido.setEstadoPedido("CANCELADO");
+            pedidoRepository.save(pedido);
+
+            if (pedido.getDetalles() != null) {
+                for (DetallePedido detalle : pedido.getDetalles()) {
+                    try {
+                        inventarioClient.liberarStock(detalle.getIdPresentacion(), detalle.getCantidad());
+                        log.info("Stock liberado para la presentación {} del pedido {}", detalle.getIdPresentacion(), idPedido);
+                    } catch (Exception e) {
+                        log.error("Fallo al liberar stock en ms_inventario para presentación {}", detalle.getIdPresentacion(), e);
+                    }
+                }
+            }
+        }
     }
 }

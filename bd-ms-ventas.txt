@@ -9,7 +9,7 @@ CREATE TABLE "pedido" (
 CREATE TABLE "detalle_pedido" (
   "id_detalle" bigserial PRIMARY KEY,
   "id_pedido" bigint,
-  "id_producto" bigint, /* REFERENCIA LÓGICA al MS Inventario */
+  "id_presentacion" bigint, /* REFERENCIA LÓGICA al MS Inventario */
   "cantidad" int,
   "precio_unitario_snapshot" int
 );

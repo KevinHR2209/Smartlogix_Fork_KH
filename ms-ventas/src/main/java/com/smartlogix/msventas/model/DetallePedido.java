@@ -20,7 +20,8 @@ public class DetallePedido {
     @JoinColumn(name = "id_pedido")
     private Pedido pedido;
 
-    private Long idProducto; // referencia lógica al ms-inventario
+    @Column(name = "id_presentacion")
+    private Long idPresentacion; // Reemplazamos idProducto
 
     private Integer cantidad;
 
