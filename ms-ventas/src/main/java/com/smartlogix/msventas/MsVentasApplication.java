@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @OpenAPIDefinition(servers = {@Server(url = "/", description = "Servidor API Gateway")})
 @SpringBootApplication
+@EnableScheduling
 public class MsVentasApplication {
     public static void main(String[] args) {
         SpringApplication.run(MsVentasApplication.class, args);

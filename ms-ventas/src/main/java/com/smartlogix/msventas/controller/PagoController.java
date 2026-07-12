@@ -2,6 +2,7 @@ package com.smartlogix.msventas.controller;
 
 import com.smartlogix.msventas.model.Pago;
 import com.smartlogix.msventas.repository.PagoRepository;
+import com.smartlogix.msventas.service.PedidoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.List;
 public class PagoController {
 
     private final PagoRepository pagoRepository;
+    private final PedidoService pedidoService; // <-- Inyectamos el servicio
 
     @GetMapping
     public List<Pago> listar() {
@@ -28,5 +30,14 @@ public class PagoController {
         }
         Pago guardado = pagoRepository.save(pago);
         return ResponseEntity.status(201).body(guardado);
+    }
+
+    // ENDPOINT COMPENSATORIO
+    @PostMapping("/fallido/{idPedido}")
+    public ResponseEntity<String> registrarPagoFallido(@PathVariable Long idPedido) {
+        // Disparamos la compensación para liberar el stock en ms_inventario
+        pedidoService.cancelarPedidoYLiberarStock(idPedido);
+
+        return ResponseEntity.ok("El pedido ha sido cancelado y el stock fue liberado con éxito.");
     }
 }
