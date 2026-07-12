@@ -35,7 +35,7 @@ spring:
         - id: ms-inventario-route
           uri: ${URL_MS_INVENTARIO:http://localhost:8081}
           predicates:
-            - Path=/api/productos/**, /api/bodegas/**
+            - Path=/api/presentaciones/**, /api/inventario/**, /api/bodegas/**, /api/perfumes/**, /api/marcas/**, /api/familias-olfativas/**, /api/regiones/**, /api/provincias/**, /api/comunas/**
           filters:
             - name: CircuitBreaker
               args:
