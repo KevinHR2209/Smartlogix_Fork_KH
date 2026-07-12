@@ -17,10 +17,9 @@ public class InventarioResponse {
     private BigDecimal precioActual;
     private Long idPerfume;
     private String nombrePerfume;
-    private String skuPerfume;
     private Integer stockDisponible;
     private Integer stockReservado;
     private Integer stockMinimo;
-    private Boolean stockBajo;         // true si stockDisponible <= stockMinimo
+    private Boolean stockBajo;
     private OffsetDateTime ultimaActualizacion;
 }

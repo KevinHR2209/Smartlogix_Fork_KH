@@ -3,6 +3,7 @@ package com.smartlogix.inventario.controller;
 import com.smartlogix.inventario.dto.DescuentoStockRequest;
 import com.smartlogix.inventario.dto.PresentacionRequest;
 import com.smartlogix.inventario.dto.PresentacionResponse;
+import com.smartlogix.inventario.dto.LiberacionStockRequest;
 import com.smartlogix.inventario.service.InventarioService;
 import com.smartlogix.inventario.service.PresentacionPerfumeService;
 import jakarta.validation.Valid;
@@ -72,5 +73,12 @@ public class PresentacionPerfumeController {
     public ResponseEntity<PresentacionResponse> obtenerPorCodigoBarras(
             @PathVariable String codigoBarras) {
         return ResponseEntity.ok(presentacionService.buscarPorCodigoBarras(codigoBarras));
+    }
+    @PutMapping("/{id}/liberar-stock")
+    public ResponseEntity<Void> liberarStock(
+            @PathVariable Long id,
+            @Valid @RequestBody LiberacionStockRequest request) {
+        inventarioService.liberarStockPorPresentacion(id, request.getCantidad());
+        return ResponseEntity.ok().build();
     }
 }

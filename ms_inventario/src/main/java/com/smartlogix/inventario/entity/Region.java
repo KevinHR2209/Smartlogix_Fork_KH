@@ -3,12 +3,14 @@ package com.smartlogix.inventario.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data @NoArgsConstructor @AllArgsConstructor
-@Entity @Table(name = "region")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "region")
 public class Region {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_region")
     private Integer idRegion;
 

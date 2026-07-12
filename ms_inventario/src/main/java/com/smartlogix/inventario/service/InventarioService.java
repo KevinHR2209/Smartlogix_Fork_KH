@@ -5,8 +5,10 @@ import com.smartlogix.inventario.entity.*;
 import com.smartlogix.inventario.exception.ResourceNotFoundException;
 import com.smartlogix.inventario.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -266,7 +268,6 @@ public class InventarioService {
                 .precioActual(pr.getPrecioActual())
                 .idPerfume(pr.getPerfume().getIdPerfume())
                 .nombrePerfume(pr.getPerfume().getNombre())
-                .skuPerfume(pr.getPerfume().getSku())
                 .stockDisponible(inv.getStockDisponible())
                 .stockReservado(inv.getStockReservado())
                 .stockMinimo(inv.getStockMinimo())
@@ -292,5 +293,29 @@ public class InventarioService {
                 .fechaMovimiento(m.getFechaMovimiento())
                 .usuarioResponsable(m.getUsuarioResponsable())
                 .build();
+    }
+    @Transactional
+    public void liberarStockPorPresentacion(Long idPresentacion, Integer cantidad) {
+        List<Inventario> stocks = inventarioRepository
+                .findByPresentacionIdPresentacion(idPresentacion);
+
+        if (stocks.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "No existe inventario para la presentación ID: " + idPresentacion);
+        }
+
+        // Devuelve el stock al primer inventario disponible (el mismo que se descontó)
+        int restante = cantidad;
+        for (Inventario inv : stocks) {
+            if (restante == 0) break;
+            inv.setStockDisponible(inv.getStockDisponible() + restante);
+            inv.setUltimaActualizacion(OffsetDateTime.now());
+            inventarioRepository.save(inv);
+            restante = 0;
+        }
+
+        registrarMovimiento("ENTRADA", stocks.get(0).getPresentacion(),
+                null, stocks.get(0).getBodega(),
+                cantidad, null, "Liberación de stock por cancelación de pedido", null);
     }
 }

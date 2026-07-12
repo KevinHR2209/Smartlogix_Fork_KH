@@ -3,14 +3,16 @@ package com.smartlogix.inventario.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data @NoArgsConstructor @AllArgsConstructor
-@Entity @Table(name = "provincia")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "provincia")
 public class Provincia {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_provincia")
-    private Integer idProvincia;
+    private Integer idProvincia;   // ← sin @GeneratedValue, el ID viene del init.sql
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_region", nullable = false)
