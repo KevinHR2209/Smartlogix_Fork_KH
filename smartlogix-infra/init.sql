@@ -3,6 +3,7 @@ CREATE DATABASE ms_inventario;
 CREATE DATABASE ms_ventas;
 CREATE DATABASE ms_logistica;
 CREATE DATABASE ms_autenticacion;
+CREATE DATABASE ms_ml_forecast;
 
 -- =========================
 -- ms_cliente
@@ -937,3 +938,10 @@ INSERT INTO usuarios ("id_usuario", "nombre", "correo", "password", "rol", "acti
   (12, 'Isidora Vargas', 'isidora.vargas@smartlogix.cl', '$2a$10$F6p8JeVuBHD2GBWX3FHz5eqqNjZJJqy346x8ogucU8oZofIoa2A0i', 'CLIENTE', true),
   (13, 'Admin User', 'admin@smartlogix.cl', '$2a$10$F6p8JeVuBHD2GBWX3FHz5eqqNjZJJqy346x8ogucU8oZofIoa2A0i', 'ADMIN', true),
   (14, 'Cliente Demo', 'cliente@smartlogix.cl', '$2a$10$F6p8JeVuBHD2GBWX3FHz5eqqNjZJJqy346x8ogucU8oZofIoa2A0i', 'CLIENTE', true);
+-- =========================
+-- ms_ml_forecast
+-- =========================
+-- Nota: las tablas de este esquema se crean automaticamente al levantar
+-- ms-ml-forecast (SQLAlchemy Base.metadata.create_all en app/db.py), por
+-- lo que no se listan aqui como CREATE TABLE. Ver ms-ml-forecast/schema.sql
+-- para la referencia completa de columnas.
