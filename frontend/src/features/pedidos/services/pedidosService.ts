@@ -5,6 +5,9 @@ import { Pedido, CrearPedidoPayload } from "@/types";
 export const pedidosService = {
   getAll: () => apiGet<Pedido[]>(endpoints.pedidos),
 
+  // Backend: PedidoController.listarPorCliente -> GET /api/pedidos/cliente/{idCliente}
+  getByCliente: (idCliente: number) => apiGet<Pedido[]>(`${endpoints.pedidos}/cliente/${idCliente}`),
+
   // El backend (PedidoController.crear) ya no recibe regionDestino como
   // query param, ni espera montoTotal/estadoPedido/precioUnitarioSnapshot
   // en el body: calcula el precio real contra ms-inventario y arma el

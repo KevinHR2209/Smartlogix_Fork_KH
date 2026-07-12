@@ -9,6 +9,7 @@ export const endpoints = {
   pagos: {
     mercadopagoPreferencia: (idPedido: number) =>
       `/api/pagos/mercadopago/preferencia/${idPedido}`,
+    mercadopagoEstado: (idPedido: number) => `/api/pagos/mercadopago/estado/${idPedido}`,
   },
   auth: {
     login: "/api/auth/login",

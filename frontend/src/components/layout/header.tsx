@@ -84,6 +84,14 @@ export function Header() {
                   </div>
 
                   <div className="py-2">
+                    <Link
+                      href="/pedidos"
+                      role="menuitem"
+                      onClick={() => setMenuOpen(false)}
+                      className="block w-full rounded-xl px-3 py-2 text-left text-sm text-[var(--foreground)] transition hover:bg-[var(--muted)]"
+                    >
+                      Mis pedidos
+                    </Link>
                     <button
                       type="button"
                       role="menuitem"

@@ -9,3 +9,14 @@ export interface PreferenciaMercadoPago {
   sandbox_init_point: string;
   external_reference: string;
 }
+
+// GET /api/pagos/mercadopago/estado/{idPedido} devuelve el modelo Pago tal
+// cual (mismo shape que el resto de ms-ventas, camelCase normal).
+export interface EstadoPago {
+  idPago: number;
+  montoTransaccion: number;
+  metodoPago: string;
+  estadoPago: string;
+  fechaPago: string;
+  tokenTransaccion: string;
+}
