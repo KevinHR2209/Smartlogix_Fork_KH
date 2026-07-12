@@ -12,4 +12,6 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     // Busca pedidos por estado y anteriores a una fecha
     List<Pedido> findByEstadoPedidoAndFechaCreacionBefore(String estadoPedido, OffsetDateTime fecha);
+    List<Pedido> findByIdCliente(Long idCliente);
+
 }

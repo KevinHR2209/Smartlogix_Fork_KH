@@ -1,5 +1,6 @@
 package com.smartlogix.inventario.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +18,7 @@ public class Provincia {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_region", nullable = false)
     @ToString.Exclude
+    @JsonIgnore
     private Region region;
 
     @Column(name = "nombre_provincia", nullable = false, length = 100)

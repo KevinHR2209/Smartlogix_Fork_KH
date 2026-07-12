@@ -5,31 +5,33 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.math.BigDecimal;
+import com.smartlogix.msventas.dto.PresentacionResponse;
 
 // DTOs auxiliares
 record DescuentoStockRequest(Integer cantidad, String regionDestino) {}
 record LiberacionStockRequest(Integer cantidad) {}
 record CantidadRequest(Integer cantidad) {}
-record PresentacionResponse(Long idPresentacion, BigDecimal precioActual) {}
 
 @Component
 public class InventarioClient {
 
-    private final RestClient restClient;
+    private final RestClient restClientPresentaciones;
+    private final RestClient restClientInventario;
 
     public InventarioClient(@Value("${inventario.service.url:http://ms-inventario:8081}") String baseUrl) {
-        this.restClient = RestClient.builder()
-                // Apuntamos al controlador de presentaciones
+        this.restClientPresentaciones = RestClient.builder()
                 .baseUrl(baseUrl + "/api/presentaciones")
+                .build();
+
+        this.restClientInventario = RestClient.builder()
+                .baseUrl(baseUrl + "/api/inventario")
                 .build();
     }
 
-    // ── NUEVO: Obtener precio real de la presentación ──
+    // ── Obtener precio real de la presentación ──
     public PresentacionResponse obtenerPresentacion(Long idPresentacion) {
         try {
-            return restClient.get()
+            return restClientPresentaciones.get()
                     .uri("/{id}", idPresentacion)
                     .retrieve()
                     .body(PresentacionResponse.class);
@@ -39,28 +41,31 @@ public class InventarioClient {
         }
     }
 
-    // ── NUEVO: Reservar stock para el checkout ──
-    public void reservarStock(Long idPresentacion, Integer cantidad) {
+    // ── Reservar stock (usa el endpoint /api/inventario/{id}/reservar) ──
+    // NOTA: Necesitas el ID de inventario, no el de presentación
+    // Si solo tienes idPresentacion, busca el inventario primero
+    public void reservarStock(Long idInventario, Integer cantidad) {
         CantidadRequest body = new CantidadRequest(cantidad);
         try {
-            restClient.put()
-                    .uri("/{id}/reservar-stock", idPresentacion)
+            restClientInventario.put()
+                    .uri("/{id}/reservar", idInventario)
                     .body(body)
                     .retrieve()
                     .toBodilessEntity();
         } catch (org.springframework.web.client.HttpClientErrorException.UnprocessableEntity e) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Stock insuficiente para la presentación con id " + idPresentacion);
+                    "Stock insuficiente para el inventario " + idInventario);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
-                    "Error al reservar stock en inventario para la presentación " + idPresentacion);
+                    "Error al reservar stock en inventario: " + idInventario);
         }
     }
 
+    // ── Descontar stock (endpoint en /api/presentaciones/{id}/descontar-stock) ──
     public void descontarStock(Long idPresentacion, Integer cantidad, String regionDestino) {
         DescuentoStockRequest body = new DescuentoStockRequest(cantidad, regionDestino);
         try {
-            restClient.put()
+            restClientPresentaciones.put()
                     .uri("/{id}/descontar-stock", idPresentacion)
                     .body(body)
                     .retrieve()
@@ -85,10 +90,11 @@ public class InventarioClient {
         }
     }
 
+    // ── Liberar stock (endpoint en /api/presentaciones/{id}/liberar-stock) ──
     public void liberarStock(Long idPresentacion, Integer cantidad) {
         LiberacionStockRequest body = new LiberacionStockRequest(cantidad);
         try {
-            restClient.put()
+            restClientPresentaciones.put()
                     .uri("/{id}/liberar-stock", idPresentacion)
                     .body(body)
                     .retrieve()

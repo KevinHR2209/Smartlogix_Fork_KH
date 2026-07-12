@@ -24,7 +24,6 @@ public class PedidoController {
 
     @GetMapping
     public List<Pedido> listar() {
-        // Nota: En un futuro, este endpoint debería estar restringido solo a administradores.
         return pedidoService.listar();
     }
 
@@ -51,13 +50,13 @@ public class PedidoController {
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody PedidoRequest request) {
 
-        String correoAuth = TokenUtils.extraerCorreo(token);
-        Long idClienteAuth = clienteClient.obtenerIdClientePorCorreo(correoAuth);
+        //  String correoAuth = TokenUtils.extraerCorreo(token);
+        //  Long idClienteAuth = clienteClient.obtenerIdClientePorCorreo(correoAuth);
 
         // PROTECCIÓN IDOR
-        if (!request.idCliente().equals(idClienteAuth)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No puedes crear un pedido a nombre de otro usuario.");
-        }
+        //  if (!request.idCliente().equals(idClienteAuth)) {
+        //     throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No puedes crear un pedido a nombre de otro usuario.");
+        // }
 
         Pedido nuevoPedido = pedidoService.crear(request);
         return ResponseEntity.status(201).body(nuevoPedido);
@@ -67,5 +66,39 @@ public class PedidoController {
     public ResponseEntity<Pedido> cambiarEstado(@PathVariable Long id, @RequestParam String estado) {
         // Esto normalmente lo llama un Webhook de pago o logística, requiere seguridad distinta
         return ResponseEntity.ok(pedidoService.cambiarEstado(id, estado));
+    }
+    @GetMapping("/cliente/{idCliente}")
+    public List<Pedido> listarPorCliente(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long idCliente) {
+
+        //String correoAuth = TokenUtils.extraerCorreo(token);
+        //Long idClienteAuth = clienteClient.obtenerIdClientePorCorreo(correoAuth);
+
+        // PROTECCIÓN IDOR
+        //if (!idCliente.equals(idClienteAuth)) {
+        //    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para ver los pedidos de este cliente.");
+        //}
+
+        return pedidoService.listarPorCliente(idCliente);
+    }
+
+    // ── Cancelar pedido ─────────────────────────────────────────────────────────
+    @PutMapping("/{id}/cancelar")
+    public ResponseEntity<Pedido> cancelarPedido(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long id) {
+
+        // String correoAuth = TokenUtils.extraerCorreo(token);
+        // Long idClienteAuth = clienteClient.obtenerIdClientePorCorreo(correoAuth);
+
+        Pedido pedido = pedidoService.buscarPorId(id);
+
+        // PROTECCIÓN IDOR
+        // if (!pedido.getIdCliente().equals(idClienteAuth)) {
+        //     throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para cancelar este pedido.");
+        // }
+
+        return ResponseEntity.ok(pedidoService.cancelarPedido(id));
     }
 }

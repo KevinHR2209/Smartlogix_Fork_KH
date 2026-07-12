@@ -1,5 +1,6 @@
 package com.smartlogix.msventas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,10 +22,11 @@ public class Pedido {
 
     private OffsetDateTime fechaCreacion;
 
-    private Integer montoTotal;
+    private Long montoTotal;
 
     private String estadoPedido;
 
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<DetallePedido> detalles;
 }

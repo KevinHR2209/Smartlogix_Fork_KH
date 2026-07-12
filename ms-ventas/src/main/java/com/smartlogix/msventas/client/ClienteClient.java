@@ -1,19 +1,12 @@
 package com.smartlogix.msventas.client;
 
+import com.smartlogix.msventas.dto.ClienteDto;
+import com.smartlogix.msventas.dto.DireccionClienteResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
-
-record ClienteDto(Long idCliente, String rut, String nombre) {}
-
-// DTO DE RESPUESTA
-record DireccionClienteResponse(String calle, String numero, String detalle, String comuna) {
-    public String getDireccionCompleta() {
-        return calle + " " + (numero != null ? numero : "") + " " + (detalle != null ? detalle : "");
-    }
-}
 
 @Component
 public class ClienteClient {
@@ -49,18 +42,19 @@ public class ClienteClient {
     }
 
     public Long obtenerIdClientePorCorreo(String correo) {
-            try {
-                ClienteDto cliente = restClient.get()
-                        .uri("/correo/{correo}", correo)
-                        .retrieve()
-                        .body(ClienteDto.class);
-                return cliente.idCliente();
-            } catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Cliente no encontrado para el correo: " + correo);
-            }
+        try {
+            ClienteDto cliente = restClient.get()
+                    .uri("/correo/{correo}", correo)
+                    .retrieve()
+                    .body(ClienteDto.class);
+            return cliente.idCliente();
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Cliente no encontrado para el correo: " + correo);
         }
+    }
 
-    // RESCATAR DIRECCIÓN
     public DireccionClienteResponse obtenerDireccionPrincipal(Long idCliente) {
         try {
             return restClient.get()
@@ -68,7 +62,8 @@ public class ClienteClient {
                     .retrieve()
                     .body(DireccionClienteResponse.class);
         } catch (Exception e) {
-            throw new RuntimeException("No se pudo obtener la dirección del cliente " + idCliente, e);
+            throw new RuntimeException(
+                    "No se pudo obtener la dirección del cliente " + idCliente, e);
         }
     }
 }

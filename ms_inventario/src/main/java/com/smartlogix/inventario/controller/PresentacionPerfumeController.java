@@ -5,6 +5,7 @@ import com.smartlogix.inventario.dto.PresentacionRequest;
 import com.smartlogix.inventario.dto.PresentacionResponse;
 import com.smartlogix.inventario.dto.LiberacionStockRequest;
 import com.smartlogix.inventario.service.InventarioService;
+import com.smartlogix.inventario.dto.CantidadRequest;
 import com.smartlogix.inventario.service.PresentacionPerfumeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -79,6 +80,13 @@ public class PresentacionPerfumeController {
             @PathVariable Long id,
             @Valid @RequestBody LiberacionStockRequest request) {
         inventarioService.liberarStockPorPresentacion(id, request.getCantidad());
+        return ResponseEntity.ok().build();
+    }
+    @PutMapping("/{id}/reservar-stock")
+    public ResponseEntity<Void> reservarStock(
+            @PathVariable Long id,
+            @Valid @RequestBody CantidadRequest request) {
+        inventarioService.reservarStockPorPresentacion(id, request.getCantidad());
         return ResponseEntity.ok().build();
     }
 }

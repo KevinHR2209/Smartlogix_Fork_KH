@@ -55,7 +55,7 @@ public class PedidoService {
         pedido.setFechaCreacion(OffsetDateTime.now());
         pedido.setEstadoPedido("PENDIENTE_PAGO");
 
-        int montoTotalCalculado = 0;
+        long montoTotalCalculado = 0L;
         List<DetallePedido> detalles = new ArrayList<>();
 
         // 3. Procesar detalles de forma segura
@@ -76,7 +76,7 @@ public class PedidoService {
             detalle.setPrecioUnitarioSnapshot(precioReal);
 
             detalles.add(detalle);
-            montoTotalCalculado += (precioReal * item.cantidad());
+            montoTotalCalculado += ((long) precioReal * item.cantidad());
         }
 
         pedido.setDetalles(detalles);
@@ -120,7 +120,10 @@ public class PedidoService {
         Pedido pedido = buscarPorId(idPedido);
 
         if (!"PENDIENTE_PAGO".equals(pedido.getEstadoPedido())) {
-            throw new IllegalStateException("El pedido " + idPedido + " no está pendiente de pago.");
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "El pedido " + idPedido + " no está pendiente de pago. Estado actual: "
+                            + pedido.getEstadoPedido());
         }
 
         // 1. Cambiamos el estado localmente
@@ -130,12 +133,15 @@ public class PedidoService {
         // 2. Rescatar la dirección del cliente desde ms-clientes
         String direccionCompleta = "Dirección no registrada";
         String comuna = "Sin comuna";
+
         try {
             var direccion = clienteClient.obtenerDireccionPrincipal(pedido.getIdCliente());
             direccionCompleta = direccion.getDireccionCompleta();
             comuna = direccion.comuna();
+            log.info("Dirección obtenida para cliente {}: {} - {}", pedido.getIdCliente(), direccionCompleta, comuna);
         } catch (Exception e) {
-            log.warn("No se pudo rescatar la dirección para el cliente {}. Se despachará con datos por defecto.", pedido.getIdCliente());
+            log.warn("No se pudo rescatar la dirección para el cliente {}. Se despachará con datos por defecto. Error: {}",
+                    pedido.getIdCliente(), e.getMessage());
         }
 
         // 3. Confirmar la venta en ms-inventario y enviar a ms-logistica
@@ -143,8 +149,13 @@ public class PedidoService {
             for (DetallePedido detalle : pedido.getDetalles()) {
                 try {
                     inventarioClient.descontarStock(detalle.getIdPresentacion(), detalle.getCantidad(), comuna);
+                    log.info("Stock descontado para presentación {} - cantidad: {}", detalle.getIdPresentacion(), detalle.getCantidad());
                 } catch (Exception e) {
                     log.error("Fallo al descontar stock definitivo para presentación {}", detalle.getIdPresentacion(), e);
+                    throw new ResponseStatusException(
+                            HttpStatus.INTERNAL_SERVER_ERROR,
+                            "Error al descontar stock en inventario"
+                    );
                 }
             }
         }
@@ -155,6 +166,36 @@ public class PedidoService {
             log.info("Despacho creado exitosamente en ms-logistica para el pedido {}", idPedido);
         } catch (Exception e) {
             log.error("Fallo al crear el despacho en logística para el pedido {}", idPedido, e);
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error al crear despacho en logística"
+            );
         }
+    }
+
+    // ── Listar pedidos por cliente ──────────────────────────────────────────
+    public List<Pedido> listarPorCliente(Long idCliente) {
+        return pedidoRepository.findByIdCliente(idCliente);
+    }
+
+    // ── Cancelar pedido ─────────────────────────────────────────────────────
+    @Transactional
+    public Pedido cancelarPedido(Long id) {
+        Pedido pedido = buscarPorId(id);
+
+        if (!"PENDIENTE_PAGO".equals(pedido.getEstadoPedido())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Solo se pueden cancelar pedidos en estado PENDIENTE_PAGO");
+        }
+
+        // Liberar stock de las presentaciones
+        if (pedido.getDetalles() != null) {
+            for (DetallePedido detalle : pedido.getDetalles()) {
+                inventarioClient.liberarStock(detalle.getIdPresentacion(), detalle.getCantidad());
+            }
+        }
+
+        pedido.setEstadoPedido("CANCELADO");
+        return pedidoRepository.save(pedido);
     }
 }

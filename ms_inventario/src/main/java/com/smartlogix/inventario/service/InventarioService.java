@@ -318,4 +318,26 @@ public class InventarioService {
                 null, stocks.get(0).getBodega(),
                 cantidad, null, "Liberación de stock por cancelación de pedido", null);
     }
+    @Transactional
+    public void reservarStockPorPresentacion(Long idPresentacion, Integer cantidad) {
+        List<Inventario> stocks = inventarioRepository
+                .findByPresentacionIdPresentacion(idPresentacion);
+
+        if (stocks.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "No existe inventario para la presentación ID: " + idPresentacion);
+        }
+
+        // Reservar del primer inventario disponible
+        Inventario inv = stocks.get(0);
+        if (inv.getStockDisponible() < cantidad) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Stock insuficiente para la presentación ID: " + idPresentacion);
+        }
+
+        inv.setStockDisponible(inv.getStockDisponible() - cantidad);
+        inv.setStockReservado(inv.getStockReservado() + cantidad);
+        inv.setUltimaActualizacion(OffsetDateTime.now());
+        inventarioRepository.save(inv);
+    }
 }
