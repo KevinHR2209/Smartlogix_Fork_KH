@@ -16,7 +16,7 @@ import java.util.List;
 public class PagoController {
 
     private final PagoRepository pagoRepository;
-    private final PedidoService pedidoService; // <-- Inyectamos el servicio
+    private final PedidoService pedidoService;
 
     @GetMapping
     public List<Pago> listar() {
@@ -28,7 +28,13 @@ public class PagoController {
         if (pago.getFechaPago() == null) {
             pago.setFechaPago(OffsetDateTime.now());
         }
+
+        pago.setEstadoPago("APROBADO");
         Pago guardado = pagoRepository.save(pago);
+
+        // Disparamos el Descuento real + Logística
+        pedidoService.procesarPagoExitoso(pago.getIdPedido());
+
         return ResponseEntity.status(201).body(guardado);
     }
 

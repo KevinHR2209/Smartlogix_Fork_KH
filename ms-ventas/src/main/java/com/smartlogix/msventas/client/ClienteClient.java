@@ -8,12 +8,19 @@ import org.springframework.web.server.ResponseStatusException;
 
 record ClienteDto(Long idCliente, String rut, String nombre) {}
 
+// DTO DE RESPUESTA
+record DireccionClienteResponse(String calle, String numero, String detalle, String comuna) {
+    public String getDireccionCompleta() {
+        return calle + " " + (numero != null ? numero : "") + " " + (detalle != null ? detalle : "");
+    }
+}
+
 @Component
 public class ClienteClient {
 
     private final RestClient restClient;
 
-    public ClienteClient(@Value("${clientes.service.url:http://ms--clientes:8082}") String baseUrl) {
+    public ClienteClient(@Value("${clientes.service.url:http://ms-clientes:8082}") String baseUrl) {
         this.restClient = RestClient.builder()
                 .baseUrl(baseUrl + "/api/clientes")
                 .build();
@@ -38,6 +45,18 @@ public class ClienteClient {
             throw new ResponseStatusException(
                     HttpStatus.SERVICE_UNAVAILABLE,
                     "Servicio de clientes no disponible");
+        }
+    }
+
+    // RESCATAR DIRECCIÓN
+    public DireccionClienteResponse obtenerDireccionPrincipal(Long idCliente) {
+        try {
+            return restClient.get()
+                    .uri("/{id}/direccion-principal", idCliente)
+                    .retrieve()
+                    .body(DireccionClienteResponse.class);
+        } catch (Exception e) {
+            throw new RuntimeException("No se pudo obtener la dirección del cliente " + idCliente, e);
         }
     }
 }
