@@ -28,6 +28,12 @@ public class ClienteController {
         return ResponseEntity.ok(service.buscarPorIdDto(id));
     }
 
+    // ENDPOINT PARA MS-VENTAS
+    @GetMapping("/correo/{correo}")
+    public ResponseEntity<ClienteResponse> buscarPorCorreo(@PathVariable String correo) {
+        return ResponseEntity.ok(service.buscarPorCorreoDto(correo));
+    }
+
     @PostMapping("/desde-auth")
     public ResponseEntity<ClienteResponse> crearDesdeAuth(
             @Valid @RequestBody CrearClienteDesdeAuthRequest request) {

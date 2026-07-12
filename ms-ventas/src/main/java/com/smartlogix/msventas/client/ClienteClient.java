@@ -48,6 +48,18 @@ public class ClienteClient {
         }
     }
 
+    public Long obtenerIdClientePorCorreo(String correo) {
+            try {
+                ClienteDto cliente = restClient.get()
+                        .uri("/correo/{correo}", correo)
+                        .retrieve()
+                        .body(ClienteDto.class);
+                return cliente.idCliente();
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Cliente no encontrado para el correo: " + correo);
+            }
+        }
+
     // RESCATAR DIRECCIÓN
     public DireccionClienteResponse obtenerDireccionPrincipal(Long idCliente) {
         try {

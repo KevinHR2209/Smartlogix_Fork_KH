@@ -80,6 +80,14 @@ public class ClienteService {
         return mapCliente(cliente);
     }
 
+    // MÉTODO PARA BÚSQUEDA POR CORREO
+    public ClienteResponse buscarPorCorreoDto(String correo) {
+        Cliente cliente = clienteRepository.findByCorreo(correo)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Cliente no encontrado con el correo: " + correo));
+        return mapCliente(cliente);
+    }
+
     // Usado internamente para validación desde otros servicios
     public Cliente buscarPorId(Long id) {
         return clienteRepository.findById(id)
