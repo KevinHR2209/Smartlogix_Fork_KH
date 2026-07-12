@@ -176,7 +176,7 @@ export default function AdminVentasPage() {
                           key={detalle.idDetalle}
                           className="flex flex-wrap gap-3 text-sm text-zinc-600 dark:text-zinc-300"
                         >
-                          <span>Producto: {detalle.idProducto}</span>
+                          <span>Presentación: {detalle.idPresentacion}</span>
                           <span>Cantidad: {detalle.cantidad}</span>
                           <span>
                             Precio snapshot:{" "}
