@@ -112,6 +112,56 @@
   .estado { text-align: center; color: var(--text-dim); padding: 40px; font-size: 13px; }
   .rango-label { color: var(--text-dim); font-size: 12px; }
 
+  .badge-riesgo {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .badge-riesgo.bajo { background: rgba(34, 195, 166, 0.15); color: var(--accent-2); }
+  .badge-riesgo.medio { background: rgba(255, 176, 32, 0.15); color: var(--warning); }
+  .badge-riesgo.alto { background: rgba(255, 93, 108, 0.15); color: var(--danger); }
+
+  .btn-accion {
+    background: var(--accent);
+    border: none;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn-accion:hover { opacity: 0.9; }
+  .btn-accion:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .buscador-producto {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .buscador-producto select {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    color: var(--text);
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .resultado-producto {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .resultado-producto .kpi { padding: 12px; }
+  .resultado-producto .kpi-value { font-size: 18px; }
+
   @media (max-width: 900px) {
     .grid, .grid-2 { grid-template-columns: 1fr; }
   }
@@ -179,6 +229,48 @@
   <div class="panel">
     <h3>Ventas por marca</h3>
     <div class="chart-wrap"><canvas id="chart-marca"></canvas></div>
+  </div>
+</div>
+
+<div class="grid" style="grid-template-columns: 1fr 1fr; margin-top: 16px;">
+  <div class="panel">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+      <h3 style="margin:0;">Predicción de quiebre de stock (próximos 7 días)</h3>
+      <button class="btn-accion" id="btn-predecir-quiebres">Predecir quiebres</button>
+    </div>
+    <p class="kpi-sub" id="estado-prediccion" style="margin-bottom:12px;"></p>
+    <div style="max-height: 380px; overflow-y: auto;">
+      <table id="tabla-quiebres">
+        <thead><tr><th>Producto</th><th>Riesgo</th><th class="num">Probabilidad</th></tr></thead>
+        <tbody><tr><td colspan="3" class="estado">Click en "Predecir quiebres" para calcular</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Consultar un producto en particular</h3>
+    <div class="buscador-producto">
+      <select id="select-producto">
+        <option value="">Cargando catálogo...</option>
+      </select>
+      <button class="btn-accion" id="btn-consultar-producto">Consultar</button>
+    </div>
+    <div id="resultado-producto-vacio" class="estado">Elige un producto y presiona "Consultar"</div>
+    <div class="resultado-producto" id="resultado-producto" style="display:none;">
+      <div class="kpi">
+        <div class="kpi-label">Demanda estimada</div>
+        <div class="kpi-value" id="rp-demanda">—</div>
+        <div class="kpi-sub">unidades/día</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Riesgo de quiebre</div>
+        <div class="kpi-value" id="rp-riesgo">—</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Probabilidad</div>
+        <div class="kpi-value" id="rp-probabilidad">—</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -334,6 +426,127 @@ document.querySelectorAll(".filtro-btn[data-periodo]").forEach(btn => {
     }
   });
 });
+
+// ── Predicción de quiebre de stock ──────────────────────────────────────
+
+async function cargarCatalogoParaSelector() {
+  const select = document.getElementById("select-producto");
+  try {
+    const resp = await fetch(`${API_BASE}/catalogo`);
+    if (!resp.ok) throw new Error("No se pudo cargar el catálogo");
+    const catalogo = await resp.json();
+    catalogo.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    select.innerHTML = catalogo
+      .map(p => `<option value="${p.id_producto}">${p.nombre} — ${p.marca}</option>`)
+      .join("");
+  } catch (e) {
+    select.innerHTML = `<option value="">Error al cargar catálogo</option>`;
+    console.error(e);
+  }
+}
+
+function badgeRiesgo(nivel) {
+  return `<span class="badge-riesgo ${nivel}">${nivel}</span>`;
+}
+
+async function predecirQuiebres() {
+  const btn = document.getElementById("btn-predecir-quiebres");
+  const estado = document.getElementById("estado-prediccion");
+  const tbody = document.querySelector("#tabla-quiebres tbody");
+
+  btn.disabled = true;
+  btn.textContent = "Entrenando modelo...";
+  estado.textContent = "Esto puede tardar unos segundos (reentrena el modelo con los datos actuales).";
+
+  try {
+    const respEntrenar = await fetch(`${API_BASE}/entrenar`, { method: "POST" });
+    if (!respEntrenar.ok) {
+      const err = await respEntrenar.json().catch(() => ({}));
+      throw new Error(err.detail || "Error al entrenar el modelo");
+    }
+
+    const respAlertas = await fetch(`${API_BASE}/alertas/quiebre`);
+    if (!respAlertas.ok) throw new Error("Error al obtener las alertas de quiebre");
+    const alertas = await respAlertas.json();
+
+    tbody.innerHTML = "";
+    alertas.forEach(a => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${a.nombre}</td>
+        <td>${badgeRiesgo(a.nivel_riesgo)}</td>
+        <td class="num">${(a.probabilidad_quiebre * 100).toFixed(1)}%</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    if (alertas.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" class="estado">Sin datos suficientes todavía</td></tr>`;
+    }
+
+    const altoRiesgo = alertas.filter(a => a.nivel_riesgo === "alto").length;
+    estado.textContent = `Actualizado — ${altoRiesgo} producto(s) en riesgo alto de ${alertas.length} totales.`;
+  } catch (e) {
+    estado.textContent = "Error: " + e.message;
+    tbody.innerHTML = `<tr><td colspan="3" class="estado">No se pudo calcular la predicción</td></tr>`;
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Predecir quiebres";
+  }
+}
+
+async function consultarProducto() {
+  const select = document.getElementById("select-producto");
+  const idProducto = select.value;
+  if (!idProducto) {
+    alert("Elige un producto de la lista");
+    return;
+  }
+
+  const btn = document.getElementById("btn-consultar-producto");
+  btn.disabled = true;
+  btn.textContent = "Consultando...";
+
+  try {
+    const [respDemanda, respAlertas] = await Promise.all([
+      fetch(`${API_BASE}/predicciones/demanda/${idProducto}`),
+      fetch(`${API_BASE}/alertas/quiebre`),
+    ]);
+
+    if (!respDemanda.ok) {
+      const err = await respDemanda.json().catch(() => ({}));
+      throw new Error(err.detail || "No hay modelo entrenado. Presiona primero 'Predecir quiebres'.");
+    }
+
+    const demanda = await respDemanda.json();
+    const alertas = respAlertas.ok ? await respAlertas.json() : [];
+    const alertaProducto = alertas.find(a => String(a.id_producto) === String(idProducto));
+
+    document.getElementById("resultado-producto-vacio").style.display = "none";
+    document.getElementById("resultado-producto").style.display = "grid";
+    document.getElementById("rp-demanda").textContent = demanda.demanda_predicha_dia;
+
+    if (alertaProducto) {
+      document.getElementById("rp-riesgo").innerHTML = badgeRiesgo(alertaProducto.nivel_riesgo);
+      document.getElementById("rp-probabilidad").textContent =
+        (alertaProducto.probabilidad_quiebre * 100).toFixed(1) + "%";
+    } else {
+      document.getElementById("rp-riesgo").textContent = "—";
+      document.getElementById("rp-probabilidad").textContent = "Presiona 'Predecir quiebres' primero";
+    }
+  } catch (e) {
+    alert(e.message);
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Consultar";
+  }
+}
+
+document.getElementById("btn-predecir-quiebres").addEventListener("click", predecirQuiebres);
+document.getElementById("btn-consultar-producto").addEventListener("click", consultarProducto);
+cargarCatalogoParaSelector();
 
 // carga inicial: mes actual
 actualizarDashboard("mes_actual");
