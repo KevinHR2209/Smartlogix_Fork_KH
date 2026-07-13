@@ -76,7 +76,7 @@ export function LoginForm() {
             <input
               id="correo" type="email" value={correo} disabled={loading}
               onChange={(e) => setCorreo(e.target.value)}
-              className={inp} placeholder="admin@smartlogix.cl"
+              className={inp} placeholder="correo@ejemplo.cl"
               autoComplete="email"
             />
           </div>
