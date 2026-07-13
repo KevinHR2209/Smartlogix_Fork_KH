@@ -1,5 +1,5 @@
-target/
-.idea/
-*.iml
-*.log
+__pycache__/
+*.pyc
+*.joblib
+venv/
 .env
