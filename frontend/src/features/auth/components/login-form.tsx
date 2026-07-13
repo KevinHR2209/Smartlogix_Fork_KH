@@ -36,7 +36,7 @@ export function LoginForm() {
       setLoading(true);
 
       const response = await login({
-        correo,
+        correo: correo.trim().toLowerCase(),
         password,
       });
 
