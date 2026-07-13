@@ -60,10 +60,15 @@ export function CartSheet() {
       // 3. Crear la preferencia de pago en Mercado Pago
       const preferencia = await mercadopagoService.crearPreferencia(pedido.idPedido);
 
-      // 4. Redirigir al checkout de Mercado Pago (sandbox de prueba)
+      // 4. Redirigir al checkout de Mercado Pago.
+      // OJO: sandbox_init_point esta DEPRECADO por Mercado Pago y suele dar
+      // error o pagina en blanco con credenciales APP_USR- (incluso las de
+      // usuario de prueba). El flujo correcto hoy es usar siempre init_point
+      // con credenciales del VENDEDOR de prueba y pagar con el COMPRADOR de
+      // prueba (o tarjetas de prueba).
       clearCart();
       closeCart();
-      window.location.href = preferencia.sandbox_init_point || preferencia.init_point;
+      window.location.href = preferencia.init_point || preferencia.sandbox_init_point;
     } catch (e) {
       setErrorPago(e instanceof Error ? e.message : "No se pudo iniciar el pago");
     } finally {

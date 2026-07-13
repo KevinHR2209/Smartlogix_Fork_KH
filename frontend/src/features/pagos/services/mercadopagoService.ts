@@ -10,4 +10,11 @@ export const mercadopagoService = {
 
   consultarEstado: (idPedido: number) =>
     apiGet<EstadoPago>(endpoints.pagos.mercadopagoEstado(idPedido)),
+
+  // Se llama desde la pagina /pago/exito con el payment_id que Mercado Pago
+  // agrega como query param al redirigir de vuelta. El backend NO confia en
+  // el navegador: consulta el pago real en la API de Mercado Pago antes de
+  // marcar nada. Es idempotente (recargar la pagina no duplica nada).
+  confirmarPago: (paymentId: string) =>
+    apiPost<EstadoPago>(endpoints.pagos.mercadopagoConfirmar(paymentId), {}),
 };

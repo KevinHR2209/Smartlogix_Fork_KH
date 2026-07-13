@@ -116,11 +116,23 @@ public class MercadoPagoService {
      */
     @Transactional
     public void procesarNotificacionPago(String idPagoMercadoPago) {
+        confirmarPagoDesdeRetorno(idPagoMercadoPago);
+    }
+
+    /**
+     * Igual que procesarNotificacionPago, pero devuelve el Pago local
+     * resultante y es IDEMPOTENTE: si el pedido ya fue marcado PAGADO
+     * (porque el webhook llego primero, o porque el comprador recargo la
+     * pagina de exito), no vuelve a disparar la orquestacion ni lanza
+     * error. Esto permite usar el mismo metodo desde el webhook y desde
+     * la back_url de exito sin que se pisen entre si.
+     */
+    @Transactional
+    public Pago confirmarPagoDesdeRetorno(String idPagoMercadoPago) {
         PagoResponse pagoMp = mercadoPagoClient.obtenerPago(idPagoMercadoPago);
 
         Long idPedido = extraerIdPedido(pagoMp.externalReference());
-        // Verifica que el pedido exista (lanza 404 si no) antes de tocar nada
-        pedidoService.buscarPorId(idPedido);
+        Pedido pedido = pedidoService.buscarPorId(idPedido);
 
         Pago pago = pagoRepository.findFirstByPedido_IdPedidoOrderByFechaPagoDesc(idPedido)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -133,17 +145,27 @@ public class MercadoPagoService {
         pago.setFechaPago(OffsetDateTime.now());
         pagoRepository.save(pago);
 
+        boolean pedidoPendiente = "PENDIENTE_PAGO".equals(pedido.getEstadoPedido());
+
         if ("aprobado".equals(estadoLocal)) {
-            // Reutiliza la orquestacion existente: descuenta stock definitivo,
-            // obtiene direccion del cliente, crea el despacho, marca PAGADO
-            pedidoService.procesarPagoExitoso(idPedido);
-            log.info("Pago aprobado por Mercado Pago para el pedido {}, orquestacion disparada", idPedido);
+            if (pedidoPendiente) {
+                // Reutiliza la orquestacion existente: descuenta stock definitivo,
+                // obtiene direccion del cliente, crea el despacho, marca PAGADO
+                pedidoService.procesarPagoExitoso(idPedido);
+                log.info("Pago aprobado por Mercado Pago para el pedido {}, orquestacion disparada", idPedido);
+            } else {
+                log.info("Pago {} aprobado pero el pedido {} ya estaba en estado {}, no se repite la orquestacion",
+                        idPagoMercadoPago, idPedido, pedido.getEstadoPedido());
+            }
         } else if ("rechazado".equals(estadoLocal) || "cancelado".equals(estadoLocal)) {
-            // Reutiliza la transaccion compensatoria existente: libera stock
-            // reservado y marca CANCELADO (solo si seguia PENDIENTE_PAGO)
-            pedidoService.cancelarPedidoYLiberarStock(idPedido);
-            log.info("Pago rechazado/cancelado por Mercado Pago para el pedido {}, stock liberado", idPedido);
+            if (pedidoPendiente) {
+                // Reutiliza la transaccion compensatoria existente: libera stock
+                // reservado y marca CANCELADO (solo si seguia PENDIENTE_PAGO)
+                pedidoService.cancelarPedidoYLiberarStock(idPedido);
+                log.info("Pago rechazado/cancelado por Mercado Pago para el pedido {}, stock liberado", idPedido);
+            }
         }
+        return pago;
     }
 
     /**

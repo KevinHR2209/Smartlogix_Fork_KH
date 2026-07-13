@@ -46,6 +46,24 @@ public class MercadoPagoController {
     }
 
     /**
+     * Confirma un pago cuando el comprador vuelve desde el checkout de
+     * Mercado Pago (back_url de exito). Recibe el payment_id que Mercado
+     * Pago agrega como query param al redirigir, y reutiliza la misma
+     * logica del webhook: consulta el pago REAL en la API de Mercado Pago
+     * (nunca confia en lo que diga el navegador) y dispara la orquestacion.
+     *
+     * Esto permite que el flujo funcione 100% en local sin exponer el
+     * webhook con ngrok: el webhook sigue siendo el mecanismo principal en
+     * un despliegue real, y este endpoint es idempotente respecto a el
+     * (si el webhook ya proceso el pago, procesarPagoExitoso simplemente
+     * no vuelve a ejecutarse porque el pedido ya no esta PENDIENTE_PAGO).
+     */
+    @PostMapping("/confirmar")
+    public ResponseEntity<Pago> confirmarPago(@RequestParam("paymentId") String paymentId) {
+        return ResponseEntity.ok(mercadoPagoService.confirmarPagoDesdeRetorno(paymentId));
+    }
+
+    /**
      * Webhook que Mercado Pago llama cuando cambia el estado de un pago.
      * Acepta tanto el formato "webhooks v2" (JSON body con type/data.id)
      * como el formato IPN legacy (query params topic/id).

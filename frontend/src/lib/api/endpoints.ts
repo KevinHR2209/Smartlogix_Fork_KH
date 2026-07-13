@@ -11,6 +11,8 @@ export const endpoints = {
       `/api/pagos/mercadopago/preferencia/${idPedido}`,
     mercadopagoEstado: (idPedido: number) =>
       `/api/pagos/mercadopago/estado/${idPedido}`,
+    mercadopagoConfirmar: (paymentId: string) =>
+      `/api/pagos/mercadopago/confirmar?paymentId=${encodeURIComponent(paymentId)}`,
   },
   auth: {
     login: "/api/auth/login",
