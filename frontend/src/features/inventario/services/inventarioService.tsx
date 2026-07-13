@@ -1,37 +1,44 @@
 import { apiGet, apiPost, apiPut } from "@/lib/api/client";
-import { endpoints } from "@/lib/api/endpoints";
 import {
-  CantidadRequest,
   Inventario,
   InventarioRequest,
   TransferenciaStockRequest,
+  CantidadRequest,
+  MovimientoResponse,
 } from "../types/inventario";
+
+const BASE = "/api/inventario";
 
 export const inventarioService = {
   getById: (idInventario: number) =>
-    apiGet<Inventario>(`${endpoints.inventario}/${idInventario}`),
+    apiGet<Inventario>(`${BASE}/${idInventario}`),
 
-  getByProducto: (idProducto: number) =>
-    apiGet<Inventario[]>(`${endpoints.inventario}/producto/${idProducto}`),
+  getByProducto: (idPresentacion: number) =>
+    apiGet<Inventario[]>(`${BASE}/presentacion/${idPresentacion}`),
 
   getByBodega: (idBodega: number) =>
-    apiGet<Inventario[]>(`${endpoints.inventario}/bodega/${idBodega}`),
+    apiGet<Inventario[]>(`${BASE}/bodega/${idBodega}`),
 
   create: (payload: InventarioRequest) =>
-    apiPost<Inventario>(endpoints.inventario, payload),
+    apiPost<Inventario>(BASE, payload),
 
   ajustar: (idInventario: number, payload: CantidadRequest) =>
-    apiPut<Inventario>(`${endpoints.inventario}/${idInventario}/ajustar`, payload),
+    apiPut<Inventario>(`${BASE}/${idInventario}/ajustar`, payload),
 
   reservar: (idInventario: number, payload: CantidadRequest) =>
-    apiPut<Inventario>(`${endpoints.inventario}/${idInventario}/reservar`, payload),
+    apiPut<Inventario>(`${BASE}/${idInventario}/reservar`, payload),
 
   liberar: (idInventario: number, payload: CantidadRequest) =>
-    apiPut<Inventario>(`${endpoints.inventario}/${idInventario}/liberar`, payload),
+    apiPut<Inventario>(`${BASE}/${idInventario}/liberar`, payload),
 
   descontar: (idInventario: number, payload: CantidadRequest) =>
-    apiPut<Inventario>(`${endpoints.inventario}/${idInventario}/descontar`, payload),
+    apiPut<Inventario>(`${BASE}/${idInventario}/descontar`, payload),
 
   transferir: (payload: TransferenciaStockRequest) =>
-    apiPut<void>(`${endpoints.inventario}/transferir`, payload),
+    apiPut<void>(`${BASE}/transferir`, payload),
+
+  getMovimientos: (idPresentacion: number) =>
+    apiGet<MovimientoResponse[]>(
+      `${BASE}/movimientos/presentacion/${idPresentacion}`
+    ),
 };

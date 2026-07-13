@@ -491,81 +491,7 @@ INSERT INTO "marca" ("nombre", "pais_origen") VALUES
   ('Jean Paul Gaultier', 'Francia'),
   ('Montblanc', 'Alemania'),
   ('Bvlgari', 'Italia'),
-  ('Tom Ford', 'EE.UU.');
-
--- ============================================================
--- 2. FAMILIAS OLFATIVAS
--- ============================================================
-INSERT INTO "familia_olfativa" ("nombre", "descripcion") VALUES
-  ('Cítrica', 'Notas frescas de limón, naranja, bergamota y pomelo. Ideales para día y verano.'),
-  ('Floral', 'Aromas de flores como rosa, jazmín, lavanda. романтиcos y femeninos.'),
-  ('Amaderada', 'Maderas, sándalo, cedro, vetiver. Cálidos y duraderos.'),
-  ('Oriental', 'Especias, vainilla, ámbar, resinas. Intensos y sensuales.'),
-  ('Fougère', 'Helecho, lavanda, musgo de roble. Clásicos masculinos.'),
-  ('Chipre', 'Musgo de roble, pachulí, bergamota. Sofisticados y atemporales.'),
-  ('Cítrico-Aromático', 'Combinación de cítricos con hierbas aromáticas.'),
-  ('Amaderada-Especiado', 'Maderas con notas de pimienta, canela, cardamomo.'),
-  ('Floral-Frutal', 'Flores con toques frutales dulces.'),
-  ('Acuático', 'Notas de mar, brisa marina, algas. Frescos y modernos.');
-
--- ============================================================
--- 3. PERFUMES (20 productos reales)
--- ============================================================
-INSERT INTO "perfume" ("id_marca", "id_familia", "nombre", "descripcion", "concentracion", "genero", "temporada", "momento_uso", "estado") VALUES
-  (1,  4,  'Sauvage', 'Aromático y especiado, con bergamota de Calabria y notas amaderadas.', 'EDP', 'Hombre', 'Todo_anio', 'Dia_Noche', 'activo'),
-  (2,  2,  'Bleu de Chanel', 'Cítrico amaderado con incienso y jengibre. Elegante y versátil.', 'EDP', 'Hombre', 'Todo_anio', 'Dia_Noche', 'activo'),
-  (3,  4,  'Y Le Parfum', 'Intenso y misterioso, con haba tonka y vetiver.', 'Parfum', 'Hombre', 'Invierno', 'Noche', 'activo'),
-  (4,  3,  'Acqua di Giò', 'Fresco y acuático, inspirado en el Mediterráneo.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
-  (5,  8,  'The One', 'Especiado oriental con tabaco y jengibre. Cálido y seductor.', 'EDP', 'Hombre', 'Otoño', 'Noche', 'activo'),
-  (6,  1,  'Eros', 'Cítrico y fresco con menta y manzana verde. Energético.', 'EDT', 'Hombre', 'Primavera', 'Dia', 'activo'),
-  (7,  3,  'Eternity', 'Amaderado clásico con notas de enebro y sándalo.', 'EDP', 'Hombre', 'Todo_anio', 'Dia', 'activo'),
-  (8,  2,  'Polo Blue', 'Aromático y floral con lavanda y geranio.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
-  (9,  5,  'Boss Bottled', 'Fougère clásico con manzana y especias.', 'EDP', 'Hombre', 'Otoño', 'Dia', 'activo'),
-  (10, 4,  '1 Million', 'Oriental especiado con cuero y ámbar. Impactante.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
-  (11, 8,  '1 Million Lucky', 'Madera de avellano y haba tonka. Dulce y adictivo.', 'EDP', 'Hombre', 'Otoño', 'Dia_Noche', 'activo'),
-  (12, 2,  'Le Male', 'Floral aromático con lavanda y vainilla.', 'EDT', 'Hombre', 'Invierno', 'Noche', 'activo'),
-  (13, 3,  'Explorer', 'Amaderado con bergamota y pachulí. Aventura pura.', 'EDP', 'Hombre', 'Todo_anio', 'Dia', 'activo'),
-  (14, 10, 'Aqva Pour Homme', 'Acuático intenso con algas y neroli.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
-  (15, 4,  'Tobacco Vanille', 'Oriental especiado con tabaco y vainilla. Luxe.', 'Parfum', 'Unisex', 'Invierno', 'Noche', 'activo'),
-  (1,  2,  'J''adore', 'Floral exuberante con jazmín y rosa. Femenino.', 'EDP', 'Mujer', 'Todo_anio', 'Dia_Noche', 'activo'),
-  (2,  9,  'Coco Mademoiselle', 'Floral-frutal con naranja y pachulí. Chic.', 'EDP', 'Mujer', 'Primavera', 'Dia', 'activo'),
-  (3,  2,  'Mon Paris', 'Floral con peonía y jazmín. Romántico.', 'EDP', 'Mujer', 'Verano', 'Dia', 'activo'),
-  (4,  7,  'Light Blue', 'Cítrico-aromático con limón de Sicilia. Fresco.', 'EDT', 'Mujer', 'Verano', 'Dia', 'activo'),
-  (5,  2,  'Dolce', 'Floral con gardenia y neroli. Delicado y dulce.', 'EDP', 'Mujer', 'Primavera', 'Dia', 'activo');
-
--- ============================================================
--- 4. PRESENTACIONES (con SKUs reales)
--- ============================================================
-INSERT INTO "presentacion_perfume" ("id_perfume", "sku", "codigo_barras", "volumen_ml", "tipo_envase", "precio_actual", "peso_gramos", "imagen_url", "activo") VALUES
-  (1,  'DIO-SAU-EDP-100', '3348901453205', 100, 'Botella spray', 89990, 250, 'https://images.unsplash.com/photo-1541643600914-78b084683601', true),
-  (1,  'DIO-SAU-EDP-50',  '3348901453212', 50,  'Botella spray', 59990, 180, 'https://images.unsplash.com/photo-1541643600914-78b084683601', true),
-  (2,  'CHA-BLE-EDP-100', '3145891232015', 100, 'Botella spray', 94990, 260, 'https://images.unsplash.com/photo-1523293188086-b589b9e012cf', true),
-  (3,  'YSL-PAR-100',     '3145891232022', 100, 'Botella spray', 79990, 240, 'https://images.unsplash.com/photo-1594035910387-fea477942698', true),
-  (4,  'ARM-ACQ-EDT-100', '3365462222333', 100, 'Botella spray', 72990, 230, 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539', true),
-  (5,  'DG-ONE-EDP-100',  '3348901232111', 100, 'Botella spray', 69990, 250, 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad', true),
-  (6,  'VER-ERO-EDT-100', '3348901232222', 100, 'Botella spray', 64990, 240, 'https://images.unsplash.com/photo-1595425970377-c9703cf48b6d', true),
-  (7,  'CK-ETE-EDP-100',  '3348901232333', 100, 'Botella spray', 54990, 220, 'https://images.unsplash.com/photo-1588405764423-7271432914a5', true),
-  (8,  'RL-POL-EDT-100',  '3348901232444', 100, 'Botella spray', 59990, 230, 'https://images.unsplash.com/photo-1592945566403-ab6f3177775d', true),
-  (9,  'HUG-BOT-EDP-100', '3348901232555', 100, 'Botella spray', 62990, 240, 'https://images.unsplash.com/photo-1595425970377-c9703cf48b6d', true),
-  (10, 'CH-1M-EDP-100',   '3348901232666', 100, 'Botella spray', 74990, 260, 'https://images.unsplash.com/photo-1541643600914-78b084683601', true),
-  (11, 'CH-1ML-EDP-100',  '3348901232777', 100, 'Botella spray', 79990, 260, 'https://images.unsplash.com/photo-1523293188086-b589b9e012cf', true),
-  (12, 'JPG-LEM-EDT-100', '3348901232888', 100, 'Botella spray', 67990, 250, 'https://images.unsplash.com/photo-1594035910387-fea477942698', true),
-  (13, 'MON-EXP-EDP-100', '3348901232999', 100, 'Botella spray', 69990, 240, 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539', true),
-  (14, 'BVL-AQV-EDT-100', '3348901233001', 100, 'Botella spray', 64990, 230, 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad', true),
-  (15, 'TF-TV-100',       '3348901233112', 100, 'Botella spray', 149990, 280, 'https://images.unsplash.com/photo-1595425970377-c9703cf48b6d', true),
-  (16, 'DIO-JAD-EDP-100', '3348901233223', 100, 'Botella spray', 99990, 260, 'https://images.unsplash.com/photo-1541643600914-78b084683601', true),
-  (17, 'CHA-COC-EDP-100', '3348901233334', 100, 'Botella spray', 104990, 270, 'https://images.unsplash.com/photo-1523293188086-b589b9e012cf', true),
-  (18, 'YSL-MON-EDP-100', '3348901233445', 100, 'Botella spray', 84990, 250, 'https://images.unsplash.com/photo-1594035910387-fea477942698', true),
-  (19, 'ARM-LDB-EDT-100', '3348901233556', 100, 'Botella spray', 69990, 230, 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539', true),
-  (20, 'DG-DOL-EDP-100',  '3348901233667', 100, 'Botella spray', 74990, 250, 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad', true);
-
--- ============================================================
--- EXPANSION DEL CATALOGO: 20 -> 80 perfumes
--- Reusa las mismas fragancias del catalogo de ms-ml-forecast
--- para mantener ambos catalogos alineados.
--- ============================================================
-
-INSERT INTO "marca" ("nombre", "pais_origen") VALUES
+  ('Tom Ford', 'EE.UU.'),
   ('Hermes', 'Francia'),
   ('Prada', 'Italia'),
   ('Creed', 'Reino Unido'),
@@ -585,248 +511,306 @@ INSERT INTO "marca" ("nombre", "pais_origen") VALUES
   ('Gucci', 'Italia'),
   ('Burberry', 'Reino Unido');
 
+-- ============================================================
+-- 2. FAMILIAS OLFATIVAS
+-- ============================================================
 INSERT INTO "familia_olfativa" ("nombre", "descripcion") VALUES
-  ('Gourmand', 'Vainilla, caramelo, cacao. Dulces y envolventes.'),
-  ('Aromatica', 'Hierbas frescas, lavanda, romero. Limpias y vigorizantes.'),
-  ('Frutal', 'Notas de fruta madura: manzana, durazno, bayas rojas.');
+    ('Cítrica', 'Notas frescas de limón, naranja, bergamota y pomelo. Ideales para día y verano.'),
+    ('Floral', 'Aromas de flores como rosa, jazmín, lavanda. романтиcos y femeninos.'),
+    ('Amaderada', 'Maderas, sándalo, cedro, vetiver. Cálidos y duraderos.'),
+    ('Oriental', 'Especias, vainilla, ámbar, resinas. Intensos y sensuales.'),
+    ('Fougère', 'Helecho, lavanda, musgo de roble. Clásicos masculinos.'),
+    ('Chipre', 'Musgo de roble, pachulí, bergamota. Sofisticados y atemporales.'),
+    ('Cítrico-Aromático', 'Combinación de cítricos con hierbas aromáticas.'),
+    ('Amaderada-Especiado', 'Maderas con notas de pimienta, canela, cardamomo.'),
+    ('Floral-Frutal', 'Flores con toques frutales dulces.'),
+    ('Acuático', 'Notas de mar, brisa marina, algas. Frescos y modernos.'),
+    ('Gourmand', 'Vainilla, caramelo, cacao. Dulces y envolventes.'),
+    ('Aromatica', 'Hierbas frescas, lavanda, romero. Limpias y vigorizantes.'),
+    ('Frutal', 'Notas de fruta madura: manzana, durazno, bayas rojas.');
 
+-- ============================================================
+-- 3. PERFUMES (20 productos reales)
+-- ============================================================
 INSERT INTO "perfume" ("id_marca", "id_familia", "nombre", "descripcion", "concentracion", "genero", "temporada", "momento_uso", "estado") VALUES
-  (1, 8, 'Sauvage Elixir', 'Fragancia Sauvage Elixir de Dior.', 'Parfum', 'Hombre', 'Invierno', 'Noche', 'activo'),
-  (16, 3, 'Terre d''Hermes', 'Fragancia Terre d''Hermes de Hermes.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
-  (1, 3, 'Dior Homme Intense', 'Fragancia Dior Homme Intense de Dior.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
-  (17, 12, 'Luna Rossa', 'Fragancia Luna Rossa de Prada.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
-  (9, 8, 'Boss Bottled Intense', 'Fragancia Boss Bottled Intense de Hugo Boss.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
-  (7, 1, 'CK One', 'Fragancia CK One de Calvin Klein.', 'EDT', 'Unisex', 'Verano', 'Dia', 'activo'),
-  (8, 13, 'Polo Red', 'Fragancia Polo Red de Ralph Lauren.', 'EDT', 'Hombre', 'Otoño', 'Noche', 'activo'),
-  (15, 3, 'Oud Wood', 'Fragancia Oud Wood de Tom Ford.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
-  (15, 8, 'Noir Extreme', 'Fragancia Noir Extreme de Tom Ford.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
-  (14, 8, 'Man in Black', 'Fragancia Man in Black de Bvlgari.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
-  (12, 3, 'Le Beau', 'Fragancia Le Beau de Jean Paul Gaultier.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
-  (19, 10, 'L''Eau d''Issey', 'Fragancia L''Eau d''Issey de Issey Miyake.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
-  (20, 8, 'Wanted', 'Fragancia Wanted de Azzaro.', 'EDT', 'Hombre', 'Invierno', 'Noche', 'activo'),
-  (21, 1, 'L.12.12 Blanc', 'Fragancia L.12.12 Blanc de Lacoste.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
-  (22, 3, 'Uomo Born in Roma', 'Fragancia Uomo Born in Roma de Valentino.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
-  (32, 12, 'Guilty Pour Homme', 'Fragancia Guilty Pour Homme de Gucci.', 'EDT', 'Hombre', 'Otoño', 'Noche', 'activo'),
-  (23, 8, 'Gentleman', 'Fragancia Gentleman de Givenchy.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
-  (31, 1, 'Guerlain Homme', 'Fragancia Guerlain Homme de Guerlain.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
-  (2, 1, 'Allure Homme Sport', 'Fragancia Allure Homme Sport de Chanel.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
-  (4, 4, 'Armani Code', 'Fragancia Armani Code de Giorgio Armani.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
-  (6, 10, 'Versace Pour Homme', 'Fragancia Versace Pour Homme de Versace.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
-  (17, 3, 'L''Homme', 'Fragancia L''Homme de Prada.', 'EDT', 'Hombre', 'Otoño', 'Dia', 'activo'),
-  (2, 4, 'Chanel No 5', 'Fragancia Chanel No 5 de Chanel.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (2, 9, 'Chance Eau Tendre', 'Fragancia Chance Eau Tendre de Chanel.', 'EDT', 'Mujer', 'Verano', 'Dia', 'activo'),
-  (1, 9, 'Miss Dior', 'Fragancia Miss Dior de Dior.', 'EDP', 'Mujer', 'Verano', 'Dia', 'activo'),
-  (3, 11, 'Mon Paris', 'Fragancia Mon Paris de Yves Saint Laurent.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (24, 11, 'La Vie Est Belle Intensement', 'Fragancia La Vie Est Belle Intensement de Lancome.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (24, 9, 'Idole', 'Fragancia Idole de Lancome.', 'EDP', 'Mujer', 'Otoño', 'Dia', 'activo'),
-  (4, 11, 'Si Passione', 'Fragancia Si Passione de Giorgio Armani.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (10, 11, '212 VIP', 'Fragancia 212 VIP de Carolina Herrera.', 'EDP', 'Mujer', 'Verano', 'Noche', 'activo'),
-  (6, 9, 'Bright Crystal', 'Fragancia Bright Crystal de Versace.', 'EDT', 'Mujer', 'Verano', 'Dia', 'activo'),
-  (6, 11, 'Eros Pour Femme', 'Fragancia Eros Pour Femme de Versace.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
-  (5, 2, 'Light Blue Intense', 'Fragancia Light Blue Intense de Dolce & Gabbana.', 'EDP', 'Mujer', 'Verano', 'Dia', 'activo'),
-  (17, 2, 'Paradoxe', 'Fragancia Paradoxe de Prada.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
-  (32, 2, 'Bloom', 'Fragancia Bloom de Gucci.', 'EDP', 'Mujer', 'Otoño', 'Dia', 'activo'),
-  (32, 9, 'Flora Gorgeous Gardenia', 'Fragancia Flora Gorgeous Gardenia de Gucci.', 'EDT', 'Mujer', 'Verano', 'Dia', 'activo'),
-  (33, 13, 'Her', 'Fragancia Her de Burberry.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
-  (33, 4, 'Burberry Body', 'Fragancia Burberry Body de Burberry.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (22, 2, 'Born in Roma Donna', 'Fragancia Born in Roma Donna de Valentino.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (23, 4, 'L''Interdit', 'Fragancia L''Interdit de Givenchy.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (31, 11, 'Mon Guerlain', 'Fragancia Mon Guerlain de Guerlain.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
-  (24, 4, 'Tresor', 'Fragancia Tresor de Lancome.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (25, 4, 'For Her', 'Fragancia For Her de Narciso Rodriguez.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
-  (26, 11, 'Flowerbomb', 'Fragancia Flowerbomb de Viktor & Rolf.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (12, 4, 'Classique', 'Fragancia Classique de Jean Paul Gaultier.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (11, 11, 'Olympea', 'Fragancia Olympea de Paco Rabanne.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (11, 9, 'Lady Million', 'Fragancia Lady Million de Paco Rabanne.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
-  (27, 9, 'Daisy', 'Fragancia Daisy de Marc Jacobs.', 'EDT', 'Mujer', 'Verano', 'Dia', 'activo'),
-  (28, 11, 'Le Parfum', 'Fragancia Le Parfum de Elie Saab.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
-  (4, 11, 'My Way Intense', 'Fragancia My Way Intense de Giorgio Armani.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (3, 12, 'Libre Intense', 'Fragancia Libre Intense de Yves Saint Laurent.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (29, 8, 'Replica Jazz Club', 'Fragancia Replica Jazz Club de Maison Margiela.', 'EDT', 'Unisex', 'Invierno', 'Noche', 'activo'),
-  (30, 3, 'Santal 33', 'Fragancia Santal 33 de Le Labo.', 'EDP', 'Unisex', 'Invierno', 'Noche', 'activo'),
-  (18, 3, 'Aventus', 'Fragancia Aventus de Creed.', 'EDP', 'Hombre', 'Otoño', 'Dia_Noche', 'activo'),
-  (3, 11, 'Black Opium', 'Fragancia Black Opium de Yves Saint Laurent.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (4, 11, 'Si', 'Fragancia Si de Giorgio Armani.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
-  (10, 4, 'Good Girl', 'Fragancia Good Girl de Carolina Herrera.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
-  (3, 12, 'Libre', 'Fragancia Libre de Yves Saint Laurent.', 'EDP', 'Mujer', 'Otoño', 'Dia_Noche', 'activo'),
-  (11, 10, 'Invictus', 'Fragancia Invictus de Paco Rabanne.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
-  (5, 4, 'The Only One', 'Fragancia The Only One de Dolce & Gabbana.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo');
+    (1,  4,  'Sauvage', 'Aromático y especiado, con bergamota de Calabria y notas amaderadas.', 'EDP', 'Hombre', 'Todo_anio', 'Dia_Noche', 'activo'),
+    (2,  2,  'Bleu de Chanel', 'Cítrico amaderado con incienso y jengibre. Elegante y versátil.', 'EDP', 'Hombre', 'Todo_anio', 'Dia_Noche', 'activo'),
+    (3,  4,  'Y Le Parfum', 'Intenso y misterioso, con haba tonka y vetiver.', 'Parfum', 'Hombre', 'Invierno', 'Noche', 'activo'),
+    (4,  3,  'Acqua di Giò', 'Fresco y acuático, inspirado en el Mediterráneo.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
+    (5,  8,  'The One', 'Especiado oriental con tabaco y jengibre. Cálido y seductor.', 'EDP', 'Hombre', 'Otoño', 'Noche', 'activo'),
+    (6,  1,  'Eros', 'Cítrico y fresco con menta y manzana verde. Energético.', 'EDT', 'Hombre', 'Primavera', 'Dia', 'activo'),
+    (7,  3,  'Eternity', 'Amaderado clásico con notas de enebro y sándalo.', 'EDP', 'Hombre', 'Todo_anio', 'Dia', 'activo'),
+    (8,  2,  'Polo Blue', 'Aromático y floral con lavanda y geranio.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
+    (9,  5,  'Boss Bottled', 'Fougère clásico con manzana y especias.', 'EDP', 'Hombre', 'Otoño', 'Dia', 'activo'),
+    (10, 4,  '1 Million', 'Oriental especiado con cuero y ámbar. Impactante.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
+    (11, 8,  '1 Million Lucky', 'Madera de avellano y haba tonka. Dulce y adictivo.', 'EDT', 'Hombre', 'Otoño', 'Dia_Noche', 'activo'),
+    (12, 2,  'Le Male', 'Floral aromático con lavanda y vainilla.', 'EDT', 'Hombre', 'Invierno', 'Noche', 'activo'),
+    (13, 3,  'Explorer', 'Amaderado con bergamota y pachulí. Aventura pura.', 'EDP', 'Hombre', 'Todo_anio', 'Dia', 'activo'),
+    (14, 10, 'Aqva Pour Homme', 'Acuático intenso con algas y neroli.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
+    (15, 4,  'Tobacco Vanille', 'Oriental especiado con tabaco y vainilla. Luxe.', 'Parfum', 'Unisex', 'Invierno', 'Noche', 'activo'),
+    (1,  2,  'J''adore', 'Floral exuberante con jazmín y rosa. Femenino.', 'EDP', 'Mujer', 'Todo_anio', 'Dia_Noche', 'activo'),
+    (2,  9,  'Coco Mademoiselle', 'Floral-frutal con naranja y pachulí. Chic.', 'EDP', 'Mujer', 'Primavera', 'Dia', 'activo'),
+    (3,  2,  'Mon Paris', 'Floral con peonía y jazmín. Romántico.', 'EDP', 'Mujer', 'Verano', 'Dia', 'activo'),
+    (5,  7,  'Light Blue', 'Cítrico-aromático con limón de Sicilia. Fresco.', 'EDT', 'Mujer', 'Verano', 'Dia', 'activo'),
+    (5,  2,  'Dolce', 'Floral con gardenia y neroli. Delicado y dulce.', 'EDP', 'Mujer', 'Primavera', 'Dia', 'activo'),
+    (1, 8, 'Sauvage Elixir', 'Fragancia Sauvage Elixir de Dior.', 'Parfum', 'Hombre', 'Invierno', 'Noche', 'activo'),
+    (16, 3, 'Terre d''Hermes', 'Fragancia Terre d''Hermes de Hermes.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
+    (1, 3, 'Dior Homme Intense', 'Fragancia Dior Homme Intense de Dior.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
+    (17, 12, 'Luna Rossa', 'Fragancia Luna Rossa de Prada.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
+    (9, 8, 'Boss Bottled Intense', 'Fragancia Boss Bottled Intense de Hugo Boss.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
+    (7, 1, 'CK One', 'Fragancia CK One de Calvin Klein.', 'EDT', 'Unisex', 'Verano', 'Dia', 'activo'),
+    (8, 13, 'Polo Red', 'Fragancia Polo Red de Ralph Lauren.', 'EDT', 'Hombre', 'Otoño', 'Noche', 'activo'),
+    (15, 3, 'Oud Wood', 'Fragancia Oud Wood de Tom Ford.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
+    (15, 8, 'Noir Extreme', 'Fragancia Noir Extreme de Tom Ford.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
+    (14, 8, 'Man in Black', 'Fragancia Man in Black de Bvlgari.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
+    (12, 3, 'Le Beau', 'Fragancia Le Beau de Jean Paul Gaultier.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
+    (19, 10, 'L''Eau d''Issey', 'Fragancia L''Eau d''Issey de Issey Miyake.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
+    (20, 8, 'Wanted', 'Fragancia Wanted de Azzaro.', 'EDT', 'Hombre', 'Invierno', 'Noche', 'activo'),
+    (21, 1, 'L.12.12 Blanc', 'Fragancia L.12.12 Blanc de Lacoste.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
+    (22, 3, 'Uomo Born in Roma', 'Fragancia Uomo Born in Roma de Valentino.', 'EDT', 'Hombre', 'Invierno', 'Noche', 'activo'),
+    (32, 12, 'Guilty Pour Homme', 'Fragancia Guilty Pour Homme de Gucci.', 'EDT', 'Hombre', 'Otoño', 'Noche', 'activo'),
+    (23, 8, 'Gentleman', 'Fragancia Gentleman de Givenchy.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
+    (31, 1, 'Guerlain Homme', 'Fragancia Guerlain Homme de Guerlain.', 'EDP', 'Hombre', 'Verano', 'Dia', 'activo'),
+    (2, 1, 'Allure Homme Sport', 'Fragancia Allure Homme Sport de Chanel.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
+    (4, 4, 'Armani Code', 'Fragancia Armani Code de Giorgio Armani.', 'EDP', 'Hombre', 'Invierno', 'Noche', 'activo'),
+    (6, 10, 'Versace Pour Homme', 'Fragancia Versace Pour Homme de Versace.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
+    (17, 3, 'L''Homme', 'Fragancia L''Homme de Prada.', 'EDT', 'Hombre', 'Otoño', 'Dia', 'activo'),
+    (2, 4, 'Chanel No 5', 'Fragancia Chanel No 5 de Chanel.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (2, 9, 'Chance Eau Tendre', 'Fragancia Chance Eau Tendre de Chanel.', 'EDT', 'Mujer', 'Verano', 'Dia', 'activo'),
+    (1, 9, 'Miss Dior', 'Fragancia Miss Dior de Dior.', 'EDP', 'Mujer', 'Verano', 'Dia', 'activo'),
+    (3, 11, 'Mon Paris', 'Fragancia Mon Paris de Yves Saint Laurent.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (24, 11, 'La Vie Est Belle Intensement', 'Fragancia La Vie Est Belle Intensement de Lancome.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (24, 9, 'Idole', 'Fragancia Idole de Lancome.', 'EDP', 'Mujer', 'Otoño', 'Dia', 'activo'),
+    (4, 11, 'Si Passione', 'Fragancia Si Passione de Giorgio Armani.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (10, 11, '212 VIP', 'Fragancia 212 VIP de Carolina Herrera.', 'EDP', 'Mujer', 'Verano', 'Noche', 'activo'),
+    (6, 9, 'Bright Crystal', 'Fragancia Bright Crystal de Versace.', 'EDT', 'Mujer', 'Verano', 'Dia', 'activo'),
+    (6, 11, 'Eros Pour Femme', 'Fragancia Eros Pour Femme de Versace.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
+    (5, 2, 'Light Blue Intense', 'Fragancia Light Blue Intense de Dolce & Gabbana.', 'EDP', 'Mujer', 'Verano', 'Dia', 'activo'),
+    (17, 2, 'Paradoxe', 'Fragancia Paradoxe de Prada.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
+    (32, 2, 'Bloom', 'Fragancia Bloom de Gucci.', 'EDP', 'Mujer', 'Otoño', 'Dia', 'activo'),
+    (32, 9, 'Flora Gorgeous Gardenia', 'Fragancia Flora Gorgeous Gardenia de Gucci.', 'EDP', 'Mujer', 'Verano', 'Dia', 'activo'),
+    (33, 13, 'Her', 'Fragancia Her de Burberry.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
+    (33, 4, 'Burberry Body', 'Fragancia Burberry Body de Burberry.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (22, 2, 'Born in Roma Donna', 'Fragancia Born in Roma Donna de Valentino.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (23, 4, 'L''Interdit', 'Fragancia L''Interdit de Givenchy.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (31, 11, 'Mon Guerlain', 'Fragancia Mon Guerlain de Guerlain.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
+    (24, 4, 'Tresor', 'Fragancia Tresor de Lancome.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (25, 4, 'For Her', 'Fragancia For Her de Narciso Rodriguez.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
+    (26, 11, 'Flowerbomb', 'Fragancia Flowerbomb de Viktor & Rolf.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (12, 4, 'Classique', 'Fragancia Classique de Jean Paul Gaultier.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (11, 11, 'Olympea', 'Fragancia Olympea de Paco Rabanne.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (11, 9, 'Lady Million', 'Fragancia Lady Million de Paco Rabanne.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
+    (27, 9, 'Daisy', 'Fragancia Daisy de Marc Jacobs.', 'EDT', 'Mujer', 'Verano', 'Dia', 'activo'),
+    (28, 11, 'Le Parfum', 'Fragancia Le Parfum de Elie Saab.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
+    (4, 11, 'My Way Intense', 'Fragancia My Way Intense de Giorgio Armani.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (3, 12, 'Libre Intense', 'Fragancia Libre Intense de Yves Saint Laurent.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (29, 8, 'Replica Jazz Club', 'Fragancia Replica Jazz Club de Maison Margiela.', 'EDT', 'Unisex', 'Invierno', 'Noche', 'activo'),
+    (30, 3, 'Santal 33', 'Fragancia Santal 33 de Le Labo.', 'EDP', 'Unisex', 'Invierno', 'Noche', 'activo'),
+    (18, 3, 'Aventus', 'Fragancia Aventus de Creed.', 'EDP', 'Hombre', 'Otoño', 'Dia_Noche', 'activo'),
+    (3, 11, 'Black Opium', 'Fragancia Black Opium de Yves Saint Laurent.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (4, 11, 'Si', 'Fragancia Si de Giorgio Armani.', 'EDP', 'Mujer', 'Otoño', 'Noche', 'activo'),
+    (10, 4, 'Good Girl', 'Fragancia Good Girl de Carolina Herrera.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo'),
+    (3, 12, 'Libre', 'Fragancia Libre de Yves Saint Laurent.', 'EDP', 'Mujer', 'Otoño', 'Dia_Noche', 'activo'),
+    (11, 10, 'Invictus', 'Fragancia Invictus de Paco Rabanne.', 'EDT', 'Hombre', 'Verano', 'Dia', 'activo'),
+    (5, 4, 'The Only One', 'Fragancia The Only One de Dolce & Gabbana.', 'EDP', 'Mujer', 'Invierno', 'Noche', 'activo');
 
+-- ============================================================
+-- 4. PRESENTACIONES (con SKUs reales)
+-- ============================================================
 INSERT INTO "presentacion_perfume" ("id_perfume", "sku", "codigo_barras", "volumen_ml", "tipo_envase", "precio_actual", "peso_gramos", "imagen_url", "activo") VALUES
-  (21, 'DIO-SAU-PAR-21', '3348901234000', 60, 'Botella spray', 109990, 210, 'https://images.unsplash.com/photo-1541643600914-78b084683601', true),
-  (22, 'HER-TER-EDT-22', '3348901234001', 100, 'Botella spray', 95990, 250, 'https://images.unsplash.com/photo-1523293188086-b589b9e012cf', true),
-  (23, 'DIO-DIO-EDP-23', '3348901234002', 100, 'Botella spray', 105990, 250, 'https://images.unsplash.com/photo-1594035910387-fea477942698', true),
-  (24, 'PRA-LUN-EDT-24', '3348901234003', 100, 'Botella spray', 84990, 250, 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539', true),
-  (25, 'HUG-BOS-EDP-25', '3348901234004', 100, 'Botella spray', 79990, 250, 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad', true),
-  (26, 'CAL-CKO-EDT-26', '3348901234005', 100, 'Botella spray', 54990, 250, 'https://images.unsplash.com/photo-1595425970377-c9703cf48b6d', true),
-  (27, 'RAL-POL-EDT-27', '3348901234006', 100, 'Botella spray', 76990, 250, 'https://images.unsplash.com/photo-1588405764423-7271432914a5', true),
-  (28, 'TOM-OUD-EDP-28', '3348901234007', 50, 'Botella spray', 159990, 200, 'https://images.unsplash.com/photo-1592945566403-ab6f3177775d', true),
-  (29, 'TOM-NOI-EDP-29', '3348901234008', 100, 'Botella spray', 149990, 250, 'https://images.unsplash.com/photo-1541643600914-78b084683601', true),
-  (30, 'BVL-MAN-EDP-30', '3348901234009', 100, 'Botella spray', 89990, 250, 'https://images.unsplash.com/photo-1523293188086-b589b9e012cf', true),
-  (31, 'JEA-LEB-EDT-31', '3348901234010', 100, 'Botella spray', 84990, 250, 'https://images.unsplash.com/photo-1594035910387-fea477942698', true),
-  (32, 'ISS-LEA-EDT-32', '3348901234011', 125, 'Botella spray', 74990, 275, 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539', true),
-  (33, 'AZZ-WAN-EDT-33', '3348901234012', 100, 'Botella spray', 69990, 250, 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad', true),
-  (34, 'LAC-LBL-EDT-34', '3348901234013', 100, 'Botella spray', 59990, 250, 'https://images.unsplash.com/photo-1595425970377-c9703cf48b6d', true),
-  (35, 'VAL-UOM-EDP-35', '3348901234014', 100, 'Botella spray', 94990, 250, 'https://images.unsplash.com/photo-1588405764423-7271432914a5', true),
-  (36, 'GUC-GUI-EDT-36', '3348901234015', 90, 'Botella spray', 84990, 240, 'https://images.unsplash.com/photo-1592945566403-ab6f3177775d', true),
-  (37, 'GIV-GEN-EDP-37', '3348901234016', 100, 'Botella spray', 87990, 250, 'https://images.unsplash.com/photo-1541643600914-78b084683601', true),
-  (38, 'GUE-GUE-EDT-38', '3348901234017', 100, 'Botella spray', 79990, 250, 'https://images.unsplash.com/photo-1523293188086-b589b9e012cf', true),
-  (39, 'CHA-ALL-EDT-39', '3348901234018', 100, 'Botella spray', 99990, 250, 'https://images.unsplash.com/photo-1594035910387-fea477942698', true),
-  (40, 'GIO-ARM-EDP-40', '3348901234019', 100, 'Botella spray', 89990, 250, 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539', true),
-  (41, 'VER-VER-EDT-41', '3348901234020', 100, 'Botella spray', 74990, 250, 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad', true),
-  (42, 'PRA-LHO-EDT-42', '3348901234021', 100, 'Botella spray', 84990, 250, 'https://images.unsplash.com/photo-1595425970377-c9703cf48b6d', true),
-  (43, 'CHA-CHA-EDP-43', '3348901234022', 100, 'Botella spray', 129990, 250, 'https://images.unsplash.com/photo-1588405764423-7271432914a5', true),
-  (44, 'CHA-CHA-EDT-44', '3348901234023', 100, 'Botella spray', 109990, 250, 'https://images.unsplash.com/photo-1592945566403-ab6f3177775d', true),
-  (45, 'DIO-MIS-EDP-45', '3348901234024', 100, 'Botella spray', 104990, 250, 'https://images.unsplash.com/photo-1541643600914-78b084683601', true),
-  (46, 'YVE-MON-EDP-46', '3348901234025', 90, 'Botella spray', 99990, 240, 'https://images.unsplash.com/photo-1523293188086-b589b9e012cf', true),
-  (47, 'LAN-LAV-EDP-47', '3348901234026', 50, 'Botella spray', 89990, 200, 'https://images.unsplash.com/photo-1594035910387-fea477942698', true),
-  (48, 'LAN-IDO-EDP-48', '3348901234027', 75, 'Botella spray', 94990, 225, 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539', true),
-  (49, 'GIO-SIP-EDP-49', '3348901234028', 100, 'Botella spray', 99990, 250, 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad', true),
-  (50, 'CAR-VIP-EDP-50', '3348901234029', 80, 'Botella spray', 89990, 230, 'https://images.unsplash.com/photo-1595425970377-c9703cf48b6d', true),
-  (51, 'VER-BRI-EDT-51', '3348901234030', 90, 'Botella spray', 74990, 240, 'https://images.unsplash.com/photo-1588405764423-7271432914a5', true),
-  (52, 'VER-ERO-EDP-52', '3348901234031', 100, 'Botella spray', 84990, 250, 'https://images.unsplash.com/photo-1592945566403-ab6f3177775d', true),
-  (53, 'DOL-LIG-EDP-53', '3348901234032', 100, 'Botella spray', 94990, 250, 'https://images.unsplash.com/photo-1541643600914-78b084683601', true),
-  (54, 'PRA-PAR-EDP-54', '3348901234033', 90, 'Botella spray', 104990, 240, 'https://images.unsplash.com/photo-1523293188086-b589b9e012cf', true),
-  (55, 'GUC-BLO-EDP-55', '3348901234034', 100, 'Botella spray', 99990, 250, 'https://images.unsplash.com/photo-1594035910387-fea477942698', true),
-  (56, 'GUC-FLO-EDT-56', '3348901234035', 100, 'Botella spray', 89990, 250, 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539', true),
-  (57, 'BUR-HER-EDP-57', '3348901234036', 100, 'Botella spray', 94990, 250, 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad', true),
-  (58, 'BUR-BUR-EDP-58', '3348901234037', 85, 'Botella spray', 89990, 235, 'https://images.unsplash.com/photo-1595425970377-c9703cf48b6d', true),
-  (59, 'VAL-BOR-EDP-59', '3348901234038', 100, 'Botella spray', 94990, 250, 'https://images.unsplash.com/photo-1588405764423-7271432914a5', true),
-  (60, 'GIV-LIN-EDP-60', '3348901234039', 80, 'Botella spray', 94990, 230, 'https://images.unsplash.com/photo-1592945566403-ab6f3177775d', true),
-  (61, 'GUE-MON-EDP-61', '3348901234040', 100, 'Botella spray', 99990, 250, 'https://images.unsplash.com/photo-1541643600914-78b084683601', true),
-  (62, 'LAN-TRE-EDP-62', '3348901234041', 100, 'Botella spray', 89990, 250, 'https://images.unsplash.com/photo-1523293188086-b589b9e012cf', true),
-  (63, 'NAR-FOR-EDP-63', '3348901234042', 100, 'Botella spray', 94990, 250, 'https://images.unsplash.com/photo-1594035910387-fea477942698', true),
-  (64, 'VIK-FLO-EDP-64', '3348901234043', 100, 'Botella spray', 109990, 250, 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539', true),
-  (65, 'JEA-CLA-EDP-65', '3348901234044', 100, 'Botella spray', 94990, 250, 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad', true),
-  (66, 'PAC-OLY-EDP-66', '3348901234045', 80, 'Botella spray', 89990, 230, 'https://images.unsplash.com/photo-1595425970377-c9703cf48b6d', true),
-  (67, 'PAC-LAD-EDP-67', '3348901234046', 80, 'Botella spray', 89990, 230, 'https://images.unsplash.com/photo-1588405764423-7271432914a5', true),
-  (68, 'MAR-DAI-EDT-68', '3348901234047', 100, 'Botella spray', 79990, 250, 'https://images.unsplash.com/photo-1592945566403-ab6f3177775d', true),
-  (69, 'ELI-LEP-EDP-69', '3348901234048', 90, 'Botella spray', 99990, 240, 'https://images.unsplash.com/photo-1541643600914-78b084683601', true),
-  (70, 'GIO-MYW-EDP-70', '3348901234049', 90, 'Botella spray', 99990, 240, 'https://images.unsplash.com/photo-1523293188086-b589b9e012cf', true),
-  (71, 'YVE-LIB-EDP-71', '3348901234050', 90, 'Botella spray', 104990, 240, 'https://images.unsplash.com/photo-1594035910387-fea477942698', true),
-  (72, 'MAI-REP-EDT-72', '3348901234051', 100, 'Botella spray', 94990, 250, 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539', true),
-  (73, 'LEL-SAN-EDP-73', '3348901234052', 50, 'Botella spray', 149990, 200, 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad', true),
-  (74, 'CRE-AVE-EDP-74', '3348901234053', 100, 'Botella spray', 189990, 250, 'https://images.unsplash.com/photo-1595425970377-c9703cf48b6d', true),
-  (75, 'YVE-BLA-EDP-75', '3348901234054', 90, 'Botella spray', 99990, 240, 'https://images.unsplash.com/photo-1588405764423-7271432914a5', true),
-  (76, 'GIO-SI-EDP-76', '3348901234055', 100, 'Botella spray', 98990, 250, 'https://images.unsplash.com/photo-1592945566403-ab6f3177775d', true),
-  (77, 'CAR-GOO-EDP-77', '3348901234056', 80, 'Botella spray', 97990, 230, 'https://images.unsplash.com/photo-1541643600914-78b084683601', true),
-  (78, 'YVE-LIB-EDP-78', '3348901234057', 90, 'Botella spray', 96990, 240, 'https://images.unsplash.com/photo-1523293188086-b589b9e012cf', true),
-  (79, 'PAC-INV-EDT-79', '3348901234058', 100, 'Botella spray', 76990, 250, 'https://images.unsplash.com/photo-1594035910387-fea477942698', true),
-  (80, 'DOL-THE-EDP-80', '3348901234059', 100, 'Botella spray', 88990, 250, 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539', true);
-
-INSERT INTO "inventario" ("id_bodega", "id_presentacion", "stock_disponible", "stock_reservado", "stock_minimo") VALUES
-  (1, 22, 20, 2, 5),
-  (2, 23, 30, 3, 5),
-  (3, 24, 40, 4, 5),
-  (4, 25, 50, 5, 5),
-  (5, 26, 60, 6, 5),
-  (1, 27, 70, 7, 5),
-  (2, 28, 80, 8, 5),
-  (3, 29, 20, 2, 5),
-  (4, 30, 30, 3, 5),
-  (5, 31, 40, 4, 5),
-  (1, 32, 50, 5, 5),
-  (2, 33, 60, 6, 5),
-  (3, 34, 70, 7, 5),
-  (4, 35, 80, 8, 5),
-  (5, 36, 20, 2, 5),
-  (1, 37, 30, 3, 5),
-  (2, 38, 40, 4, 5),
-  (3, 39, 50, 5, 5),
-  (4, 40, 60, 6, 5),
-  (5, 41, 70, 7, 5),
-  (1, 42, 80, 8, 5),
-  (2, 43, 20, 2, 5),
-  (3, 44, 30, 3, 5),
-  (4, 45, 40, 4, 5),
-  (5, 46, 50, 5, 5),
-  (1, 47, 60, 6, 5),
-  (2, 48, 70, 7, 5),
-  (3, 49, 80, 8, 5),
-  (4, 50, 20, 2, 5),
-  (5, 51, 30, 3, 5),
-  (1, 52, 40, 4, 5),
-  (2, 53, 50, 5, 5),
-  (3, 54, 60, 6, 5),
-  (4, 55, 70, 7, 5),
-  (5, 56, 80, 8, 5),
-  (1, 57, 20, 2, 5),
-  (2, 58, 30, 3, 5),
-  (3, 59, 40, 4, 5),
-  (4, 60, 50, 5, 5),
-  (5, 61, 60, 6, 5),
-  (1, 62, 70, 7, 5),
-  (2, 63, 80, 8, 5),
-  (3, 64, 20, 2, 5),
-  (4, 65, 30, 3, 5),
-  (5, 66, 40, 4, 5),
-  (1, 67, 50, 5, 5),
-  (2, 68, 60, 6, 5),
-  (3, 69, 70, 7, 5),
-  (4, 70, 80, 8, 5),
-  (5, 71, 20, 2, 5),
-  (1, 72, 30, 3, 5),
-  (2, 73, 40, 4, 5),
-  (3, 74, 50, 5, 5),
-  (4, 75, 60, 6, 5),
-  (5, 76, 70, 7, 5),
-  (1, 77, 80, 8, 5),
-  (2, 78, 20, 2, 5),
-  (3, 79, 30, 3, 5),
-  (4, 80, 40, 4, 5),
-  (5, 81, 50, 5, 5);
+   (1,  'DIO-SAU-EDP-100', '3348901453205', 100, 'Botella spray', 89990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/DIO-SAU-EDP-100.webp', true),
+   (1,  'DIO-SAU-EDP-50',  '3348901453212', 60,  'Botella spray', 59990, 180, 'https://images.unsplash.com/photo-1541643600914-78b084683601', false),
+   (2,  'CHA-BLE-EDP-100', '3145891232015', 100, 'Botella spray', 94990, 260, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/CHA-BLE-EDP-100.webp', true),
+   (3,  'YSL-PAR-100',     '3145891232022', 100, 'Botella spray', 79990, 240, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/YSL-PAR-100.jpg.webp', true),
+   (4,  'ARM-ACQ-EDT-100', '3365462222333', 100, 'Botella spray', 72990, 230, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/ARM-ACQ-EDT-100.webp', true),
+   (5,  'DG-ONE-EDP-100',  '3348901232111', 100, 'Botella spray', 69990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/DG-ONE-EDP-100.webp', true),
+   (6,  'VER-ERO-EDT-100', '3348901232222', 100, 'Botella spray', 64990, 240, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/VER-ERO-EDT-100.webp', true),
+   (7,  'CK-ETE-EDP-100',  '3348901232333', 100, 'Botella spray', 54990, 220, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/CK-ETE-EDP-100.webp', true),
+   (8,  'RL-POL-EDT-100',  '3348901232444', 125, 'Botella spray', 59990, 230, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/RL-POL-EDT-100.webp', true),
+   (9,  'HUG-BOT-EDP-100', '3348901232555', 100, 'Botella spray', 62990, 240, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/HUG-BOT-EDP-100.webp', true),
+   (10, 'CH-1M-EDP-100',   '3348901232666', 100, 'Botella spray', 74990, 260, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/CH-1M-EDP-100.webp', true),
+   (11, 'CH-1ML-EDT-100',  '3348901232777', 100, 'Botella spray', 79990, 260, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/CH-1ML-EDP-100.webp', true),
+   (12, 'JPG-LEM-EDT-100', '3348901232888', 125, 'Botella spray', 67990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/JPG-LEM-EDT-100.webp', true),
+   (13, 'MON-EXP-EDP-100', '3348901232999', 100, 'Botella spray', 69990, 240, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/MON-EXP-EDP-100.webp', true),
+   (14, 'BVL-AQV-EDT-100', '3348901233001', 100, 'Botella spray', 64990, 230, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/BVL-AQV-EDT-100.webp', true),
+   (15, 'TF-TV-100',       '3348901233112', 100, 'Botella spray', 149990, 280, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/TF-TV-100.webp', true),
+   (16, 'DIO-JAD-EDP-100', '3348901233223', 100, 'Botella spray', 99990, 260, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/DIO-JAD-EDP-100.webp', true),
+   (17, 'CHA-COC-EDP-100', '3348901233334', 100, 'Botella spray', 104990, 270, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/CHA-COC-EDP-100.webp', true),
+   (18, 'YSL-MON-EDP-100', '3348901233445', 90, 'Botella spray', 84990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/YSL-MON-EDP-100.webp', true),
+   (19, 'ARM-LDB-EDT-100', '3348901233556', 100, 'Botella spray', 69990, 230, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/ARM-LDB-EDT-100.webp', true),
+   (20, 'DG-DOL-EDP-100',  '3348901233667', 75, 'Botella spray', 74990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/DG-DOL-EDP-100.webp', true),
+   (21, 'DIO-SAU-PAR-21', '3348901234000', 60, 'Botella spray', 109990, 210, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/DIO-SAU-PAR-21.webp', true),
+   (22, 'HER-TER-EDT-22', '3348901234001', 100, 'Botella spray', 95990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/HER-TER-EDT-22.webp', true),
+   (23, 'DIO-DIO-EDP-23', '3348901234002', 100, 'Botella spray', 105990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/DIO-DIO-EDP-23.webp', true),
+   (24, 'PRA-LUN-EDT-24', '3348901234003', 100, 'Botella spray', 84990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/PRA-LUN-EDT-24.webp', true),
+   (25, 'HUG-BOS-EDP-25', '3348901234004', 100, 'Botella spray', 79990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/HUG-BOS-EDP-25.webp', true),
+   (26, 'CAL-CKO-EDT-26', '3348901234005', 100, 'Botella spray', 54990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/CAL-CKO-EDT-26.webp', true),
+   (27, 'RAL-POL-EDT-27', '3348901234006', 125, 'Botella spray', 76990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/RAL-POL-EDT-27.webp', true),
+   (28, 'TOM-OUD-EDP-28', '3348901234007', 50, 'Botella spray', 159990, 200, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/TOM-OUD-EDP-28.webp', true),
+   (29, 'TOM-NOI-EDP-29', '3348901234008', 100, 'Botella spray', 149990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/TOM-NOI-EDP-29.webp', true),
+   (30, 'BVL-MAN-EDP-30', '3348901234009', 100, 'Botella spray', 89990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/BVL-MAN-EDP-30.webp', true),
+   (31, 'JEA-LEB-EDT-31', '3348901234010', 125, 'Botella spray', 84990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/JEA-LEB-EDT-31.webp', true),
+   (32, 'ISS-LEA-EDT-32', '3348901234011', 125, 'Botella spray', 74990, 275, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/ISS-LEA-EDT-32.webp', true),
+   (33, 'AZZ-WAN-EDT-33', '3348901234012', 100, 'Botella spray', 69990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/AZZ-WAN-EDT-33.webp', true),
+   (34, 'LAC-LBL-EDT-34', '3348901234013', 100, 'Botella spray', 59990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/LAC-LBL-EDT-34.webp', true),
+   (35, 'VAL-UOM-EDT-35', '3348901234014', 100, 'Botella spray', 94990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/VAL-UOM-EDP-35.webp', true),
+   (36, 'GUC-GUI-EDT-36', '3348901234015', 90, 'Botella spray', 84990, 240, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/GUC-GUI-EDT-36.webp', true),
+   (37, 'GIV-GEN-EDP-37', '3348901234016', 100, 'Botella spray', 87990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/GIV-GEN-EDP-37.webp', true),
+   (38, 'GUE-GUE-EDP-38', '3348901234017', 100, 'Botella spray', 79990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/GUE-GUE-EDT-38.webp', true),
+   (39, 'CHA-ALL-EDT-39', '3348901234018', 100, 'Botella spray', 99990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/CHA-ALL-EDT-39.webp', true),
+   (40, 'GIO-ARM-EDP-40', '3348901234019', 75, 'Botella spray', 89990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/GIO-ARM-EDP-40.webp', true),
+   (41, 'VER-VER-EDT-41', '3348901234020', 100, 'Botella spray', 74990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/VER-VER-EDT-41.webp', true),
+   (42, 'PRA-LHO-EDT-42', '3348901234021', 100, 'Botella spray', 84990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/PRA-LHO-EDT-42.webp', true),
+   (43, 'CHA-CHA-EDP-43', '3348901234022', 100, 'Botella spray', 129990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/CHA-CHA-EDP-43.webp', true),
+   (44, 'CHA-CHA-EDT-44', '3348901234023', 100, 'Botella spray', 109990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/CHA-CHA-EDT-44.webp', true),
+   (45, 'DIO-MIS-EDP-45', '3348901234024', 100, 'Botella spray', 104990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/DIO-MIS-EDP-45.webp', true),
+   (46, 'YVE-MON-EDP-46', '3348901234025', 90, 'Botella spray', 99990, 240, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/YSL-MON-EDP-100.webp', true), --duplicado
+   (47, 'LAN-LAV-EDP-47', '3348901234026', 50, 'Botella spray', 89990, 200, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/LAN-LAV-EDP-47.webp', true),
+   (48, 'LAN-IDO-EDP-48', '3348901234027', 100, 'Botella spray', 94990, 225, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/LAN-IDO-EDP-48.webp', true),
+   (49, 'GIO-SIP-EDP-49', '3348901234028', 100, 'Botella spray', 99990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/GIO-SIP-EDP-49.webp', true),
+   (50, 'CAR-VIP-EDP-50', '3348901234029', 80, 'Botella spray', 89990, 230, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/CAR-VIP-EDP-50.webp', true),
+   (51, 'VER-BRI-EDT-51', '3348901234030', 90, 'Botella spray', 74990, 240, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/VER-BRI-EDT-51.webp', true),
+   (52, 'VER-ERO-EDP-52', '3348901234031', 100, 'Botella spray', 84990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/VER-ERO-EDP-52.webp', true),
+   (53, 'DOL-LIG-EDP-53', '3348901234032', 100, 'Botella spray', 94990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/DOL-LIG-EDP-53.webp', true),
+   (54, 'PRA-PAR-EDP-54', '3348901234033', 90, 'Botella spray', 104990, 240, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/PRA-PAR-EDP-54.webp', true),
+   (55, 'GUC-BLO-EDP-55', '3348901234034', 100, 'Botella spray', 99990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/GUC-BLO-EDP-55.webp', true),
+   (56, 'GUC-FLO-EDP-56', '3348901234035', 100, 'Botella spray', 89990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/GUC-FLO-EDT-56.webp', true),
+   (57, 'BUR-HER-EDP-57', '3348901234036', 100, 'Botella spray', 94990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/BUR-HER-EDP-57.jpg.webp', true),
+   (58, 'BUR-BUR-EDP-58', '3348901234037', 85, 'Botella spray', 89990, 235, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/BUR-BUR-EDP-58.webp', true),
+   (59, 'VAL-BOR-EDP-59', '3348901234038', 100, 'Botella spray', 94990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/VAL-BOR-EDP-59.webp', true),
+   (60, 'GIV-LIN-EDP-60', '3348901234039', 80, 'Botella spray', 94990, 230, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/GIV-LIN-EDP-60.webp', true),
+   (61, 'GUE-MON-EDP-61', '3348901234040', 100, 'Botella spray', 99990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/GUE-MON-EDP-61.webp', true),
+   (62, 'LAN-TRE-EDP-62', '3348901234041', 100, 'Botella spray', 89990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/LAN-TRE-EDP-62.webp', true),
+   (63, 'NAR-FOR-EDP-63', '3348901234042', 100, 'Botella spray', 94990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/NAR-FOR-EDP-63.webp', true),
+   (64, 'VIK-FLO-EDP-64', '3348901234043', 100, 'Botella spray', 109990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/VIK-FLO-EDP-64.webp', true),
+   (65, 'JEA-CLA-EDP-65', '3348901234044', 100, 'Botella spray', 94990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/JEA-CLA-EDP-65.webp', true),
+   (66, 'PAC-OLY-EDP-66', '3348901234045', 80, 'Botella spray', 89990, 230, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/PAC-OLY-EDP-66.webp', true),
+   (67, 'PAC-LAD-EDP-67', '3348901234046', 80, 'Botella spray', 89990, 230, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/PAC-LAD-EDP-67.webp', true),
+   (68, 'MAR-DAI-EDT-68', '3348901234047', 100, 'Botella spray', 79990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/MAR-DAI-EDT-68.webp', true),
+   (69, 'ELI-LEP-EDP-69', '3348901234048', 90, 'Botella spray', 99990, 240, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/ELI-LEP-EDP-69.webp', true),
+   (70, 'GIO-MYW-EDP-70', '3348901234049', 90, 'Botella spray', 99990, 240, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/GIO-MYW-EDP-70.webp', true),
+   (71, 'YVE-LIB-EDP-71', '3348901234050', 90, 'Botella spray', 104990, 240, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/YVE-LIB-EDP-71.webp', true),
+   (72, 'MAI-REP-EDT-72', '3348901234051', 100, 'Botella spray', 94990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/MAI-REP-EDT-72.webp', true),
+   (73, 'LEL-SAN-EDP-73', '3348901234052', 50, 'Botella spray', 149990, 200, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/LEL-SAN-EDP-73.webp', true),
+   (74, 'CRE-AVE-EDP-74', '3348901234053', 100, 'Botella spray', 189990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/CRE-AVE-EDP-74.webp', true),
+   (75, 'YVE-BLA-EDP-75', '3348901234054', 90, 'Botella spray', 99990, 240, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/YVE-BLA-EDP-75.webp', true),
+   (76, 'GIO-SI-EDP-76', '3348901234055', 100, 'Botella spray', 98990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/GIO-SI-EDP-76.webp', true),
+   (77, 'CAR-GOO-EDP-77', '3348901234056', 80, 'Botella spray', 97990, 230, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/CAR-GOO-EDP-77.webp', true),
+   (78, 'YVE-LIB-EDP-78', '3348901234057', 90, 'Botella spray', 96990, 240, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/YVE-LIB-EDP-78.webp', true),
+   (79, 'PAC-INV-EDT-79', '3348901234058', 100, 'Botella spray', 76990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/PAC-INV-EDT-79.webp', true),
+   (80, 'DOL-THE-EDP-80', '3348901234059', 100, 'Botella spray', 88990, 250, 'https://bucket-de-prueba-smartlogix.s3.us-east-1.amazonaws.com/DOL-THE-EDP-80.webp', true);
 
 -- ============================================================
 -- 5. BODEGAS (con direcciones reales)
 -- ============================================================
 INSERT INTO "direccion_bodega" ("id_comuna", "calle", "numero", "detalle") VALUES
-  (13101, 'Av. Libertador Bernardo O''Higgins', '1234', 'Santiago Centro'),
-  (13201, 'Av. Concha y Toro', '5678', 'Puente Alto'),
-  (5101, 'Esmeralda', '910', 'Valparaíso'),
-  (8101, 'Av. Pedro de Valdivia', '1112', 'Concepción'),
-  (13113, 'Av. Apoquindo', '3333', 'Las Condes');
+   (13101, 'Av. Libertador Bernardo O''Higgins', '1234', 'Santiago Centro'),
+   (13201, 'Av. Concha y Toro', '5678', 'Puente Alto'),
+   (5101, 'Esmeralda', '910', 'Valparaíso'),
+   (8101, 'Av. Pedro de Valdivia', '1112', 'Concepción'),
+   (13113, 'Av. Apoquindo', '3333', 'Las Condes');
 
 INSERT INTO "bodega" ("nombre", "id_direccion_bodega", "activa") VALUES
-  ('Bodega Central Santiago', 1, true),
-  ('Bodega Puente Alto', 2, true),
-  ('Bodega Valparaíso', 3, true),
-  ('Bodega Concepción', 4, true),
-  ('Bodega Las Condes', 5, true);
+     ('Bodega Central Santiago', 1, true),
+     ('Bodega Puente Alto', 2, true),
+     ('Bodega Valparaíso', 3, true),
+     ('Bodega Concepción', 4, true),
+     ('Bodega Las Condes', 5, true);
 
 -- ============================================================
 -- 6. INVENTARIO INICIAL (stock distribuido por región)
 -- ============================================================
 INSERT INTO "inventario" ("id_bodega", "id_presentacion", "stock_disponible", "stock_reservado", "stock_minimo") VALUES
-  -- Bodega Central (1)
-  (1, 1, 150, 10, 5),
-  (1, 2, 80,  5,  5),
-  (1, 3, 120, 8,  5),
-  (1, 4, 90,  6,  5),
-  (1, 5, 100, 7,  5),
-  
-  -- Bodega Puente Alto (2)
-  (2, 1, 70,  5,  5),
-  (2, 2, 40,  3,  5),
-  (2, 6, 60,  4,  5),
-  (2, 7, 50,  3,  5),
-  
-  -- Bodega Valparaíso (3)
-  (3, 1, 45,  3,  5),
-  (3, 8, 35,  2,  5),
-  (3, 9, 40,  3,  5),
-  
-  -- Bodega Concepción (4)
-  (4, 1, 30,  2,  5),
-  (4, 10, 25, 2,  5),
-  (4, 11, 20, 1,  5),
-  
-  -- Bodega Las Condes (5)
-  (5, 15, 15,  1,  5),
-  (5, 16, 12,  1,  5),
-  (5, 17, 10,  1,  5),
-  (5, 18, 8,   1,  5),
-  (5, 19, 10,  1,  5),
-  (5, 20, 7,   1,  5);
+     -- Bodega Central (1)
+     (1, 1, 150, 10, 5),
+     (1, 2, 80,  5,  5),
+     (1, 3, 120, 8,  5),
+     (1, 4, 90,  6,  5),
+     (1, 5, 100, 7,  5),
+     (1, 22, 20, 2, 5),
+     (1, 27, 70, 7, 5),
+     (1, 32, 50, 5, 5),
+     (1, 37, 30, 3, 5),
+     (1, 42, 80, 8, 5),
+     (1, 47, 60, 6, 5),
+     (1, 52, 40, 4, 5),
+     (1, 57, 20, 2, 5),
+     (1, 62, 70, 7, 5),
+     (1, 67, 50, 5, 5),
+     (1, 72, 30, 3, 5),
+     (1, 77, 80, 8, 5),
+
+     -- Bodega Puente Alto (2)
+     (2, 1, 70,  5,  5),
+     (2, 2, 40,  3,  5),
+     (2, 6, 60,  4,  5),
+     (2, 7, 50,  3,  5),
+     (2, 23, 30, 3, 5),
+     (2, 28, 80, 8, 5),
+     (2, 33, 60, 6, 5),
+     (2, 38, 40, 4, 5),
+     (2, 43, 20, 2, 5),
+     (2, 48, 70, 7, 5),
+     (2, 53, 50, 5, 5),
+     (2, 58, 30, 3, 5),
+     (2, 63, 80, 8, 5),
+     (2, 68, 60, 6, 5),
+     (2, 73, 40, 4, 5),
+     (2, 78, 20, 2, 5),
+
+     -- Bodega Valparaíso (3)
+     (3, 1, 45,  3,  5),
+     (3, 8, 35,  2,  5),
+     (3, 9, 40,  3,  5),
+     (3, 24, 40, 4, 5),
+     (3, 29, 20, 2, 5),
+     (3, 34, 70, 7, 5),
+     (3, 39, 50, 5, 5),
+     (3, 44, 30, 3, 5),
+     (3, 49, 80, 8, 5),
+     (3, 54, 60, 6, 5),
+     (3, 59, 40, 4, 5),
+     (3, 64, 20, 2, 5),
+     (3, 69, 70, 7, 5),
+     (3, 74, 50, 5, 5),
+     (3, 79, 30, 3, 5),
+
+     -- Bodega Concepción (4)
+     (4, 1, 30,  2,  5),
+     (4, 10, 25, 2,  5),
+     (4, 11, 20, 1,  5),
+     (4, 25, 50, 5, 5),
+     (4, 30, 30, 3, 5),
+     (4, 35, 80, 8, 5),
+     (4, 40, 60, 6, 5),
+     (4, 45, 40, 4, 5),
+     (4, 50, 20, 2, 5),
+     (4, 55, 70, 7, 5),
+     (4, 60, 50, 5, 5),
+     (4, 65, 30, 3, 5),
+     (4, 70, 80, 8, 5),
+     (4, 75, 60, 6, 5),
+     (4, 80, 40, 4, 5),
+
+     -- Bodega Las Condes (5)
+     (5, 15, 15,  1,  5),
+     (5, 16, 12,  1,  5),
+     (5, 17, 10,  1,  5),
+     (5, 18, 8,   1,  5),
+     (5, 19, 10,  1,  5),
+     (5, 20, 7,   1,  5),
+     (5, 26, 60, 6, 5),
+     (5, 31, 40, 4, 5),
+     (5, 36, 20, 2, 5),
+     (5, 41, 70, 7, 5),
+     (5, 46, 50, 5, 5),
+     (5, 51, 30, 3, 5),
+     (5, 56, 80, 8, 5),
+     (5, 61, 60, 6, 5),
+     (5, 66, 40, 4, 5),
+     (5, 71, 20, 2, 5),
+     (5, 76, 70, 7, 5),
+     (5, 21, 50, 5, 5);
 
 INSERT INTO "region" ("id_region", "codigo_region", "nombre_region") VALUES
   (1,  'I',     'Arica y Parinacota'),
@@ -853,22 +837,22 @@ INSERT INTO "provincia" ("id_provincia", "id_region", "nombre_provincia") VALUES
   -- Arica y Parinacota (I)
   (11,  1,  'Arica'),
   (12,  1,  'Parinacota'),
-  
+
   -- Antofagasta (II)
   (21,  2,  'Antofagasta'),
   (22,  2,  'El Loa'),
   (23,  2,  'Tocopilla'),
-  
+
   -- Atacama (III)
   (31,  3,  'Copiapó'),
   (32,  3,  'Chañaral'),
   (33,  3,  'Huasco'),
-  
+
   -- Coquimbo (IV)
   (41,  4,  'Elqui'),
   (42,  4,  'Limarí'),
   (43,  4,  'Choapa'),
-  
+
   -- Valparaíso (V)
   (51,  5,  'Valparaíso'),
   (52,  5,  'Isla de Pascua'),
@@ -878,45 +862,45 @@ INSERT INTO "provincia" ("id_provincia", "id_region", "nombre_provincia") VALUES
   (56,  5,  'San Antonio'),
   (57,  5,  'San Felipe de Aconcagua'),
   (58,  5,  'Marga Marga'),
-  
+
   -- O'Higgins (VI)
   (61,  6,  'Cachapoal'),
   (62,  6,  'Colchagua'),
   (63,  6,  'Cardenal Caro'),
-  
+
   -- Maule (VII)
   (71,  7,  'Talca'),
   (72,  7,  'Cachapoal'),
   (73,  7,  'Colbún'),
   (74,  7,  'Linares'),
-  
+
   -- Biobío (VIII)
   (81,  8,  'Concepción'),
   (82,  8,  'Biobío'),
   (83,  8,  'Arauco'),
-  
+
   -- La Araucanía (IX)
   (91,  9,  'Cautín'),
   (92,  9,  'Malleco'),
-  
+
   -- Los Lagos (X)
   (101, 10, 'Llanquihue'),
   (102, 10, 'Chiloé'),
   (103, 10, 'Osorno'),
   (104, 10, 'Palena'),
-  
+
   -- Aysén (XI)
   (111, 11, 'Coyhaique'),
   (112, 11, 'Aysén'),
   (113, 11, 'Capitán Prat'),
   (114, 11, 'General Carrera'),
-  
+
   -- Magallanes (XII)
   (121, 12, 'Magallanes'),
   (122, 12, 'Antártica Chilena'),
   (123, 12, 'Tierra del Fuego'),
   (124, 12, 'Última Esperanza'),
-  
+
   -- Metropolitana (RM)
   (131, 13, 'Santiago'),
   (132, 13, 'Cordillera'),
@@ -924,15 +908,15 @@ INSERT INTO "provincia" ("id_provincia", "id_region", "nombre_provincia") VALUES
   (134, 13, 'Maipo'),
   (135, 13, 'Melipilla'),
   (136, 13, 'Talagante'),
-  
+
   -- Los Ríos (XIV)
   (141, 14, 'Valdivia'),
   (142, 14, 'Ranco'),
-  
+
   -- Arica y Parinacota (XV) - duplicada por codificación INE
   (151, 15, 'Arica'),
   (152, 15, 'Parinacota'),
-  
+
   -- Ñuble (XVI)
   (161, 16, 'Diguillín'),
   (162, 16, 'Punilla'),
@@ -1156,19 +1140,5 @@ INSERT INTO usuarios ("id_usuario", "nombre", "correo", "password", "rol", "acti
   (13, 'Admin User', 'admin@smartlogix.cl', '$2a$10$F6p8JeVuBHD2GBWX3FHz5eqqNjZJJqy346x8ogucU8oZofIoa2A0i', 'ADMIN', true),
   (14, 'Cliente Demo', 'cliente@smartlogix.cl', '$2a$10$F6p8JeVuBHD2GBWX3FHz5eqqNjZJJqy346x8ogucU8oZofIoa2A0i', 'CLIENTE', true);
 
--- El INSERT de arriba usa id_usuario explicito (1-14), pero la columna es
--- GENERATED BY DEFAULT AS IDENTITY: su secuencia interna sigue en 1 porque
--- nunca se le avisa de estos inserts manuales. Sin este fix, el primer
--- POST /api/auth/register intenta usar id_usuario=1 (choca con el usuario
--- semilla) y explota con "duplicate key value violates unique constraint
--- usuarios_pkey" -- y eso se repite 14 veces hasta que la secuencia
--- avanza sola. Este setval sincroniza la secuencia con el maximo id ya
--- usado, para que el primer registro real funcione a la primera.
+
 SELECT setval(pg_get_serial_sequence('usuarios', 'id_usuario'), (SELECT MAX(id_usuario) FROM usuarios));
--- =========================
--- ms_ml_forecast
--- =========================
--- Nota: las tablas de este esquema se crean automaticamente al levantar
--- ms-ml-forecast (SQLAlchemy Base.metadata.create_all en app/db.py), por
--- lo que no se listan aqui como CREATE TABLE. Ver ms-ml-forecast/schema.sql
--- para la referencia completa de columnas.

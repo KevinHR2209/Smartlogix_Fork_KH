@@ -13,8 +13,7 @@ const adminLinks = [
   { label: "Productos", href: "/admin/productos" },
   { label: "Bodegas", href: "/admin/bodegas" },
   { label: "Inventario", href: "/admin/inventario" },
-  { label: "Ventas", href: "/admin/ventas" },
-  { label: "Transportistas", href: "/admin/transportistas" },
+  { label: "Ventas", href: "/admin/ventas" }
 ];
 
 const quickLinks = [{ label: "Ver catálogo", href: "/" }];

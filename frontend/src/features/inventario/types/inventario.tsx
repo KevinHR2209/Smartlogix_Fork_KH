@@ -1,28 +1,54 @@
-export type Inventario = {
-  idInventario?: number;
+export interface Inventario {
+  idInventario: number;
   idBodega: number;
-  nombreBodega?: string;
-  idProducto: number;
-  sku?: string;
-  nombreProducto?: string;
+  nombreBodega: string;
+  idPresentacion: number;
+  idPerfume: number;
+  nombrePerfume: string;
+  volumenMl: number;
+  tipoEnvase: string;
+  precioActual: number;
   stockDisponible: number;
   stockReservado: number;
-};
+  stockMinimo: number;
+  stockBajo: boolean;
+  ultimaActualizacion: string;
+}
 
-export type InventarioRequest = {
+export interface InventarioRequest {
   idBodega: number;
-  idProducto: number;
+  idPresentacion: number;
   stockDisponible: number;
   stockReservado: number;
-};
+  stockMinimo: number;
+}
 
-export type CantidadRequest = {
-  cantidad: number;
-};
-
-export type TransferenciaStockRequest = {
-  idProducto: number;
+export interface TransferenciaStockRequest {
+  idPresentacion: number;
   idBodegaOrigen: number;
   idBodegaDestino: number;
   cantidad: number;
-};
+  observacion?: string;
+  usuarioResponsable?: string;
+}
+
+export interface CantidadRequest {
+  cantidad: number;
+}
+
+export interface MovimientoResponse {
+  idMovimiento: number;
+  tipoMovimiento: string;
+  idPresentacion: number;
+  nombrePerfume: string;
+  volumenMl: number;
+  idBodegaOrigen?: number;
+  nombreBodegaOrigen?: string;
+  idBodegaDestino?: number;
+  nombreBodegaDestino?: string;
+  cantidad: number;
+  idPedido?: number;
+  observacion?: string;
+  fechaMovimiento: string;
+  usuarioResponsable?: string;
+}

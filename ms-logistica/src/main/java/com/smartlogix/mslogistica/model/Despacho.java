@@ -17,19 +17,20 @@ public class Despacho {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idDespacho;
 
-    private Long idPedido; // referencia logica a ms-ventas
+    private Long idPedido; // referencia lógica a ms-ventas
 
     private String direccionEntrega;
 
     private String comunaEntrega;
 
-    private String estadoDespacho; // PENDIENTE, EN_RUTA, ENTREGADO, CANCELADO
+    private String estadoDespacho; // PENDIENTE, EN_RUTA, ENTREGADO, CANCELADO, PROBLEMA_ENTREGA
 
     private OffsetDateTime fechaCreacion;
 
     private OffsetDateTime fechaEntregaEstimada;
 
-    @ManyToOne
-    @JoinColumn(name = "id_transportista")
-    private Transportista transportista;
+    // ── CAMPOS COURIER ────────────────────────────────────────────────────────
+    private String courier;
+    private String codigoSeguimiento;
+    private String urlSeguimiento;
 }
