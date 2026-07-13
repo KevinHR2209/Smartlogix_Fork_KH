@@ -1,6 +1,6 @@
 import os
-
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.db import init_db
@@ -18,6 +18,14 @@ app.include_router(predicciones.router)
 app.include_router(analytics.router)
 
 STATIC_DASHBOARD_DIR = os.path.join(os.path.dirname(__file__), "static", "dashboard")
+
+# Ruta explícita: evita el 307 redirect que genera StaticFiles
+# cuando se pide /dashboard sin barra final
+@app.get("/dashboard", include_in_schema=False)
+def dashboard_index():
+    return FileResponse(os.path.join(STATIC_DASHBOARD_DIR, "index.html"))
+
+# Archivos estáticos del dashboard (chart.umd.js, etc.)
 app.mount("/dashboard", StaticFiles(directory=STATIC_DASHBOARD_DIR, html=True), name="dashboard")
 
 
@@ -29,4 +37,3 @@ def on_startup():
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "ms-ml-forecast"}
-

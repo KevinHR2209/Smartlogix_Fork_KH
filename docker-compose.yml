@@ -207,6 +207,7 @@ services:
     environment:
       - WATCHPACK_POLLING=true
       - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - ML_FORECAST_INTERNAL_URL=http://ms-ml-forecast:8086
     depends_on:
       - ms-gateway
 
