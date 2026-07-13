@@ -21,3 +21,11 @@ spring:
 springdoc:
   api-docs:
     path: /api/inventario/v3/api-docs
+
+aws:
+  s3:
+    bucket-name: ${AWS_BUCKET_NAME:tu-bucket}
+  access-key-id: ${AWS_ACCESS_KEY_ID:tu-access}
+  secret-access-key: ${AWS_SECRET_ACCESS_KEY:tu-secret}
+  session-token: ${AWS_SESSION_TOKEN:tu-token-temporal}
+  region: ${AWS_REGION:us-east-1}

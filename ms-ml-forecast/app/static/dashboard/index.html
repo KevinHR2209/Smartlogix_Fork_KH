@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SmartLogix · Dashboard de Ventas de Perfumes</title>
-<script src="chart.umd.js"></script>
+<script src="/ml-dashboard/chart.umd.js"></script>
 <style>
   :root {
     --bg: #0f1115;
@@ -171,7 +171,22 @@
 
 <h1>Dashboard de Ventas — Catálogo de Perfumes</h1>
 <p class="subtitle">SmartLogix · ms-ml-forecast · <span id="rango-actual" class="rango-label"></span></p>
-
+<div style="background:#171a21;border:1px solid #2a2e38;border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+  <div style="font-size:13px;color:#9aa0ab;flex:1;min-width:200px;">
+    <strong style="color:#e8e9ed;">Inicialización del modelo</strong>
+    — Carga el catálogo, sincroniza y entrena el modelo ML por primera vez.
+  </div>
+  <button id="btn-seed" style="background:transparent;border:1px solid #2a2e38;color:#9aa0ab;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
+  Cargar catálogo
+  </button>
+  <button id="btn-sync" style="background:transparent;border:1px solid #22c3a6;color:#22c3a6;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
+  Sincronizar datos
+</button>
+  <button id="btn-entrenar-init" style="background:#7c5cff;border:none;color:white;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
+  Entrenar modelo
+  </button>
+  <span id="init-status" style="font-size:12px;color:#9aa0ab;min-width:180px;">—</span>
+</div>
 <div class="filtros">
   <button class="filtro-btn" data-periodo="semana">Última semana</button>
   <button class="filtro-btn" data-periodo="mes_anterior">Mes anterior</button>
@@ -275,7 +290,7 @@
 </div>
 
 <script>
-const API_BASE = ""; // mismo origen: FastAPI sirve el dashboard y expone /analytics
+const API_BASE = "/ml-api";
 let periodoActivo = "mes_actual";
 let chartLinea, chartFamilia, chartMarca;
 
@@ -543,7 +558,57 @@ async function consultarProducto() {
     btn.textContent = "Consultar";
   }
 }
+async function ejecutarSeed() {
+  const btn = document.getElementById("btn-seed");
+  const status = document.getElementById("init-status");
+  btn.disabled = true; btn.textContent = "Cargando...";
+  status.textContent = "Ejecutando seed del catálogo...";
+  try {
+    const resp = await fetch(`${API_BASE}/catalogo/seed`, { method: "POST" });
+    if (!resp.ok) { const err = await resp.json().catch(()=>({})); throw new Error(err.detail || "Error en seed"); }
+    const data = await resp.json();
+    status.textContent = "Seed OK — " + (data.message ?? "Catálogo cargado");
+    await cargarCatalogoParaSelector();
+  } catch(e) { status.textContent = "❌ " + e.message; }
+  finally { btn.disabled = false; btn.textContent = "Cargar catálogo"; }
+}
 
+async function ejecutarEntrenar() {
+  const btn = document.getElementById("btn-entrenar-init");
+  const status = document.getElementById("init-status");
+  btn.disabled = true; btn.textContent = "Entrenando...";
+  status.textContent = "Entrenando modelo ML, espera unos segundos...";
+  try {
+    const resp = await fetch(`${API_BASE}/entrenar`, { method: "POST" });
+    if (!resp.ok) { const err = await resp.json().catch(()=>({})); throw new Error(err.detail || "Error al entrenar"); }
+    const data = await resp.json();
+    const mae = data.metricas?.demanda_mae?.toFixed(3) ?? "—";
+    const auc = data.metricas?.quiebre_auc?.toFixed(3) ?? "—";
+    status.textContent = `Modelo listo — MAE demanda: ${mae} · AUC quiebre: ${auc}`;
+  } catch(e) { status.textContent = "❌ " + e.message; }
+  finally { btn.disabled = false; btn.textContent = "Entrenar modelo"; }
+}
+
+
+async function ejecutarSync() {
+  const btn = document.getElementById("btn-sync");
+  const status = document.getElementById("init-status");
+  btn.disabled = true; btn.textContent = "Sincronizando...";
+  status.textContent = "Sincronizando datos de ventas...";
+  try {
+    const resp = await fetch(`${API_BASE}/sync`, { method: "POST" });
+    if (!resp.ok) { const err = await resp.json().catch(()=>({})); throw new Error(err.detail || "Error en sync"); }
+    const data = await resp.json();
+    const fuente = data.fuente === "dataset_sintetico_fallback" ? "dataset sintético" : "ms-ventas";
+    status.textContent = `Sync OK — ${data.registros ?? 0} registros desde ${fuente}`;
+    actualizarDashboard(periodoActivo); // refresca los gráficos automáticamente
+  } catch(e) { status.textContent = "❌ " + e.message; }
+  finally { btn.disabled = false; btn.textContent = "Sincronizar datos"; }
+}
+
+document.getElementById("btn-sync").addEventListener("click", ejecutarSync);
+document.getElementById("btn-seed").addEventListener("click", ejecutarSeed);
+document.getElementById("btn-entrenar-init").addEventListener("click", ejecutarEntrenar);
 document.getElementById("btn-predecir-quiebres").addEventListener("click", predecirQuiebres);
 document.getElementById("btn-consultar-producto").addEventListener("click", consultarProducto);
 cargarCatalogoParaSelector();

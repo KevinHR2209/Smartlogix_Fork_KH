@@ -1,64 +1,65 @@
 import Link from "next/link";
-import { Producto } from "../types/producto";
+import Image from "next/image";
+import { Producto } from "@/features/productos/types/producto";
 import { formatCurrency } from "@/lib/utils/currency";
 
 interface ProductCardProps {
-  producto: Producto;
-  onAdd?: (producto: Producto) => void;
+    producto: Producto;
 }
 
-export function ProductCard({ producto, onAdd }: ProductCardProps) {
-  const disponible = (producto.stockTotal ?? 0) > 0;
+export function ProductCard({ producto }: ProductCardProps) {
+    // Lógica de stock
+    const stock = producto.stockTotal ?? 0;
+    const disponible = stock > 0;
 
-  return (
-    <article className="card-base flex h-full flex-col overflow-hidden p-4">
-      <div className="mb-3 aspect-[4/3] rounded-2xl bg-zinc-100 dark:bg-zinc-800" />
+    // Imagen y Marca leídas correctamente
+    const imagenSrc = producto.imagenUrl || "/placeholder.png";
+    const marcaNombre = producto.marca?.nombre || "SMARTLOGIX";
 
-      <div className="mb-2 flex items-center justify-between gap-3">
-        <span className="truncate text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-500 dark:text-zinc-400">
-          {producto.sku}
-        </span>
-
-        <span
-          className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
-            disponible
-              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
-              : "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300"
-          }`}
-        >
-          {disponible ? `Stock: ${producto.stockTotal}` : "Agotado"}
-        </span>
-      </div>
-
-      <h3 className="text-lg font-semibold leading-tight line-clamp-2">
-        {producto.nombre}
-      </h3>
-
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">
-        {producto.descripcion}
-      </p>
-
-      <div className="mt-4 text-2xl font-bold">
-        {formatCurrency(Number(producto.precioActual ?? 0))}
-      </div>
-
-      <div className="mt-4 flex gap-3">
+    return (
         <Link
-          href={`/productos/${producto.idProducto}`}
-          className="btn-secondary flex-1 text-center"
+            href={`/productos/${producto.idProducto}`}
+            className="group flex flex-col border border-gray-200 bg-white transition-all hover:border-black"
         >
-          Ver detalle
-        </Link>
+            {/* CONTENEDOR DE IMAGEN */}
+            <div className="aspect-[4/5] relative overflow-hidden bg-gray-50 w-full border-b border-gray-200">
+                <Image
+                    src={imagenSrc}
+                    alt={producto.nombre}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                />
+            </div>
 
-        <button
-          type="button"
-          className="btn-primary flex-1 disabled:cursor-not-allowed disabled:opacity-50"
-          disabled={!disponible}
-          onClick={() => onAdd?.(producto)}
-        >
-          {disponible ? "Agregar" : "Sin stock"}
-        </button>
-      </div>
-    </article>
-  );
+            {/* INFORMACIÓN DEL PRODUCTO */}
+            <div className="p-4 flex flex-col flex-1">
+
+                {/* HEADER: MARCA Y STOCK */}
+                <div className="flex justify-between items-start mb-3 gap-2">
+          <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500">
+            {marcaNombre}
+          </span>
+                    <span className="text-[10px] uppercase tracking-widest font-semibold text-gray-400">
+            {disponible ? `Stock: ${stock}` : "Agotado"}
+          </span>
+                </div>
+
+                {/* TÍTULO */}
+                <h3 className="text-sm font-bold uppercase tracking-tighter text-black mb-2 line-clamp-2">
+                    {producto.nombre}
+                </h3>
+
+                {/* FOOTER: PRECIO Y ACCIÓN */}
+                <div className="mt-auto pt-4 flex items-center justify-between">
+          <span className="text-sm font-bold text-black">
+            {formatCurrency(producto.precioActual)}
+          </span>
+                    <span className="text-[10px] uppercase tracking-widest font-bold text-gray-400 group-hover:text-black transition-colors">
+            Ver Detalle
+          </span>
+                </div>
+            </div>
+        </Link>
+    );
 }

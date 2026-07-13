@@ -92,6 +92,11 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ms_inventario
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
+      - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+      - AWS_REGION=${AWS_REGION}
     command: mvn clean spring-boot:run
     depends_on:
       postgres:
@@ -207,6 +212,7 @@ services:
     environment:
       - WATCHPACK_POLLING=true
       - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - ML_FORECAST_INTERNAL_URL=http://ms-ml-forecast:8086
     depends_on:
       - ms-gateway
 
