@@ -1,5 +1,18 @@
+export interface Marca {
+  idMarca: number;
+  nombre: string;
+  paisOrigen?: string;
+}
+
+export interface FamiliaOlfativa {
+  idFamilia: number;
+  nombre: string;
+  descripcion?: string;
+}
+
 export interface Producto {
-  idProducto?: number;
+  idProducto?: number; // Este es tu idPresentacion
+  idPerfume?: number;
   sku: string;
   nombre: string;
   descripcion: string;
@@ -8,17 +21,10 @@ export interface Producto {
   dimensiones: string;
   estado: string;
   stockTotal?: number;
-  // Campos rescatados del aplanamiento:
   imagenUrl?: string;
   volumenMl?: number;
-  marca?: {
-    idMarca: number;
-    nombre: string;
-  };
-  familiaOlfativa?: {
-    idFamilia: number;
-    nombre: string;
-  };
+  marca?: Marca;
+  familiaOlfativa?: FamiliaOlfativa;
 }
 
 export interface ProductFiltersState {

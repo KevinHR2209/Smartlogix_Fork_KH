@@ -1,13 +1,38 @@
 "use client";
 
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { Producto } from "@/features/productos/types/producto";
-// import { productosService } from "@/features/productos/services/productosService";
+import { productosService } from "@/features/productos/services/productosService";
 
-export function ProductoForm() {
-    const router = useRouter();
+// Función mágica que convierte a WebP en el navegador
+const convertToWebP = (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+        const img = new window.Image();
+        img.src = URL.createObjectURL(file);
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return reject(new Error("No se pudo crear el contexto 2d"));
+            ctx.drawImage(img, 0, 0);
+            canvas.toBlob((blob) => {
+                if (!blob) return reject(new Error("Error al convertir a WebP"));
+                const webpFile = new File([blob], "imagen.webp", { type: "image/webp" });
+                resolve(webpFile);
+            }, "image/webp", 0.8);
+        };
+        img.onerror = () => reject(new Error("Error al cargar la imagen para conversión"));
+    });
+};
+
+interface ProductoFormProps {
+    onSuccess?: () => void;
+    initialData?: Producto | null; // Recibe datos si estamos editando
+}
+
+export function ProductoForm({ onSuccess, initialData }: ProductoFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -26,6 +51,24 @@ export function ProductoForm() {
         familiaId: "",
     });
 
+    // Rellenamos el formulario si viene data inicial (Modo Edición)
+    useEffect(() => {
+        if (initialData) {
+            setFormData({
+                nombre: initialData.nombre || "",
+                sku: initialData.sku || "",
+                descripcion: initialData.descripcion || "",
+                precioActual: initialData.precioActual?.toString() || "",
+                volumenMl: initialData.volumenMl?.toString() || "",
+                pesoGramos: initialData.pesoGramos?.toString() || "",
+                tipoEnvase: initialData.dimensiones || "spray",
+                marcaId: initialData.marca?.idMarca?.toString() || "",
+                familiaId: initialData.familiaOlfativa?.idFamilia?.toString() || "",
+            });
+            setImagePreview(initialData.imagenUrl || null);
+        }
+    }, [initialData]);
+
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -40,33 +83,39 @@ export function ProductoForm() {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+
+        if (!formData.sku) {
+            setError("Debes ingresar un SKU antes de guardar (se usará como nombre de la imagen).");
+            return;
+        }
+
         setIsSubmitting(true);
         setError(null);
 
         try {
-            let uploadedImageUrl = "";
+            // Si estamos editando y no subimos foto nueva, mantenemos la anterior
+            let uploadedImageUrl = initialData?.imagenUrl || "";
 
-            // 1. SUBIDA DE IMAGEN AL BUCKET VÍA MICROSERVICIO
+            // 1. SUBIDA DE IMAGEN A AWS (Si seleccionó una nueva)
             if (imageFile) {
+                const webpFile = await convertToWebP(imageFile);
                 const uploadData = new FormData();
-                uploadData.append("archivo", imageFile); // "archivo" debe coincidir con el @RequestParam en Java
+                uploadData.append("archivo", webpFile);
+                uploadData.append("sku", formData.sku);
 
-                // Asegúrate de que esta ruta apunte a tu API Gateway o al microservicio correcto
                 const uploadRes = await fetch("/api/archivos/subir", {
                     method: "POST",
                     body: uploadData
                 });
 
                 if (!uploadRes.ok) {
-                    throw new Error("Error al subir la imagen al servidor.");
+                    throw new Error("Error al subir la imagen al servidor AWS.");
                 }
-
-                // El backend devuelve la URL como texto plano en nuestro ejemplo
                 uploadedImageUrl = await uploadRes.text();
             }
 
-            // 2. CREACIÓN DEL PRODUCTO EN LA BASE DE DATOS
-            const nuevoProducto = {
+            // 2. CREACIÓN O EDICIÓN DEL PRODUCTO
+            const payload = {
                 nombre: formData.nombre,
                 sku: formData.sku,
                 descripcion: formData.descripcion,
@@ -74,21 +123,28 @@ export function ProductoForm() {
                 volumenMl: Number(formData.volumenMl),
                 pesoGramos: Number(formData.pesoGramos),
                 dimensiones: formData.tipoEnvase,
-                estado: "activo",
-                imagenUrl: uploadedImageUrl, // Aquí va la URL real del bucket
-                // marcaId y familiaId se envían según lo que espere tu backend
+                estado: initialData?.estado || "activo", // Mantiene el estado original si edita
+                imagenUrl: uploadedImageUrl,
             };
 
-            // Descomenta esto cuando actualices tu productosService.create
-            // await productosService.create(nuevoProducto);
+            if (initialData?.idProducto) {
+                // Actualizar
+                await productosService.update(initialData.idProducto, {
+                    ...payload,
+                    idProducto: initialData.idProducto
+                });
+                alert("Producto actualizado exitosamente.");
+            } else {
+                // Crear
+                await productosService.create(payload);
+                alert("Producto creado exitosamente.");
+            }
 
-            // 3. REDIRECCIÓN
-            // router.push("/admin/productos");
-            alert("Producto creado exitosamente con la imagen: " + uploadedImageUrl);
+            if (onSuccess) onSuccess();
 
         } catch (err) {
             console.error(err);
-            setError(err instanceof Error ? err.message : "Hubo un error al crear el producto.");
+            setError(err instanceof Error ? err.message : "Hubo un error al guardar el producto.");
         } finally {
             setIsSubmitting(false);
         }
@@ -97,9 +153,11 @@ export function ProductoForm() {
     return (
         <form onSubmit={handleSubmit} className="max-w-4xl mx-auto bg-white border border-gray-200 p-6 md:p-10 text-black">
             <div className="mb-8 border-b border-gray-100 pb-6">
-                <h2 className="text-2xl font-bold uppercase tracking-tighter text-black">Crear Nuevo Perfume</h2>
+                <h2 className="text-2xl font-bold uppercase tracking-tighter text-black">
+                    {initialData ? "Editar Perfume" : "Crear Nuevo Perfume"}
+                </h2>
                 <p className="text-xs uppercase tracking-widest text-gray-500 mt-2 font-semibold">
-                    Ingresa los datos y sube la imagen de la presentación.
+                    {initialData ? "Modifica los datos del producto." : "Ingresa los datos y sube la imagen. Se convertirá a WebP automáticamente."}
                 </p>
             </div>
 
@@ -110,7 +168,6 @@ export function ProductoForm() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* COLUMNA IZQUIERDA: DATOS GENERALES */}
                 <div className="flex flex-col space-y-5">
                     <div>
                         <label className="block text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-2">Nombre del Perfume</label>
@@ -120,7 +177,7 @@ export function ProductoForm() {
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-2">SKU</label>
-                            <input required type="text" name="sku" value={formData.sku} onChange={handleChange} className="w-full border border-gray-300 p-3 text-sm rounded-none focus:outline-none focus:border-black transition-colors" placeholder="Ej: DIO-SAU-100" />
+                            <input required type="text" name="sku" value={formData.sku} onChange={handleChange} disabled={!!initialData} className="w-full border border-gray-300 p-3 text-sm rounded-none focus:outline-none focus:border-black transition-colors uppercase disabled:bg-gray-100 disabled:text-gray-400" placeholder="Ej: DIO-SAU-100" />
                         </div>
                         <div>
                             <label className="block text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-2">Precio ($)</label>
@@ -145,14 +202,11 @@ export function ProductoForm() {
                     </div>
                 </div>
 
-                {/* COLUMNA DERECHA: IMAGEN Y EXTRAS */}
                 <div className="flex flex-col space-y-5">
-                    {/* ZONA DE CARGA DE IMAGEN ESTÉTICA */}
                     <div>
                         <label className="block text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-2">Imagen de Presentación</label>
 
                         <div className="relative border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 transition-colors flex flex-col items-center justify-center aspect-[4/5] w-full cursor-pointer overflow-hidden group">
-
                             {imagePreview ? (
                                 <>
                                     <Image src={imagePreview} alt="Vista previa" fill className="object-cover" />
@@ -189,13 +243,20 @@ export function ProductoForm() {
                 </div>
             </div>
 
-            <div className="mt-10 pt-6 border-t border-gray-100">
+            <div className="mt-10 pt-6 border-t border-gray-100 flex gap-4">
+                <button
+                    type="button"
+                    onClick={() => { if(onSuccess) onSuccess() }}
+                    className="w-1/3 py-4 text-sm uppercase tracking-widest font-bold transition-all rounded-none border border-gray-300 bg-white text-black hover:bg-gray-50"
+                >
+                    Cancelar
+                </button>
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-4 text-sm uppercase tracking-widest font-bold transition-all rounded-none border-2 border-black bg-black text-white hover:bg-white hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-2/3 py-4 text-sm uppercase tracking-widest font-bold transition-all rounded-none border-2 border-black bg-black text-white hover:bg-white hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {isSubmitting ? "Guardando y subiendo..." : "Crear Producto"}
+                    {isSubmitting ? "Guardando..." : initialData ? "Actualizar Producto" : "Crear Producto"}
                 </button>
             </div>
         </form>
