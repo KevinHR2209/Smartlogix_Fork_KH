@@ -8,6 +8,17 @@ export interface Producto {
   dimensiones: string;
   estado: string;
   stockTotal?: number;
+  // Campos rescatados del aplanamiento:
+  imagenUrl?: string;
+  volumenMl?: number;
+  marca?: {
+    idMarca: number;
+    nombre: string;
+  };
+  familiaOlfativa?: {
+    idFamilia: number;
+    nombre: string;
+  };
 }
 
 export interface ProductFiltersState {

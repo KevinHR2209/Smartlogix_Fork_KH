@@ -2,81 +2,110 @@ import { apiGet } from "@/lib/api/client";
 import { endpoints } from "@/lib/api/endpoints";
 import { Producto } from "../types/producto";
 
+// Interfaces de lo que nos devuelve el backend de Perfumes
 interface PresentacionResponse {
-  idPresentacion: number;
-  sku: string;
-  volumenMl: number;
-  tipoEnvase: string;
-  precioActual: number;
-  pesoGramos: number;
-  activo: boolean;
+    idPresentacion: number;
+    sku: string;
+    volumenMl: number;
+    tipoEnvase: string;
+    precioActual: number;
+    pesoGramos: number;
+    activo: boolean;
+    imagenUrl?: string;
+}
+
+interface MarcaResponse {
+    idMarca: number;
+    nombre: string;
+    paisOrigen?: string;
+}
+
+interface FamiliaOlfativaResponse {
+    idFamilia: number;
+    nombre: string;
+    descripcion?: string;
 }
 
 interface PerfumeResponse {
-  idPerfume: number;
-  nombre: string;
-  descripcion: string;
-  estado: string;
-  presentaciones: PresentacionResponse[];
+    idPerfume: number;
+    nombre: string;
+    descripcion: string;
+    estado: string;
+    marca?: MarcaResponse;
+    familiaOlfativa?: FamiliaOlfativaResponse;
+    presentaciones: PresentacionResponse[];
 }
 
-// El backend real expone /api/perfumes (cada perfume trae sus presentaciones
-// anidadas) en vez del antiguo /api/productos plano. Cada presentacion se
-// aplana a un "Producto" para no tener que tocar el resto de la UI (carrito,
-// grillas, etc), que ya asume esa forma de dato.
-//
-// Simplificacion deliberada: no se llama a /api/inventario por presentacion
-// para traer el stock real (serian N llamadas extra por cada presentacion).
-// stockTotal queda fijo en un valor > 0 para que el catalogo se vea
-// "disponible" en la demo. Si se necesita el stock real, hay que agregar esa
-// llamada aqui.
+// Interfaz de lo que nos devuelve el backend de Inventario
+interface InventarioResponse {
+    stockDisponible: number;
+    // (Ignoramos el resto de campos como stockReservado o idBodega porque para el catálogo solo nos interesa el disponible)
+}
+
 function aplanarPerfume(perfume: PerfumeResponse): Producto[] {
-  return (perfume.presentaciones ?? [])
-    .filter((p) => p.activo && (perfume.estado ?? "").toUpperCase() === "ACTIVO")
-    .map((p) => ({
-      idProducto: p.idPresentacion,
-      sku: p.sku,
-      nombre: `${perfume.nombre} ${p.volumenMl}ml`,
-      descripcion: perfume.descripcion,
-      precioActual: p.precioActual,
-      pesoGramos: p.pesoGramos,
-      dimensiones: p.tipoEnvase,
-      estado: perfume.estado,
-      stockTotal: 999,
-    }));
+    return (perfume.presentaciones ?? [])
+        .filter((p) => p.activo && (perfume.estado ?? "").toUpperCase() === "ACTIVO")
+        .map((p) => ({
+            idProducto: p.idPresentacion, // Usamos idPresentacion como ID principal en el frontend
+            sku: p.sku,
+            nombre: `${perfume.nombre} ${p.volumenMl}ml`,
+            descripcion: perfume.descripcion,
+            precioActual: p.precioActual,
+            pesoGramos: p.pesoGramos,
+            dimensiones: p.tipoEnvase,
+            estado: perfume.estado,
+            stockTotal: 0, // Lo dejaremos en 0 temporalmente, se llena en getAll
+            imagenUrl: p.imagenUrl,
+            volumenMl: p.volumenMl,
+            marca: perfume.marca,
+            familiaOlfativa: perfume.familiaOlfativa
+        }));
 }
 
 export const productosService = {
-  getAll: async (): Promise<Producto[]> => {
-    const perfumes = await apiGet<PerfumeResponse[]>(endpoints.perfumes);
-    return perfumes.flatMap(aplanarPerfume);
-  },
+    getAll: async (): Promise<Producto[]> => {
+        // 1. Traemos el catálogo base
+        // Si tienes "endpoints.perfumes" úsalo, sino asumo la ruta "/api/perfumes"
+        const rutaPerfumes = endpoints.perfumes || "/api/perfumes";
+        const perfumes = await apiGet<PerfumeResponse[]>(rutaPerfumes);
+        const productosAplanados = perfumes.flatMap(aplanarPerfume);
 
-  getById: async (id: number) => {
-    const productos = await productosService.getAll();
-    return productos.find((item) => item.idProducto === id) ?? null;
-  },
+        // 2. Consultamos el stock real al microservicio de inventario
+        const productosConStock = await Promise.all(
+            productosAplanados.map(async (producto) => {
+                try {
+                    // Ajusta esta ruta si en tu API Gateway el endpoint se llama distinto
+                    const rutaInventario = `/api/inventario/presentacion/${producto.idProducto}`;
+                    const inventarios = await apiGet<InventarioResponse[]>(rutaInventario);
 
-  // TODO: el admin de productos (crear/editar/eliminar) todavia asume el
-  // viejo modelo plano de "producto". El backend real ahora separa
-  // perfume (nombre, marca, familia olfativa) de presentacion (sku, precio,
-  // volumen), asi que estos 3 metodos necesitan repensarse (probablemente
-  // 2 formularios separados) en vez de una migracion 1 a 1. Fuera de
-  // alcance de esta sesion — no se toco el admin, solo se evito que
-  // rompiera la compilacion.
-  create: async (_producto: Omit<Producto, "idProducto">): Promise<Producto> => {
-    throw new Error(
-      "Crear producto no esta implementado con el nuevo modelo perfume/presentacion todavia"
-    );
-  },
-  update: async (_id: number, _producto: Producto): Promise<Producto> => {
-    throw new Error(
-      "Editar producto no esta implementado con el nuevo modelo perfume/presentacion todavia"
-    );
-  },
-  remove: async (_id: number): Promise<void> => {
-    throw new Error(
-      "Eliminar producto no esta implementado con el nuevo modelo perfume/presentacion todavia"
-    );
-  },
+                    // Como puede estar en varias bodegas, sumamos el stock disponible de todas
+                    const stockReal = inventarios.reduce((sum, inv) => sum + (inv.stockDisponible || 0), 0);
+
+                    return { ...producto, stockTotal: stockReal };
+                } catch (error) {
+                    console.error(`Error obteniendo stock para ${producto.sku}`, error);
+                    // Si el inventario falla, devolvemos 0 por seguridad para no romper la vista
+                    return { ...producto, stockTotal: 0 };
+                }
+            })
+        );
+
+        return productosConStock;
+    },
+
+    getById: async (id: number) => {
+        // Como esto llama a getAll, ya vendrá con el stock real resuelto
+        const productos = await productosService.getAll();
+        return productos.find((item) => item.idProducto === id) ?? null;
+    },
+
+    create: async (_producto: Omit<Producto, "idProducto">): Promise<Producto> => {
+        throw new Error("No implementado");
+    },
+    update: async (_id: number, _producto: Producto): Promise<Producto> => {
+        throw new Error("No implementado");
+    },
+    remove: async (_id: number): Promise<void> => {
+        throw new Error("No implementado");
+    },
 };

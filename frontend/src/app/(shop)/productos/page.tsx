@@ -1,28 +1,30 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Producto } from "@/features/productos/types/producto";
-import { ProductFilters } from "@/features/productos/components/product-filters";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { ProductGrid } from "@/features/productos/components/product-grid";
-import { useCart } from "@/features/cart/context/cart-context";
+import { ProductFilters } from "@/features/productos/components/product-filters";
 import { productosService } from "@/features/productos/services/productosService";
+import { Producto } from "@/features/productos/types/producto";
 
 export default function ProductosPage() {
   const [productos, setProductos] = useState<Producto[]>([]);
-  const [search, setSearch] = useState("");
-  const [onlyStock, setOnlyStock] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { addItem } = useCart();
+  const [error, setError] = useState<string | null>(null);
+
+  // Estados para los filtros
+  const [searchTerm, setSearchTerm] = useState("");
+  const [onlyStock, setOnlyStock] = useState(false);
 
   useEffect(() => {
     const loadProductos = async () => {
       try {
+        setLoading(true);
         const data = await productosService.getAll();
-        if (Array.isArray(data)) {
-          setProductos(data);
-        }
-      } catch (error) {
-        console.error("Error cargando productos", error);
+        setProductos(data);
+      } catch (err) {
+        console.error("Error cargando el catálogo:", err);
+        setError("No se pudo cargar el catálogo de productos.");
       } finally {
         setLoading(false);
       }
@@ -31,50 +33,87 @@ export default function ProductosPage() {
     loadProductos();
   }, []);
 
-  const productosFiltrados = useMemo(() => {
-    return productos.filter((producto) => {
-      const term = search.toLowerCase();
+  if (loading) {
+    return (
+        <main className="min-h-screen bg-white flex items-center justify-center">
+          <div className="text-sm uppercase tracking-widest font-bold text-black">
+            Cargando catálogo...
+          </div>
+        </main>
+    );
+  }
 
-      const matchSearch =
-        (producto.nombre ?? "").toLowerCase().includes(term) ||
-        (producto.descripcion ?? "").toLowerCase().includes(term) ||
-        (producto.sku ?? "").toLowerCase().includes(term);
+  if (error) {
+    return (
+        <main className="min-h-screen bg-white flex flex-col items-center justify-center">
+          <h1 className="text-2xl font-bold uppercase tracking-tighter text-black mb-4">Error</h1>
+          <p className="text-gray-500 mb-8 font-medium">{error}</p>
+        </main>
+    );
+  }
 
-      const matchStock = onlyStock ? (producto.stockTotal ?? 0) > 0 : true;
-      const matchEstado = (producto.estado ?? "").toUpperCase() === "ACTIVO";
+  // LÓGICA DE FILTRADO
+  const productosFiltrados = productos.filter((producto) => {
+    const marca = producto.marca?.nombre || "";
+    const textoBusqueda = searchTerm.toLowerCase();
 
-      return matchSearch && matchStock && matchEstado;
-    });
-  }, [productos, search, onlyStock]);
+    // Busca por nombre, SKU o marca
+    const coincideBusqueda =
+        producto.nombre.toLowerCase().includes(textoBusqueda) ||
+        producto.sku.toLowerCase().includes(textoBusqueda) ||
+        marca.toLowerCase().includes(textoBusqueda);
+
+    // Verifica el stock si el checkbox está marcado
+    const stock = producto.stockTotal ?? 0;
+    const coincideStock = onlyStock ? stock > 0 : true;
+
+    return coincideBusqueda && coincideStock;
+  });
 
   return (
-    <main className="container-app py-10">
-      <section className="mb-10 flex flex-col gap-3">
-        <p className="text-sm uppercase tracking-[0.25em] text-zinc-500 dark:text-zinc-400">
-          Smartlogix Store
-        </p>
-        <h1 className="text-4xl font-bold tracking-tight">Catálogo de productos</h1>
-        <p className="max-w-2xl text-zinc-600 dark:text-zinc-400">
-          Explora el catálogo, filtra por disponibilidad y revisa cada producto en una vista separada.
-        </p>
-      </section>
+      <main className="min-h-screen bg-white font-sans text-black selection:bg-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-6 text-xs uppercase tracking-widest text-gray-500">
+          <Link href="/" className="hover:text-black transition-colors">Inicio</Link>
+          <span className="mx-2">/</span>
+          <span className="text-black font-semibold">Catálogo</span>
+        </div>
 
-      <section className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
-        <ProductFilters
-          search={search}
-          onSearchChange={setSearch}
-          onlyStock={onlyStock}
-          onOnlyStockChange={setOnlyStock}
-        />
+        <div className="max-w-7xl mx-auto px-4 pb-24">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 border-b border-gray-100 pb-6 gap-4">
+            <div>
+              <h1 className="text-3xl lg:text-4xl font-bold uppercase tracking-tighter text-black">
+                Catálogo
+              </h1>
+              <p className="text-gray-500 mt-2 text-sm font-medium">
+                {productosFiltrados.length} {productosFiltrados.length === 1 ? 'producto encontrado' : 'productos encontrados'}.
+              </p>
+            </div>
 
-        {loading ? (
-          <div className="card-base flex min-h-72 items-center justify-center p-8">
-            Cargando productos...
+            {/* PASAMOS LOS ESTADOS AL COMPONENTE DE FILTROS */}
+            <div className="relative z-30">
+              <ProductFilters
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  onlyStock={onlyStock}
+                  setOnlyStock={setOnlyStock}
+              />
+            </div>
           </div>
-        ) : (
-          <ProductGrid productos={productosFiltrados} onAdd={addItem} />
-        )}
-      </section>
-    </main>
+
+          {/* LA GRILLA DEFINITIVA */}
+          {productosFiltrados.length === 0 ? (
+              <div className="py-24 text-center text-gray-500 uppercase tracking-widest text-sm font-bold">
+                No hay productos que coincidan con tu búsqueda.
+              </div>
+          ) : (
+              /* AQUÍ FORZAMOS LAS 4 COLUMNAS (lg:grid-cols-4) */
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {productosFiltrados.map((producto) => (
+                    <ProductGrid key={producto.idProducto} producto={producto} />
+                ))}
+              </div>
+          )}
+        </div>
+      </main>
   );
 }
