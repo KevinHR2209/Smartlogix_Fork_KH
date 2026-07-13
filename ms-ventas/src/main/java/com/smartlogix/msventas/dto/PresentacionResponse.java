@@ -2,4 +2,9 @@ package com.smartlogix.msventas.dto;
 
 import java.math.BigDecimal;
 
-public record PresentacionResponse(Long idPresentacion, BigDecimal precioActual) {}
+public record PresentacionResponse(
+        Long idPresentacion,
+        BigDecimal precioActual,
+        String nombrePerfume,
+        Integer volumenMl
+) {}
