@@ -1,4 +1,3 @@
-// Inventario.tsx
 export interface Inventario {
   idInventario: number;
   idBodega: number;
@@ -31,10 +30,6 @@ export interface TransferenciaStockRequest {
   cantidad: number;
   observacion?: string;
   usuarioResponsable?: string;
-}
-
-export interface AjusteStockRequest {
-  cantidad: number;
 }
 
 export interface CantidadRequest {

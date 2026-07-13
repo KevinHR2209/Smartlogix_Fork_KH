@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiPut, apiPutParams } from "@/lib/api/client";
+import { apiGet, apiPost, apiPut } from "@/lib/api/client";
 import {
   Inventario,
   InventarioRequest,
@@ -35,8 +35,10 @@ export const inventarioService = {
     apiPut<Inventario>(`${BASE}/${idInventario}/descontar`, payload),
 
   transferir: (payload: TransferenciaStockRequest) =>
-    apiPutParams(`${BASE}/transferir`),
+    apiPut<void>(`${BASE}/transferir`, payload),
 
   getMovimientos: (idPresentacion: number) =>
-    apiGet<MovimientoResponse[]>(`${BASE}/movimientos/presentacion/${idPresentacion}`),
+    apiGet<MovimientoResponse[]>(
+      `${BASE}/movimientos/presentacion/${idPresentacion}`
+    ),
 };

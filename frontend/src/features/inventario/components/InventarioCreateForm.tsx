@@ -27,7 +27,9 @@ export function InventarioCreateForm({
           <select
             className="input-base"
             value={form.idBodega || ""}
-            onChange={(e) => onChange({ ...form, idBodega: Number(e.target.value) })}
+            onChange={(e) =>
+              onChange({ ...form, idBodega: Number(e.target.value) })
+            }
           >
             <option value="">Selecciona una bodega</option>
             {bodegas.map((bodega) => (
@@ -39,23 +41,34 @@ export function InventarioCreateForm({
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium">Presentación (Perfume)</label>
+          <label className="mb-2 block text-sm font-medium">
+            Presentación
+          </label>
           <select
             className="input-base"
             value={form.idPresentacion || ""}
-            onChange={(e) => onChange({ ...form, idPresentacion: Number(e.target.value) })}
+            onChange={(e) =>
+              onChange({ ...form, idPresentacion: Number(e.target.value) })
+            }
           >
             <option value="">Selecciona una presentación</option>
             {productos.map((producto) => (
-              <option key={producto.idPresentacion} value={producto.idPresentacion}>
-                {producto.nombrePerfume} – {producto.volumenMl}ml {producto.codigoBarras ? `(${producto.codigoBarras})` : ""}
+              <option
+                key={producto.idPresentacion}
+                value={producto.idPresentacion}
+              >
+                {producto.nombrePerfume ?? "Sin nombre"} -{" "}
+                {producto.volumenMl ?? 0}ml
+                {producto.codigoBarras ? ` - ${producto.codigoBarras}` : ""}
               </option>
             ))}
           </select>
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium">Stock disponible</label>
+          <label className="mb-2 block text-sm font-medium">
+            Stock disponible
+          </label>
           <input
             type="number"
             min={0}
@@ -68,7 +81,9 @@ export function InventarioCreateForm({
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium">Stock reservado</label>
+          <label className="mb-2 block text-sm font-medium">
+            Stock reservado
+          </label>
           <input
             type="number"
             min={0}
@@ -81,7 +96,9 @@ export function InventarioCreateForm({
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium">Stock mínimo</label>
+          <label className="mb-2 block text-sm font-medium">
+            Stock mínimo
+          </label>
           <input
             type="number"
             min={0}
