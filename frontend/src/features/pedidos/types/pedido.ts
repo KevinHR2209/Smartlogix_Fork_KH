@@ -1,20 +1,17 @@
 export interface DetallePedido {
   idDetalle?: number;
-  idProducto: number;
+  idPresentacion: number;
   cantidad: number;
-  precioUnitarioSnapshot: number;
+  precioUnitarioSnapshot?: number;
 }
 
 export interface CrearPedidoDetallePayload {
-  idProducto: number;
+  idPresentacion: number;
   cantidad: number;
-  precioUnitarioSnapshot: number;
 }
 
 export interface CrearPedidoPayload {
   idCliente: number;
-  estadoPedido: string;
-  montoTotal: number;
   detalles: CrearPedidoDetallePayload[];
 }
 

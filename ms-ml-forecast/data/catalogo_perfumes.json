@@ -1,0 +1,1618 @@
+[
+  {
+    "id_producto": 9001,
+    "nombre": "Sauvage",
+    "marca": "Dior",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "amaderada",
+      "aromatica"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano",
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "dia",
+      "noche"
+    ],
+    "precio_referencia": 89990
+  },
+  {
+    "id_producto": 9002,
+    "nombre": "Sauvage Elixir",
+    "marca": "Dior",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "amaderada",
+      "especiada"
+    ],
+    "formato": "Parfum",
+    "version": "elixir",
+    "presentacion_ml": 60,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 109990
+  },
+  {
+    "id_producto": 9003,
+    "nombre": "Bleu de Chanel",
+    "marca": "Chanel",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "amaderada",
+      "citrica"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo",
+      "verano"
+    ],
+    "momento_uso": [
+      "dia",
+      "noche"
+    ],
+    "precio_referencia": 99990
+  },
+  {
+    "id_producto": 9004,
+    "nombre": "Acqua di Gio",
+    "marca": "Giorgio Armani",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "acuatica",
+      "citrica"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 79990
+  },
+  {
+    "id_producto": 9005,
+    "nombre": "Acqua di Gio Profondo",
+    "marca": "Giorgio Armani",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "acuatica",
+      "aromatica"
+    ],
+    "formato": "EDP",
+    "version": "profondo",
+    "presentacion_ml": 75,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia",
+      "noche"
+    ],
+    "precio_referencia": 89990
+  },
+  {
+    "id_producto": 9006,
+    "nombre": "La Vie Est Belle",
+    "marca": "Lancome",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "gourmand",
+      "floral"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 75,
+    "temporada": [
+      "invierno",
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 94990
+  },
+  {
+    "id_producto": 9007,
+    "nombre": "Good Girl",
+    "marca": "Carolina Herrera",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "oriental"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 80,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 97990
+  },
+  {
+    "id_producto": 9008,
+    "nombre": "Good Girl Legere",
+    "marca": "Carolina Herrera",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "citrica"
+    ],
+    "formato": "EDT",
+    "version": "legere",
+    "presentacion_ml": 80,
+    "temporada": [
+      "verano",
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 92990
+  },
+  {
+    "id_producto": 9009,
+    "nombre": "Black Opium",
+    "marca": "Yves Saint Laurent",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "gourmand",
+      "oriental"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 90,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 99990
+  },
+  {
+    "id_producto": 9010,
+    "nombre": "Libre",
+    "marca": "Yves Saint Laurent",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "aromatica"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 90,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "dia",
+      "noche"
+    ],
+    "precio_referencia": 96990
+  },
+  {
+    "id_producto": 9011,
+    "nombre": "One Million",
+    "marca": "Paco Rabanne",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "especiada",
+      "amaderada"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno",
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 74990
+  },
+  {
+    "id_producto": 9012,
+    "nombre": "Invictus",
+    "marca": "Paco Rabanne",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "acuatica",
+      "amaderada"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 76990
+  },
+  {
+    "id_producto": 9013,
+    "nombre": "Light Blue",
+    "marca": "Dolce & Gabbana",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "citrica",
+      "acuatica"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 84990
+  },
+  {
+    "id_producto": 9014,
+    "nombre": "The Only One",
+    "marca": "Dolce & Gabbana",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "oriental",
+      "floral"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 88990
+  },
+  {
+    "id_producto": 9015,
+    "nombre": "Eros",
+    "marca": "Versace",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "aromatica",
+      "amaderada"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano",
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "dia",
+      "noche"
+    ],
+    "precio_referencia": 79990
+  },
+  {
+    "id_producto": 9016,
+    "nombre": "Eros Parfum",
+    "marca": "Versace",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "amaderada",
+      "especiada"
+    ],
+    "formato": "Parfum",
+    "version": "parfum",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 99990
+  },
+  {
+    "id_producto": 9017,
+    "nombre": "Si",
+    "marca": "Giorgio Armani",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "gourmand",
+      "amaderada"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo",
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 98990
+  },
+  {
+    "id_producto": 9018,
+    "nombre": "My Way",
+    "marca": "Giorgio Armani",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "gourmand"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 90,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "dia",
+      "noche"
+    ],
+    "precio_referencia": 93990
+  },
+  {
+    "id_producto": 9019,
+    "nombre": "Aventus",
+    "marca": "Creed",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "frutal",
+      "amaderada"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo",
+      "verano"
+    ],
+    "momento_uso": [
+      "dia",
+      "noche"
+    ],
+    "precio_referencia": 189990
+  },
+  {
+    "id_producto": 9020,
+    "nombre": "CH Men",
+    "marca": "Carolina Herrera",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "citrica",
+      "especiada"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano",
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 72990
+  },
+  {
+    "id_producto": 9021,
+    "nombre": "Terre d'Hermes",
+    "marca": "Hermes",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "amaderada",
+      "citrica"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano",
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 95990
+  },
+  {
+    "id_producto": 9022,
+    "nombre": "Dior Homme Intense",
+    "marca": "Dior",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "amaderada",
+      "floral"
+    ],
+    "formato": "EDP",
+    "version": "intense",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 105990
+  },
+  {
+    "id_producto": 9023,
+    "nombre": "Luna Rossa",
+    "marca": "Prada",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "aromatica",
+      "citrica"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 84990
+  },
+  {
+    "id_producto": 9024,
+    "nombre": "Boss Bottled",
+    "marca": "Hugo Boss",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "amaderada",
+      "frutal"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "dia",
+      "noche"
+    ],
+    "precio_referencia": 69990
+  },
+  {
+    "id_producto": 9025,
+    "nombre": "Boss Bottled Intense",
+    "marca": "Hugo Boss",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "especiada",
+      "amaderada"
+    ],
+    "formato": "EDP",
+    "version": "intense",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 79990
+  },
+  {
+    "id_producto": 9026,
+    "nombre": "CK One",
+    "marca": "Calvin Klein",
+    "genero": "unisex",
+    "familia_olfativa": [
+      "citrica",
+      "acuatica"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 54990
+  },
+  {
+    "id_producto": 9027,
+    "nombre": "CK Eternity",
+    "marca": "Calvin Klein",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "floral",
+      "amaderada"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 59990
+  },
+  {
+    "id_producto": 9028,
+    "nombre": "Polo Blue",
+    "marca": "Ralph Lauren",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "acuatica",
+      "citrica"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 74990
+  },
+  {
+    "id_producto": 9029,
+    "nombre": "Polo Red",
+    "marca": "Ralph Lauren",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "frutal",
+      "especiada"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 76990
+  },
+  {
+    "id_producto": 9030,
+    "nombre": "Oud Wood",
+    "marca": "Tom Ford",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "amaderada",
+      "especiada"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 50,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 159990
+  },
+  {
+    "id_producto": 9031,
+    "nombre": "Noir Extreme",
+    "marca": "Tom Ford",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "especiada",
+      "amaderada"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 149990
+  },
+  {
+    "id_producto": 9032,
+    "nombre": "Man in Black",
+    "marca": "Bvlgari",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "especiada",
+      "amaderada"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 89990
+  },
+  {
+    "id_producto": 9033,
+    "nombre": "Aqva Pour Homme",
+    "marca": "Bvlgari",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "acuatica"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 79990
+  },
+  {
+    "id_producto": 9034,
+    "nombre": "Le Male",
+    "marca": "Jean Paul Gaultier",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "aromatica",
+      "oriental"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 125,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 89990
+  },
+  {
+    "id_producto": 9035,
+    "nombre": "Le Beau",
+    "marca": "Jean Paul Gaultier",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "amaderada",
+      "frutal"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 84990
+  },
+  {
+    "id_producto": 9036,
+    "nombre": "L'Eau d'Issey",
+    "marca": "Issey Miyake",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "acuatica",
+      "aromatica"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 125,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 74990
+  },
+  {
+    "id_producto": 9037,
+    "nombre": "Montblanc Legend",
+    "marca": "Montblanc",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "aromatica",
+      "amaderada"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "dia",
+      "noche"
+    ],
+    "precio_referencia": 64990
+  },
+  {
+    "id_producto": 9038,
+    "nombre": "Wanted",
+    "marca": "Azzaro",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "especiada",
+      "amaderada"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 69990
+  },
+  {
+    "id_producto": 9039,
+    "nombre": "L.12.12 Blanc",
+    "marca": "Lacoste",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "citrica",
+      "aromatica"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 59990
+  },
+  {
+    "id_producto": 9040,
+    "nombre": "Uomo Born in Roma",
+    "marca": "Valentino",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "amaderada",
+      "especiada"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 94990
+  },
+  {
+    "id_producto": 9041,
+    "nombre": "Guilty Pour Homme",
+    "marca": "Gucci",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "aromatica",
+      "amaderada"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 90,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 84990
+  },
+  {
+    "id_producto": 9042,
+    "nombre": "Gentleman",
+    "marca": "Givenchy",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "amaderada",
+      "especiada"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 87990
+  },
+  {
+    "id_producto": 9043,
+    "nombre": "Guerlain Homme",
+    "marca": "Guerlain",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "citrica",
+      "amaderada"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 79990
+  },
+  {
+    "id_producto": 9044,
+    "nombre": "Allure Homme Sport",
+    "marca": "Chanel",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "citrica",
+      "acuatica"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 99990
+  },
+  {
+    "id_producto": 9045,
+    "nombre": "Armani Code",
+    "marca": "Giorgio Armani",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "oriental",
+      "amaderada"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 89990
+  },
+  {
+    "id_producto": 9046,
+    "nombre": "Versace Pour Homme",
+    "marca": "Versace",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "acuatica",
+      "aromatica"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 74990
+  },
+  {
+    "id_producto": 9047,
+    "nombre": "L'Homme",
+    "marca": "Prada",
+    "genero": "masculino",
+    "familia_olfativa": [
+      "amaderada",
+      "floral"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 84990
+  },
+  {
+    "id_producto": 9048,
+    "nombre": "Chanel No 5",
+    "marca": "Chanel",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "oriental"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 129990
+  },
+  {
+    "id_producto": 9049,
+    "nombre": "Coco Mademoiselle",
+    "marca": "Chanel",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "oriental",
+      "floral"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 119990
+  },
+  {
+    "id_producto": 9050,
+    "nombre": "Chance Eau Tendre",
+    "marca": "Chanel",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "frutal"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 109990
+  },
+  {
+    "id_producto": 9051,
+    "nombre": "J'adore",
+    "marca": "Dior",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "dia",
+      "noche"
+    ],
+    "precio_referencia": 114990
+  },
+  {
+    "id_producto": 9052,
+    "nombre": "Miss Dior",
+    "marca": "Dior",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "frutal"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 104990
+  },
+  {
+    "id_producto": 9053,
+    "nombre": "Mon Paris",
+    "marca": "Yves Saint Laurent",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "gourmand",
+      "floral"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 90,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 99990
+  },
+  {
+    "id_producto": 9054,
+    "nombre": "La Vie Est Belle Intensement",
+    "marca": "Lancome",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "gourmand",
+      "floral"
+    ],
+    "formato": "EDP",
+    "version": "intense",
+    "presentacion_ml": 50,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 89990
+  },
+  {
+    "id_producto": 9055,
+    "nombre": "Idole",
+    "marca": "Lancome",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "frutal"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 75,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 94990
+  },
+  {
+    "id_producto": 9056,
+    "nombre": "Si Passione",
+    "marca": "Giorgio Armani",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "gourmand"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 99990
+  },
+  {
+    "id_producto": 9057,
+    "nombre": "212 VIP",
+    "marca": "Carolina Herrera",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "gourmand",
+      "frutal"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 80,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 89990
+  },
+  {
+    "id_producto": 9058,
+    "nombre": "Bright Crystal",
+    "marca": "Versace",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "frutal"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 90,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 74990
+  },
+  {
+    "id_producto": 9059,
+    "nombre": "Eros Pour Femme",
+    "marca": "Versace",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "gourmand",
+      "floral"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 84990
+  },
+  {
+    "id_producto": 9060,
+    "nombre": "Light Blue Intense",
+    "marca": "Dolce & Gabbana",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "citrica",
+      "floral"
+    ],
+    "formato": "EDP",
+    "version": "intense",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 94990
+  },
+  {
+    "id_producto": 9061,
+    "nombre": "Paradoxe",
+    "marca": "Prada",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "amaderada"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 90,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 104990
+  },
+  {
+    "id_producto": 9062,
+    "nombre": "Bloom",
+    "marca": "Gucci",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 99990
+  },
+  {
+    "id_producto": 9063,
+    "nombre": "Flora Gorgeous Gardenia",
+    "marca": "Gucci",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "frutal"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 89990
+  },
+  {
+    "id_producto": 9064,
+    "nombre": "Her",
+    "marca": "Burberry",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "frutal",
+      "gourmand"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 94990
+  },
+  {
+    "id_producto": 9065,
+    "nombre": "Burberry Body",
+    "marca": "Burberry",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "oriental"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 85,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 89990
+  },
+  {
+    "id_producto": 9066,
+    "nombre": "Born in Roma Donna",
+    "marca": "Valentino",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "amaderada"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 94990
+  },
+  {
+    "id_producto": 9067,
+    "nombre": "L'Interdit",
+    "marca": "Givenchy",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "oriental"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 80,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 94990
+  },
+  {
+    "id_producto": 9068,
+    "nombre": "Mon Guerlain",
+    "marca": "Guerlain",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "gourmand",
+      "floral"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 99990
+  },
+  {
+    "id_producto": 9069,
+    "nombre": "Tresor",
+    "marca": "Lancome",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "oriental"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 89990
+  },
+  {
+    "id_producto": 9070,
+    "nombre": "For Her",
+    "marca": "Narciso Rodriguez",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "oriental"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 94990
+  },
+  {
+    "id_producto": 9071,
+    "nombre": "Flowerbomb",
+    "marca": "Viktor & Rolf",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "gourmand"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 109990
+  },
+  {
+    "id_producto": 9072,
+    "nombre": "Classique",
+    "marca": "Jean Paul Gaultier",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "oriental"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 94990
+  },
+  {
+    "id_producto": 9073,
+    "nombre": "Olympea",
+    "marca": "Paco Rabanne",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "gourmand",
+      "floral"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 80,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 89990
+  },
+  {
+    "id_producto": 9074,
+    "nombre": "Lady Million",
+    "marca": "Paco Rabanne",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "frutal"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 80,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 89990
+  },
+  {
+    "id_producto": 9075,
+    "nombre": "Daisy",
+    "marca": "Marc Jacobs",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "frutal"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "verano"
+    ],
+    "momento_uso": [
+      "dia"
+    ],
+    "precio_referencia": 79990
+  },
+  {
+    "id_producto": 9076,
+    "nombre": "Le Parfum",
+    "marca": "Elie Saab",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "gourmand"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 90,
+    "temporada": [
+      "entretiempo"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 99990
+  },
+  {
+    "id_producto": 9077,
+    "nombre": "My Way Intense",
+    "marca": "Giorgio Armani",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "gourmand"
+    ],
+    "formato": "EDP",
+    "version": "intense",
+    "presentacion_ml": 90,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 99990
+  },
+  {
+    "id_producto": 9078,
+    "nombre": "Libre Intense",
+    "marca": "Yves Saint Laurent",
+    "genero": "femenino",
+    "familia_olfativa": [
+      "floral",
+      "aromatica"
+    ],
+    "formato": "EDP",
+    "version": "intense",
+    "presentacion_ml": 90,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 104990
+  },
+  {
+    "id_producto": 9079,
+    "nombre": "Replica Jazz Club",
+    "marca": "Maison Margiela",
+    "genero": "unisex",
+    "familia_olfativa": [
+      "especiada",
+      "amaderada"
+    ],
+    "formato": "EDT",
+    "version": "clasica",
+    "presentacion_ml": 100,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 94990
+  },
+  {
+    "id_producto": 9080,
+    "nombre": "Santal 33",
+    "marca": "Le Labo",
+    "genero": "unisex",
+    "familia_olfativa": [
+      "amaderada"
+    ],
+    "formato": "EDP",
+    "version": "clasica",
+    "presentacion_ml": 50,
+    "temporada": [
+      "invierno"
+    ],
+    "momento_uso": [
+      "noche"
+    ],
+    "precio_referencia": 149990
+  }
+]

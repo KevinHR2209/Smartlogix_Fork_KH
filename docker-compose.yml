@@ -34,6 +34,7 @@ services:
       - URL_MS_VENTAS=http://ms-ventas:8083
       - URL_MS_CLIENTES=http://ms-clientes:8082
       - URL_MS_LOGISTICA=http://ms-logistica:8084
+      - URL_MS_ML=http://ms-ml-forecast:8086
     command: mvn clean spring-boot:run
     depends_on:
       postgres:
@@ -119,6 +120,11 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
       - URL_MS_CLIENTES=http://ms-clientes:8082
       - URL_MS_INVENTARIO=http://ms-inventario:8081
+      - MERCADOPAGO_ACCESS_TOKEN=${MERCADOPAGO_ACCESS_TOKEN:-}
+      - MERCADOPAGO_BACK_URL_SUCCESS=${MERCADOPAGO_BACK_URL_SUCCESS:-http://localhost:3000/pago/exito}
+      - MERCADOPAGO_BACK_URL_FAILURE=${MERCADOPAGO_BACK_URL_FAILURE:-http://localhost:3000/pago/error}
+      - MERCADOPAGO_BACK_URL_PENDING=${MERCADOPAGO_BACK_URL_PENDING:-http://localhost:3000/pago/pendiente}
+      - MERCADOPAGO_NOTIFICATION_URL=${MERCADOPAGO_NOTIFICATION_URL:-}
     command: mvn clean spring-boot:run
     depends_on:
       postgres:
@@ -203,6 +209,24 @@ services:
       - NEXT_PUBLIC_API_URL=http://localhost:8080
     depends_on:
       - ms-gateway
+
+  ms-ml-forecast:
+    build:
+      context: ./ms-ml-forecast
+    container_name: ms-ml-forecast
+    working_dir: /app
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./ms-ml-forecast:/app
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/ms_ml_forecast
+      - URL_MS_VENTAS=http://ms-ventas:8083
+      - URL_MS_INVENTARIO=http://ms-inventario:8081
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8086 --reload
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   pgdata:

@@ -10,6 +10,11 @@ export const clientesService = {
   getById: (id: number) =>
     apiGet<Cliente>(`${endpoints.clientes}/${id}`),
 
+  // Usado en el checkout: el JWT solo trae el correo del usuario logueado,
+  // hay que resolver su idCliente antes de poder crear un pedido.
+  getByCorreo: (correo: string) =>
+    apiGet<Cliente>(`${endpoints.clientes}/correo/${encodeURIComponent(correo)}`),
+
   create: (cliente: ClientePayload) =>
     apiPost<Cliente>(endpoints.clientes, cliente),
 

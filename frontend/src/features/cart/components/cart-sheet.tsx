@@ -1,7 +1,13 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/features/cart/context/cart-context";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { formatCurrency } from "@/lib/utils/currency";
+import { clientesService } from "@/features/clientes/services/clientesService";
+import { pedidosService } from "@/features/pedidos/services/pedidosService";
+import { mercadopagoService } from "@/features/pagos/services/mercadopagoService";
 
 export function CartSheet() {
   const {
@@ -15,8 +21,55 @@ export function CartSheet() {
     totalItems,
     totalPrice,
   } = useCart();
+  const { user, isAuthenticated } = useAuth();
+  const router = useRouter();
+  const [procesando, setProcesando] = useState(false);
+  const [errorPago, setErrorPago] = useState<string | null>(null);
 
   if (!isOpen) return null;
+
+  async function comprar() {
+    if (!isAuthenticated || !user) {
+      closeCart();
+      router.push("/login");
+      return;
+    }
+
+    setErrorPago(null);
+    setProcesando(true);
+    try {
+      // 1. El JWT solo trae el correo, hay que resolver el idCliente real
+      const cliente = await clientesService.getByCorreo(user.correo);
+      if (!cliente.idCliente) {
+        throw new Error("No se encontro un cliente asociado a tu cuenta");
+      }
+
+      // 2. Crear el pedido (queda en PENDIENTE_PAGO, con stock ya reservado)
+      const pedido = await pedidosService.create({
+        idCliente: cliente.idCliente,
+        detalles: items.map((item) => ({
+          idPresentacion: item.idProducto!,
+          cantidad: item.cantidad,
+        })),
+      });
+
+      if (!pedido.idPedido) {
+        throw new Error("El pedido se creo pero no devolvio un id");
+      }
+
+      // 3. Crear la preferencia de pago en Mercado Pago
+      const preferencia = await mercadopagoService.crearPreferencia(pedido.idPedido);
+
+      // 4. Redirigir al checkout de Mercado Pago (sandbox de prueba)
+      clearCart();
+      closeCart();
+      window.location.href = preferencia.sandbox_init_point || preferencia.init_point;
+    } catch (e) {
+      setErrorPago(e instanceof Error ? e.message : "No se pudo iniciar el pago");
+    } finally {
+      setProcesando(false);
+    }
+  }
 
   return (
     <div
@@ -114,12 +167,23 @@ export function CartSheet() {
                 </span>
               </div>
 
+              {errorPago && (
+                <p className="mb-3 rounded-lg bg-red-100 p-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
+                  {errorPago}
+                </p>
+              )}
+
               <div className="flex gap-3">
                 <button type="button" onClick={clearCart} className="btn-secondary flex-1">
                   Vaciar
                 </button>
-                <button type="button" className="btn-primary flex-1">
-                  Comprar
+                <button
+                  type="button"
+                  onClick={comprar}
+                  disabled={procesando}
+                  className="btn-primary flex-1 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {procesando ? "Procesando..." : "Comprar"}
                 </button>
               </div>
             </div>
