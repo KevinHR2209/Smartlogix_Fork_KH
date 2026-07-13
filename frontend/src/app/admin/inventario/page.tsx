@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { inventarioService } from "@/features/inventario/services/inventarioService";
-import { productosService } from "@/features/productos/services/productosService";
 import { bodegasService } from "@/features/bodegas/services/bodegasService";
+import { apiGet } from "@/lib/api/client";
+import { endpoints } from "@/lib/api/endpoints";
 import {
   Inventario,
   InventarioRequest,
@@ -43,7 +44,7 @@ function Notificacion({ n, onClose }: { n: Notif; onClose: () => void }) {
 
 export default function AdminInventarioPage() {
   const [productos, setProductos] = useState<any[]>([]);
-  const [presentaciones, setPresentaciones] = useState<Producto[]>([]);
+  const [presentaciones, setPresentaciones] = useState<any[]>([]);
   const [bodegas, setBodegas] = useState<Bodega[]>([]);
   const [tab, setTab] = useState<Tab>("stock");
   const [notif, setNotif] = useState<Notif>(null);
@@ -76,11 +77,20 @@ export default function AdminInventarioPage() {
   const [movimientos, setMovimientos] = useState<MovimientoResponse[]>([]);
 
   useEffect(() => {
-    Promise.all([productosService.getAll(), bodegasService.getAll()])
-      .then(([p, b]) => {
-        const listaPerfumes = Array.isArray(p) ? p : [];
-        const listaPresentaciones = listaPerfumes.flatMap((perfume: any) =>
-          Array.isArray(perfume.presentaciones) ? perfume.presentaciones : []
+    Promise.all([
+      apiGet<any[]>(endpoints.perfumes),
+      bodegasService.getAll(),
+    ])
+      .then(([perfumes, b]) => {
+        const listaPerfumes: any[] = Array.isArray(perfumes) ? perfumes : [];
+        const listaPresentaciones: any[] = listaPerfumes.flatMap((perfume: any) =>
+          Array.isArray(perfume.presentaciones)
+            ? perfume.presentaciones.map((pres: any) => ({
+                ...pres,
+                nombrePerfume: pres.nombrePerfume ?? perfume.nombre ?? "Sin nombre",
+                idPresentacion: pres.idPresentacion ?? pres.id ?? null,
+              }))
+            : []
         );
 
         setProductos(listaPerfumes);
@@ -89,16 +99,28 @@ export default function AdminInventarioPage() {
       })
       .catch(() => notify("error", "No se pudieron cargar productos o bodegas."));
   }, []);
+    useEffect(() => {
+    console.log("=== presentaciones state ===", presentaciones);
+    console.log("=== largo:", presentaciones.length);
+    if (presentaciones.length > 0) {
+      console.log("=== primer elemento:", presentaciones[0]);
+    }
+  }, [presentaciones]);
 
   const notify = (tipo: "ok" | "error", msg: string) => setNotif({ tipo, msg });
 
-  const renderPresentacionOption = (p: Producto, index: number) => {
+
+    const renderPresentacionOption = (p: any, index: number) => {
+    const id = p.idPresentacion;
+    if (!id) return null;
+
     const nombre = p.nombrePerfume ?? "Sin nombre";
-    const volumen = p.volumenMl ?? 0;
+    const volumen = p.volumenMl ? `${p.volumenMl}ml` : "";
     const codigo = p.sku ?? p.codigoBarras ?? "";
-    const label = `${nombre} - ${volumen}ml${codigo ? ` - ${codigo}` : ""}`;
+    const label = `${nombre}${volumen ? ` - ${volumen}` : ""}${codigo ? ` - ${codigo}` : ""}`;
+
     return (
-      <option key={`${p.idPresentacion ?? "np"}-${index}`} value={p.idPresentacion ?? ""}>
+      <option key={`${id}-${index}`} value={id}>
         {label}
       </option>
     );
@@ -246,10 +268,10 @@ export default function AdminInventarioPage() {
   };
 
   const TABS = [
-    { id: "stock" as Tab, label: "Control de Stock", icon: "📦" },
-    { id: "transferir" as Tab, label: "Transferencias", icon: "🔀" },
-    { id: "crear" as Tab, label: "Nuevo Registro", icon: "➕" },
-    { id: "movimientos" as Tab, label: "Movimientos", icon: "📋" },
+    { id: "stock" as Tab, label: "Control de Stock" },
+    { id: "transferir" as Tab, label: "Transferencias" },
+    { id: "crear" as Tab, label: "Nuevo Registro"},
+    { id: "movimientos" as Tab, label: "Movimientos" },
   ];
 
   return (
@@ -280,7 +302,6 @@ export default function AdminInventarioPage() {
                 : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
             }`}
           >
-            <span>{t.icon}</span>
             {t.label}
           </button>
         ))}
@@ -589,7 +610,7 @@ export default function AdminInventarioPage() {
             disabled={loading}
             className="w-full rounded-2xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 py-3 font-semibold text-sm hover:opacity-80 disabled:opacity-50 transition"
           >
-            {loading ? "Transfiriendo…" : "🔀 Ejecutar Transferencia"}
+            {loading ? "Transfiriendo…" : "Ejecutar Transferencia"}
           </button>
         </div>
       )}
@@ -665,7 +686,7 @@ export default function AdminInventarioPage() {
             disabled={loading}
             className="w-full rounded-2xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 py-3 font-semibold text-sm hover:opacity-80 disabled:opacity-50 transition"
           >
-            {loading ? "Creando…" : "➕ Crear inventario"}
+            {loading ? "Creando…" : "Crear inventario"}
           </button>
         </div>
       )}
