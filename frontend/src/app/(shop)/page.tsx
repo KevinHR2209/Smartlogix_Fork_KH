@@ -8,7 +8,7 @@ export default function HomePage() {
           <p className="text-sm uppercase tracking-[0.25em] text-zinc-500 dark:text-zinc-400">
             Smartlogix
           </p>
-          <h1 className="max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">
+          <h1 className="max-w-3xl ()text-4xl font-bold tracking-tight md:text-6xl">
             Ecommerce moderno, simple y listo para separar usuario y administración
           </h1>
           <p className="max-w-2xl text-zinc-600 dark:text-zinc-400">

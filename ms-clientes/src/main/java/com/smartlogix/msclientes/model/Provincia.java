@@ -1,5 +1,6 @@
 package com.smartlogix.msclientes.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,6 +20,7 @@ public class Provincia {
     @JoinColumn(name = "id_region", nullable = false)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private Region region;
 
     @Column(name = "nombre_provincia", nullable = false)

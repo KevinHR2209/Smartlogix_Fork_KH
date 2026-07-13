@@ -1,6 +1,7 @@
 package com.smartlogix.msclientes.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,11 +25,11 @@ public class DireccionCliente {
     @JsonBackReference
     private Cliente cliente;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_comuna")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Comuna comuna;  // relación real, no solo Integer
+    private Comuna comuna;
 
     @Column(name = "calle")
     private String calle;

@@ -26,7 +26,8 @@ public class ClienteService {
 
     // ── Mappers ──────────────────────────────────────────────────────────────
 
-    private DireccionClienteResponse mapDireccion(DireccionCliente d) {
+    @Transactional(readOnly = true)
+    public DireccionClienteResponse mapDireccion(DireccionCliente d) {
         DireccionClienteResponse.DireccionClienteResponseBuilder builder = DireccionClienteResponse.builder()
                 .idDireccion(d.getIdDireccion())
                 .calle(d.getCalle())
@@ -50,6 +51,7 @@ public class ClienteService {
         return builder.build();
     }
 
+    @Transactional(readOnly = true)
     public ClienteResponse mapCliente(Cliente c) {
         List<DireccionCliente> dirs = direccionRepository.findByClienteIdCliente(c.getIdCliente());
         return ClienteResponse.builder()
@@ -67,12 +69,14 @@ public class ClienteService {
 
     // ── Clientes ─────────────────────────────────────────────────────────────
 
+    @Transactional(readOnly = true)
     public List<ClienteResponse> listar() {
         return clienteRepository.findAll().stream()
                 .map(this::mapCliente)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public ClienteResponse buscarPorIdDto(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -80,7 +84,7 @@ public class ClienteService {
         return mapCliente(cliente);
     }
 
-    // MÉTODO PARA BÚSQUEDA POR CORREO
+    @Transactional(readOnly = true)
     public ClienteResponse buscarPorCorreoDto(String correo) {
         Cliente cliente = clienteRepository.findByCorreo(correo)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -88,7 +92,7 @@ public class ClienteService {
         return mapCliente(cliente);
     }
 
-    // Usado internamente para validación desde otros servicios
+    @Transactional(readOnly = true)
     public Cliente buscarPorId(Long id) {
         return clienteRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -136,7 +140,11 @@ public class ClienteService {
                 .build();
 
         direccionRepository.save(direccion);
-        return mapCliente(guardado);
+
+        // Recargar desde BD para que la sesión Hibernate esté activa al mapear
+        Cliente recargado = clienteRepository.findById(guardado.getIdCliente())
+                .orElseThrow();
+        return mapCliente(recargado);
     }
 
     @Transactional
@@ -158,12 +166,14 @@ public class ClienteService {
 
     // ── Direcciones ──────────────────────────────────────────────────────────
 
+    @Transactional(readOnly = true)
     public List<DireccionClienteResponse> listarDirecciones(Long idCliente) {
         buscarPorId(idCliente);
         return direccionRepository.findByClienteIdCliente(idCliente)
                 .stream().map(this::mapDireccion).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public DireccionClienteResponse obtenerDireccionPrincipal(Long idCliente) {
         buscarPorId(idCliente);
         DireccionCliente principal = direccionRepository

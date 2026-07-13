@@ -2,7 +2,9 @@ package com.smartlogix.msautenticacion.service;
 
 import com.smartlogix.msautenticacion.dto.ClienteSyncRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -10,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClienteIntegrationService {
 
     private final RestTemplate restTemplate;
@@ -27,6 +30,13 @@ public class ClienteIntegrationService {
                 throw new RuntimeException("No se pudo crear el cliente en ms-clientes");
             }
         } catch (HttpStatusCodeException e) {
+
+            if (e.getStatusCode() == HttpStatus.CONFLICT) {
+                log.warn("Cliente ya existía en ms-clientes para idUsuarioAuth={}",
+                        request.getIdUsuarioAuth());
+                return;
+            }
+
             throw new RuntimeException(
                     "Error al crear cliente en ms-clientes. Status: "
                             + e.getStatusCode()

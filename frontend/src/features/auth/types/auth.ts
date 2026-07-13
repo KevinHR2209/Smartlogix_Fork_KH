@@ -20,12 +20,12 @@ export interface RegisterRequest {
   nombre: string;
   correo: string;
   password: string;
+  rol: "CLIENTE";
   rut: string;
   apellidoPaterno: string;
   apellidoMaterno: string;
   telefono: string;
   direccionPrincipal: DireccionPrincipalRequest;
-  rol?: "CLIENTE";
 }
 
 export type AuthMeResponse = {

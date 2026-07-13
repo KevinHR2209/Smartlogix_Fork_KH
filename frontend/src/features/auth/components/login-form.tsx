@@ -34,7 +34,6 @@ export function LoginForm() {
 
     try {
       setLoading(true);
-
       const response = await login({
         correo: correo.trim().toLowerCase(),
         password,
@@ -45,14 +44,13 @@ export function LoginForm() {
       } else {
         router.push("/productos");
       }
-
       router.refresh();
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "No se pudo iniciar sesión";
-
-      if (message.includes("401")) {
+      const message = err instanceof Error ? err.message : "";
+      if (message.includes("401") || message.toLowerCase().includes("credenciales")) {
         setError("Correo o contraseña incorrectos.");
+      } else if (message.toLowerCase().includes("network") || message.toLowerCase().includes("fetch")) {
+        setError("No se pudo conectar al servidor. Intenta nuevamente.");
       } else {
         setError("No se pudo iniciar sesión. Intenta nuevamente.");
       }
@@ -60,6 +58,9 @@ export function LoginForm() {
       setLoading(false);
     }
   }
+
+  const inp =
+    "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 outline-none focus:border-white/40 transition-colors disabled:opacity-50";
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-neutral-950 text-white px-4">
@@ -71,52 +72,36 @@ export function LoginForm() {
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <div>
-            <label htmlFor="correo" className="mb-2 block text-sm">
-              Correo
-            </label>
+            <label htmlFor="correo" className="mb-2 block text-sm">Correo</label>
             <input
-              id="correo"
-              type="email"
-              value={correo}
+              id="correo" type="email" value={correo} disabled={loading}
               onChange={(e) => setCorreo(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 outline-none"
-              placeholder="admin@smartlogix.cl"
+              className={inp} placeholder="admin@smartlogix.cl"
               autoComplete="email"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-2 block text-sm">
-              Contraseña
-            </label>
+            <label htmlFor="password" className="mb-2 block text-sm">Contraseña</label>
             <input
-              id="password"
-              type="password"
-              value={password}
+              id="password" type="password" value={password} disabled={loading}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 outline-none"
-              placeholder="Ingresa tu contraseña"
+              className={inp} placeholder="Ingresa tu contraseña"
               autoComplete="current-password"
             />
           </div>
 
-          {success ? <p className="text-sm text-emerald-400">{success}</p> : null}
-          {error ? <p className="text-sm text-red-400">{error}</p> : null}
+          {success && <p className="text-sm text-emerald-400">{success}</p>}
+          {error && <p className="text-sm text-red-400">{error}</p>}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-white px-4 py-3 font-medium text-neutral-950 disabled:opacity-60"
-          >
+          <button type="submit" disabled={loading} className="w-full rounded-xl bg-white px-4 py-3 font-medium text-neutral-950 disabled:opacity-60 hover:bg-white/90 transition-colors">
             {loading ? "Entrando..." : "Entrar"}
           </button>
         </form>
 
         <p className="mt-6 text-sm text-white/60">
           ¿No tienes cuenta?{" "}
-          <Link href="/register" className="text-white underline">
-            Crear cuenta
-          </Link>
+          <Link href="/register" className="text-white underline">Crear cuenta</Link>
         </p>
       </section>
     </main>
