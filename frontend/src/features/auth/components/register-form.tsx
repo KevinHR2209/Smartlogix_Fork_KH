@@ -33,7 +33,7 @@ const initialForm: RegisterFormState = {
   direccionPrincipal: { idComuna: "", calle: "", numero: "", detalle: "" },
 };
 
-const CLIENTES_URL = process.env.NEXT_PUBLIC_CLIENTES_URL ?? "http://localhost:8082";
+const CLIENTES_URL = process.env.NEXT_PUBLIC_CLIENTES_URL ?? "http://localhost:8080";
 
 export function RegisterForm() {
   const router = useRouter();

@@ -1,4 +1,4 @@
-package com.smartlogix.msclientes.config;
+/*package com.smartlogix.msclientes.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,4 +27,4 @@ public class CorsConfig {
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
-}
+}*/
