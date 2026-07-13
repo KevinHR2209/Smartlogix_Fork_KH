@@ -1,5 +1,6 @@
 package com.smartlogix.msventas.mercadopago.service;
 
+import com.smartlogix.msventas.client.InventarioClient;
 import com.smartlogix.msventas.mercadopago.client.MercadoPagoClient;
 import com.smartlogix.msventas.mercadopago.dto.MercadoPagoDto.BackUrls;
 import com.smartlogix.msventas.mercadopago.dto.MercadoPagoDto.ItemRequest;
@@ -37,6 +38,7 @@ public class MercadoPagoService {
     private final MercadoPagoClient mercadoPagoClient;
     private final PedidoService pedidoService;
     private final PagoRepository pagoRepository;
+    private final InventarioClient inventarioClient;
 
     @Value("${mercadopago.back-url-success:http://localhost:3000/pago/exito}")
     private String backUrlSuccess;
@@ -77,7 +79,7 @@ public class MercadoPagoService {
         List<ItemRequest> items = detalles.stream()
                 .map(d -> new ItemRequest(
                         String.valueOf(d.getIdPresentacion()),
-                        "Presentacion " + d.getIdPresentacion(),
+                        obtenerTituloItem(d.getIdPresentacion()),
                         d.getCantidad(),
                         BigDecimal.valueOf(d.getPrecioUnitarioSnapshot()),
                         "CLP"
@@ -154,6 +156,28 @@ public class MercadoPagoService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "No hay pagos registrados para el pedido " + idPedido));
+    }
+
+    /**
+     * Nombre real del perfume + volumen para mostrar en el checkout de
+     * Mercado Pago (ej. "Sauvage 100ml") en vez de un id crudo. Si
+     * ms-inventario no responde, cae de vuelta a un titulo generico en
+     * vez de hacer fallar todo el pago solo por un problema cosmetico.
+     */
+    private String obtenerTituloItem(Long idPresentacion) {
+        try {
+            var presentacion = inventarioClient.obtenerPresentacion(idPresentacion);
+            if (presentacion.nombrePerfume() != null) {
+                String volumen = presentacion.volumenMl() != null
+                        ? " " + presentacion.volumenMl() + "ml"
+                        : "";
+                return presentacion.nombrePerfume() + volumen;
+            }
+        } catch (Exception e) {
+            log.warn("No se pudo obtener el nombre de la presentacion {} para el checkout de Mercado Pago: {}",
+                    idPresentacion, e.getMessage());
+        }
+        return "Presentacion " + idPresentacion;
     }
 
     /**
