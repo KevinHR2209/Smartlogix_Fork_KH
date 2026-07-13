@@ -5,7 +5,7 @@ export const endpoints = {
   clientes: "/api/clientes",
   bodegas: "/api/bodegas",
   pedidos: "/api/pedidos",
-  inventario: "/api/inventario"
+  inventario: "/api/inventario",
   pagos: {
     mercadopagoPreferencia: (idPedido: number) =>
       `/api/pagos/mercadopago/preferencia/${idPedido}`,
