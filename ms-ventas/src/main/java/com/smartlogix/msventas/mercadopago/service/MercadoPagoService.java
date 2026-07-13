@@ -167,8 +167,6 @@ public class MercadoPagoService {
     private String obtenerTituloItem(Long idPresentacion) {
         try {
             var presentacion = inventarioClient.obtenerPresentacion(idPresentacion);
-            log.info("DEBUG checkout MP - presentacion {} obtenida de inventario: nombrePerfume={}, volumenMl={}, precioActual={}",
-                    idPresentacion, presentacion.nombrePerfume(), presentacion.volumenMl(), presentacion.precioActual());
             if (presentacion.nombrePerfume() != null) {
                 String volumen = presentacion.volumenMl() != null
                         ? " " + presentacion.volumenMl() + "ml"
